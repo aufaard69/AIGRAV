@@ -29,13 +29,13 @@ Set-Location -Path $AigravRoot
 Write-Host "`n[1/3] Pulling latest Skills & Database updates from GitHub..." -ForegroundColor Yellow
 
 try {
-    $pullOutput = git pull origin main 2>&1
-    Write-Host $pullOutput -ForegroundColor Green
+    $pullOutput = git pull origin main 2>&1 | Out-String
+    Write-Host $pullOutput.Trim() -ForegroundColor Green
 }
 catch {
-    Write-Host "[WARNING] Git pull encountered an issue: $_" -ForegroundColor Yellow
-    Write-Host "Attempting git fetch..." -ForegroundColor Gray
-    git fetch origin main
+    Write-Host "[INFO] Fetching updates..." -ForegroundColor Gray
+    git fetch origin main | Out-Null
+    git merge origin/main | Out-Null
 }
 
 # 3. Check / Compile C# Skills if needed
