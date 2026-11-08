@@ -870,6 +870,50 @@ def aigrav_place_next_to_viewport_on_sheet(
 
 
 # ============================================================
+# CLOUD VERSIONING & MULTI-PC UPDATE TOOLS (OPSI A & CARA 3)
+# ============================================================
+
+import aigrav_version_manager as vm
+
+
+@mcp.tool(
+    name="aigrav_check_version_update",
+    description="[Multi-PC Sync] Periksa apakah ada rilis versi AIGRAV baru di repositori GitHub. Mengembalikan perbandingan versi lokal vs remote, nama rilis, tanggal, serta daftar fitur baru (highlights) dan perbaikan (fixes).",
+)
+def aigrav_check_version_update() -> str:
+    res = vm.check_remote_version()
+    return json.dumps(res, indent=2, ensure_ascii=False)
+
+
+@mcp.tool(
+    name="aigrav_apply_version_update",
+    description="[Multi-PC Sync] Terapkan pembaruan AIGRAV dari GitHub ke PC lokal (menjalankan sync-aigrav.ps1, pull kode & skill baru, kompilasi C#, dan reload Revit). Panggil HANYA jika pengguna telah menyetujui pembaruan.",
+)
+def aigrav_apply_version_update() -> str:
+    res = vm.apply_update_locally()
+    return json.dumps(res, indent=2, ensure_ascii=False)
+
+
+@mcp.tool(
+    name="aigrav_publish_version",
+    description="[Opsi A Otomatis via AI] Buat dan publikasikan versi rilis AIGRAV baru ke GitHub. Otomatis memperbarui version.json, membuat commit release, membuat tag Git vX.Y.Z, dan meng-push rilis ke GitHub.",
+)
+def aigrav_publish_version(
+    version: str,
+    release_name: str,
+    highlights: list[str],
+    fixes: list[str] | None = None,
+) -> str:
+    res = vm.publish_new_version(
+        version=version,
+        release_name=release_name,
+        highlights=highlights,
+        fixes=fixes or [],
+    )
+    return json.dumps(res, indent=2, ensure_ascii=False)
+
+
+# ============================================================
 # START MCP
 # ============================================================
 
