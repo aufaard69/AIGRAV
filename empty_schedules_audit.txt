@@ -1,0 +1,31 @@
+================================================================================
+           AUDIT IDENTIFIKASI SCHEDULE KOSONG & ANALISIS PENYEBABNYA            
+================================================================================
+Total ViewSchedule Diperiksa: 78
+
+--------------------------------------------------------------------------------
+[SCHEDULE KOSONG DITEMUKAN]: 'Keynote Legend'
+  * Jumlah Elemen Lolos Filter : 0 elemen (KOSONG)
+  * Target Kategori            : Keynote Tags
+  * Fields                     : Key Value, Keynote Text
+  * Filter Aktif               : Tanpa Filter
+  * Total Elemen di Model      : 0 elemen pada kategori Keynote Tags
+  --> [PENYEBAB UTAMA]: Model memang TIDAK MEMILIKI elemen berkategori 'Keynote Tags'.
+
+--------------------------------------------------------------------------------
+[SCHEDULE KOSONG DITEMUKAN]: 'M.1.4 - Flasing Welded Mesh'
+  * Jumlah Elemen Lolos Filter : 0 elemen (KOSONG)
+  * Target Kategori            : Wall Sweeps
+  * Fields                     : Comments, Type, Length, Luas (m2)
+  * Filter Aktif               : Comments Equal 'Welded Mesh'
+  * Total Elemen di Model      : 3 elemen pada kategori Wall Sweeps
+  --> [PENYEBAB UTAMA]: Ada 3 elemen 'Wall Sweeps' di model, tetapi SEMUANYA TERFILTER KELUAR!
+      Elemen tidak memenuhi filter: Comments Equal 'Welded Mesh'
+      Detail Elemen Sampel di Model:
+        - ID [6586242]: Tipe='Corner Flasing 2', Comments='(kosong)'
+        - ID [6805195]: Tipe='Corner Flasing', Comments='(kosong)'
+        - ID [6806218]: Tipe='Corner Flasing', Comments='(kosong)'
+
+================================================================================
+RINGKASAN AUDIT: Ditemukan 2 schedule yang KOSONG dari 78 schedule.
+================================================================================

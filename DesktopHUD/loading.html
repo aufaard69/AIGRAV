@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIGRAV Desktop HUD - Connecting</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    
+    body {
+      margin: 0;
+      padding: 24px;
+      background: rgba(3, 7, 18, 0.95);
+      color: #00f0ff;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 18px;
+      overflow: hidden;
+      -webkit-app-region: drag;
+    }
+
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+      margin-top: 16px;
+    }
+
+    .status {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 52px;
+      height: 52px;
+      border: 3px solid rgba(0, 240, 255, 0.15);
+      border-top-color: #00f0ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="spinner"></div>
+  <div class="title">AIGRAV // DESKTOP HUD</div>
+  <div class="status" id="statusText">Menghubungkan ke AIGRAV Backend (Port 8080)...</div>
+
+  <script>
+    // Passive status check: updates UI text only.
+    // Navigation is managed exclusively by the Electron main process to prevent race conditions.
+    let pollCount = 0;
+    const statusInterval = setInterval(async () => {
+      pollCount++;
+      try {
+        const res = await fetch('http://127.0.0.1:8080/api/status');
+        if (res.ok) {
+          const statusEl = document.getElementById('statusText');
+          if (statusEl) statusEl.textContent = 'Backend aktif! Memuat antarmuka HUD...';
+          clearInterval(statusInterval);
+          // Allow Electron main process to load HUD_URL without ERR_ABORTED race collision.
+          // Fallback only if main process navigation does not fire within 2.5 seconds.
+          setTimeout(() => {
+            if (window.location.href.includes('loading.html')) {
+              window.location.replace('http://127.0.0.1:8080/aigrav_voice_hud.html');
+            }
+          }, 2500);
+        }
+      } catch (e) {
+        const statusEl = document.getElementById('statusText');
+        if (statusEl && pollCount > 6) {
+          statusEl.textContent = `Menunggu inisialisasi backend AIGRAV (${pollCount}s)...`;
+        }
+      }
+    }, 800);
+  </script>
+</body>
+</html>

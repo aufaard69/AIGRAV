@@ -1,0 +1,540 @@
+﻿--------------------------------------------------------------------------------
+                      1. MODEL DUPLICATE CHECK & OVERLAPS                       
+--------------------------------------------------------------------------------
+[Revit Warnings Summary]
+* Total Document Warnings       : 6736
+* Identical Instance Warnings   : 26
+* Element Overlap Warnings      : 3
+
+--> [CRITICAL] Identical Instances In Same Place (Double Counting in Schedule):
+  #1: Elements have duplicate "Type Mark" values.
+     Element IDs: [631838 - Structural Framing: 2L 60X60X6] [2906461 - Structural Framing: 2L 60X60X6] 
+  #2: Elements have duplicate "Type Mark" values.
+     Element IDs: [5699997 - Structural Foundations: FP1 H-300] [6072633 - Structural Foundations: FP1 700x700] 
+  #3: Elements have duplicate "Type Mark" values.
+     Element IDs: [6055808 - Walls: DINDING T=150 MM] [6055836 - Walls: Dinding Bata 150] 
+  #4: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779480 - Structural Foundations: 1200x700] [6099330 - Structural Foundations: 1200x700] 
+  #5: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779482 - Structural Foundations: 1200x700] [6099332 - Structural Foundations: 1200x700] 
+  #6: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779483 - Structural Foundations: 1200x700] [6099331 - Structural Foundations: 1200x700] 
+  #7: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779484 - Structural Foundations: 1200x700] [6099329 - Structural Foundations: 1200x700] 
+  #8: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779485 - Structural Foundations: 1200x700] [6099328 - Structural Foundations: 1200x700] 
+  #9: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779486 - Structural Foundations: 1200x700] [6099327 - Structural Foundations: 1200x700] 
+  #10: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779487 - Structural Foundations: 1200x700] [6099322 - Structural Foundations: 1200x700] 
+  #11: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779487 - Structural Foundations: 1200x700] [6099340 - Structural Foundations: 1200x700] 
+  #12: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779488 - Structural Foundations: 1200x700] [6099323 - Structural Foundations: 1200x700] 
+  #13: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779489 - Structural Foundations: 1200x700] [6099324 - Structural Foundations: 1200x700] 
+  #14: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779490 - Structural Foundations: 1200x700] [6099325 - Structural Foundations: 1200x700] 
+  #15: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779491 - Structural Foundations: 1200x700] [6099326 - Structural Foundations: 1200x700] 
+  #16: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5779780 - Structural Foundations: 1200x700] [6099300 - Structural Foundations: 1200x700] 
+  #17: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5780427 - Structural Foundations: 1200x700] [6099398 - Structural Foundations: 1200x700] 
+  #18: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5780432 - Structural Foundations: 1200x700] [6099393 - Structural Foundations: 1200x700] 
+  #19: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5780433 - Structural Foundations: 1200x700] [6099388 - Structural Foundations: 1200x700] 
+  #20: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5780433 - Structural Foundations: 1200x700] [6099406 - Structural Foundations: 1200x700] 
+  #21: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5780436 - Structural Foundations: 1200x700] [6099391 - Structural Foundations: 1200x700] 
+  #22: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [5780496 - Structural Foundations: 1200x700] [6099392 - Structural Foundations: 1200x700] 
+  #23: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [6051934 - Structural Framing: L 40X40X4] [6123962 - Structural Framing: L 40X40X4] 
+  #24: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [6099322 - Structural Foundations: 1200x700] [6099340 - Structural Foundations: 1200x700] 
+  #25: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [6099361 - Structural Foundations: 1200x700] [6099379 - Structural Foundations: 1200x700] 
+  #26: There are identical instances in the same place. This will result in double counting in schedules.
+     Element IDs: [6099388 - Structural Foundations: 1200x700] [6099406 - Structural Foundations: 1200x700] 
+
+--> [WARNING] Overlapping Elements Detected:
+  #1: Highlighted floors overlap.
+     Element IDs: [4192441 - Floors: Plat Lantai, Tebal 200 mm] [6053062 - Floors: Plat Lantai, Tebal 200 mm] 
+  #2: Highlighted floors overlap.
+     Element IDs: [4192441 - Floors: Plat Lantai, Tebal 200 mm] [6053371 - Floors: Plat Lantai, Tebal 200 mm] 
+  #3: Highlighted floors overlap.
+     Element IDs: [4192441 - Floors: Plat Lantai, Tebal 200 mm] [6133542 - Floors: Pondasi,Tebal=300 mm] 
+
+[Geometric Coincidence Scan (Key Structural & Architectural Elements)]
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747176, 5117561
+    Location: X=94313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747188, 5117559
+    Location: X=100313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747212, 5117557
+    Location: X=106313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747248, 5117555
+    Location: X=112313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747272, 5117553
+    Location: X=118313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747284, 5117551
+    Location: X=124313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747308, 5117549
+    Location: X=130313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747320, 5117547
+    Location: X=136313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747332, 5117545
+    Location: X=142313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747344, 5117543
+    Location: X=148313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747401, 5117541
+    Location: X=154313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3747449, 5117539
+    Location: X=160313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777211, 5093527
+    Location: X=160313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777232, 5093529
+    Location: X=154313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777253, 5093531
+    Location: X=148313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777274, 5093533
+    Location: X=142313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777295, 5093535
+    Location: X=136313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777316, 5093537
+    Location: X=130313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777337, 5093539
+    Location: X=124313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777358, 5093541
+    Location: X=118313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777379, 5093543
+    Location: X=112313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777400, 5093545
+    Location: X=106313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777421, 5093547
+    Location: X=100313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 3777442, 5093549
+    Location: X=94313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - WF 250] Count: 2
+    IDs: 4270488, 5066082
+    Location: X=160313,3 mm, Y=-32753,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6116814, 6116878
+    Location: X=88313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6116832, 6116877
+    Location: X=88313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6118394, 6118424
+    Location: X=82313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6118408, 6118423
+    Location: X=82313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6118984, 6119014
+    Location: X=76313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6118998, 6119013
+    Location: X=76313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6119568, 6119598
+    Location: X=70313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6119582, 6119597
+    Location: X=70313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6120140, 6120170
+    Location: X=64313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6120154, 6120169
+    Location: X=64313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6120717, 6120747
+    Location: X=58313,3 mm, Y=24746,4 mm, Z=0,0 mm
+  * Duplicate Point Geometry [Structural Columns - H 300] Count: 2
+    IDs: 6120731, 6120746
+    Location: X=58313,3 mm, Y=-15253,6 mm, Z=0,0 mm
+  * Duplicate Linear Geometry [Structural Framing - L 40X40X4] Count: 2
+    IDs: 6051934, 6123962
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100372, 6100373
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100374, 6100375
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100378, 6100379
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100382, 6100383
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100384, 6100385
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100386, 6100387
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100388, 6100389
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100392, 6100393
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100396, 6100397
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100398, 6100399
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100400, 6100401
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100402, 6100403
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100404, 6100405
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100406, 6100407
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100408, 6100409
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100410, 6100411
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100412, 6100413
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100416, 6100417
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100420, 6100421
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100422, 6100423
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100424, 6100425
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100426, 6100427
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100430, 6100431
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100434, 6100435
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100436, 6100437
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100438, 6100439
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100440, 6100441
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100442, 6100443
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100444, 6100445
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100446, 6100447
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100624, 6100625
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100626, 6100627
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100630, 6100631
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100632, 6100633
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100636, 6100637
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100640, 6100641
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100642, 6100643
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100644, 6100645
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100646, 6100647
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100650, 6100651
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100654, 6100655
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100656, 6100657
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100658, 6100659
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100660, 6100661
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100662, 6100663
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100664, 6100665
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100666, 6100667
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100668, 6100669
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100670, 6100671
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100674, 6100675
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100678, 6100679
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100680, 6100681
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100682, 6100683
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100684, 6100685
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100688, 6100689
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100692, 6100693
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100694, 6100695
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100696, 6100697
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100698, 6100699
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100700, 6100701
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100702, 6100703
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100704, 6100705
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100706, 6100707
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100708, 6100709
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100712, 6100713
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100716, 6100717
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100718, 6100719
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100720, 6100721
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100722, 6100723
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100726, 6100727
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100730, 6100731
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100732, 6100733
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100734, 6100735
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100736, 6100737
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100738, 6100739
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100740, 6100741
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6100742, 6100743
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6131478, 6131479
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6131492, 6131493
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6131506, 6131507
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6131520, 6131521
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6131534, 6131535
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6131548, 6131549
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6131562, 6131563
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6131576, 6131577
+  * Duplicate Linear Geometry [Structural Framing - Wind Brace Dia. 19 mm] Count: 2
+    IDs: 6131590, 6131591
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779480, 6099330
+    Location: X=142313,3 mm, Y=-15253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779482, 6099332
+    Location: X=154313,3 mm, Y=-15253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779483, 6099331
+    Location: X=148313,3 mm, Y=-15253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779484, 6099329
+    Location: X=136313,3 mm, Y=-15253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779485, 6099328
+    Location: X=130313,3 mm, Y=-15253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779486, 6099327
+    Location: X=124313,3 mm, Y=-15253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 3
+    IDs: 5779487, 6099322, 6099340
+    Location: X=118313,3 mm, Y=-15253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779488, 6099323
+    Location: X=112313,3 mm, Y=-15253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779489, 6099324
+    Location: X=106313,3 mm, Y=-15253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779490, 6099325
+    Location: X=100313,3 mm, Y=-15253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779491, 6099326
+    Location: X=94313,3 mm, Y=-15253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779539, 6099370
+    Location: X=148313,3 mm, Y=24746,4 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779541, 6099371
+    Location: X=154313,3 mm, Y=24746,4 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779542, 6099369
+    Location: X=142313,3 mm, Y=24746,4 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779543, 6099368
+    Location: X=136313,3 mm, Y=24746,4 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779544, 6099367
+    Location: X=130313,3 mm, Y=24746,4 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779545, 6099366
+    Location: X=124313,3 mm, Y=24746,4 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 3
+    IDs: 5779546, 6099361, 6099379
+    Location: X=118313,3 mm, Y=24746,4 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779547, 6099362
+    Location: X=112313,3 mm, Y=24746,4 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779548, 6099363
+    Location: X=106313,3 mm, Y=24746,4 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779549, 6099364
+    Location: X=100313,3 mm, Y=24746,4 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779550, 6099365
+    Location: X=94313,3 mm, Y=24746,4 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5779780, 6099300
+    Location: X=118313,3 mm, Y=-38253,6 mm, Z=-1150,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5780427, 6099398
+    Location: X=154313,3 mm, Y=47746,4 mm, Z=-1750,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5780432, 6099393
+    Location: X=124313,3 mm, Y=47746,4 mm, Z=-1750,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 3
+    IDs: 5780433, 6099388, 6099406
+    Location: X=118313,3 mm, Y=47746,4 mm, Z=-1750,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5780436, 6099391
+    Location: X=100313,3 mm, Y=47746,4 mm, Z=-1750,0 mm
+  * Duplicate Point Geometry [Structural Foundations - 1200x700] Count: 2
+    IDs: 5780496, 6099392
+    Location: X=94313,3 mm, Y=47746,4 mm, Z=-1750,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H250] Count: 2
+    IDs: 6003927, 6004121
+    Location: X=154313,3 mm, Y=-38253,6 mm, Z=2100,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004344, 6004447
+    Location: X=154313,3 mm, Y=-15253,6 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004551, 6004813
+    Location: X=154313,3 mm, Y=24746,4 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H250] Count: 2
+    IDs: 6004841, 6004842
+    Location: X=148313,3 mm, Y=-38253,6 mm, Z=2100,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004843, 6004844
+    Location: X=148313,3 mm, Y=-15253,6 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004845, 6004846
+    Location: X=148313,3 mm, Y=24746,4 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H250] Count: 2
+    IDs: 6004854, 6004855
+    Location: X=142313,3 mm, Y=-38253,6 mm, Z=2100,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004856, 6004857
+    Location: X=142313,3 mm, Y=-15253,6 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004858, 6004859
+    Location: X=142313,3 mm, Y=24746,4 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H250] Count: 2
+    IDs: 6004867, 6004868
+    Location: X=136313,3 mm, Y=-38253,6 mm, Z=2100,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004869, 6004870
+    Location: X=136313,3 mm, Y=-15253,6 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004871, 6004872
+    Location: X=136313,3 mm, Y=24746,4 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H250] Count: 2
+    IDs: 6004884, 6004885
+    Location: X=130313,3 mm, Y=-38253,6 mm, Z=2100,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004886, 6004887
+    Location: X=130313,3 mm, Y=-15253,6 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004888, 6004889
+    Location: X=130313,3 mm, Y=24746,4 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H250] Count: 2
+    IDs: 6004897, 6004898
+    Location: X=124313,3 mm, Y=-38253,6 mm, Z=2100,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004899, 6004900
+    Location: X=124313,3 mm, Y=-15253,6 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004901, 6004902
+    Location: X=124313,3 mm, Y=24746,4 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H250] Count: 2
+    IDs: 6004910, 6004911
+    Location: X=118313,3 mm, Y=-38253,6 mm, Z=2100,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004912, 6004913
+    Location: X=118313,3 mm, Y=-15253,6 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004914, 6004915
+    Location: X=118313,3 mm, Y=24746,4 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H250] Count: 2
+    IDs: 6004925, 6004926
+    Location: X=112313,3 mm, Y=-38253,6 mm, Z=2100,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004927, 6004928
+    Location: X=112313,3 mm, Y=-15253,6 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004929, 6004930
+    Location: X=112313,3 mm, Y=24746,4 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H250] Count: 2
+    IDs: 6004938, 6004939
+    Location: X=106313,3 mm, Y=-38253,6 mm, Z=2100,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004940, 6004941
+    Location: X=106313,3 mm, Y=-15253,6 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004942, 6004943
+    Location: X=106313,3 mm, Y=24746,4 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H250] Count: 2
+    IDs: 6004951, 6004952
+    Location: X=100313,3 mm, Y=-38253,6 mm, Z=2100,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004953, 6004954
+    Location: X=100313,3 mm, Y=-15253,6 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004955, 6004956
+    Location: X=100313,3 mm, Y=24746,4 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H250] Count: 2
+    IDs: 6004964, 6004965
+    Location: X=94313,3 mm, Y=-38253,6 mm, Z=2100,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004966, 6004967
+    Location: X=94313,3 mm, Y=-15253,6 mm, Z=1459,0 mm
+  * Duplicate Point Geometry [Generic Models - Pedestal H300] Count: 2
+    IDs: 6004968, 6004969
+    Location: X=94313,3 mm, Y=24746,4 mm, Z=1459,0 mm
+

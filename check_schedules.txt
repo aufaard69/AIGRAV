@@ -1,0 +1,588 @@
+﻿--------------------------------------------------------------------------------
+                3. SCHEDULE & QUANTITY TAKEOFF (QTO) COVERAGE AUDIT             
+--------------------------------------------------------------------------------
+Total ViewSchedule Ditemukan di Model: 73
+
+[Schedule: 'A.1.1 - Pondasi Tiang Pancang']
+  * Target Kategori : Structural Foundations (ID: -2001300)
+  * Jumlah Baris    : 2 baris data
+  * Fields          : Comments, Type, Count, Depth, Volume
+  * Filters         : Type Equal '618968'
+  * Total Elemen di Model : 637 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'A.1.2 - Pondasi Pile Cap']
+  * Target Kategori : Structural Foundations (ID: -2001300)
+  * Jumlah Baris    : 20 baris data
+  * Fields          : Comments, Type, Mark, Count, Volume
+  * Filters         : Type NotEqual '5779762' AND Type NotEqual '669347' AND Type NotEqual '618968'
+  * Total Elemen di Model : 637 elemen
+  * CATATAN KOORDINASI: Karena ada 3 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'A.1.3 - Bekisting Pondasi Pile Cap']
+  * Target Kategori : Structural Foundations (ID: -2001300)
+  * Jumlah Baris    : 2 baris data
+  * Fields          : Comments, Type, Length, Width, Count, Luas (m2)
+  * Filters         : Comments Equal 'Gudang Utama (GU)' AND Type NotEqual '669347' AND Type NotEqual '618968'
+  * Total Elemen di Model : 637 elemen
+  * CATATAN KOORDINASI: Karena ada 3 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'A.1.4 - Pondasi Batu Kali']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 2 baris data
+  * Fields          : Comments, Family and Type, System Length, Count, Volume
+  * Filters         : Comments Equal 'Pondasi'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'A.1.5 - Balok Sloof']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 18 baris data
+  * Fields          : Comments, Type, System Length, Count, Volume
+  * Filters         : Comments Equal 'Balok Sloof'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'A.1.6 - Bekisting Sloof']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 16 baris data
+  * Fields          : Comments, Type, Cut Length, Elevation at Bottom, Elevation at Top, Tinggi (mm), Count, Luas (m2)
+  * Filters         : Comments Equal 'Balok Sloof'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'A.1.7 - Kolom Pedestall']
+  * Target Kategori : Structural Columns (ID: -2001330)
+  * Jumlah Baris    : 12 baris data
+  * Fields          : Comments, Type, System Length, Count, Volume
+  * Filters         : Comments Equal 'Kolom Pedestal'
+  * Total Elemen di Model : 269 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'A.1.8 - Plat Lantai']
+  * Target Kategori : Floors (ID: -2000032)
+  * Jumlah Baris    : 17 baris data
+  * Fields          : Family and Type, Area, Default Thickness, Volume
+  * Filters         : (Tanpa Filter - mencakup seluruh elemen kategori ini)
+  * Total Elemen di Model : 9 elemen
+
+[Schedule: 'B.1.1 - Kolom Baja WF 250']
+  * Target Kategori : Structural Columns (ID: -2001330)
+  * Jumlah Baris    : 21 baris data
+  * Fields          : Comments, Type, System Length, Count, Volume, Weight, Kalibrasi Berat, Berat (Kg)
+  * Filters         : Type Equal '1968451'
+  * Total Elemen di Model : 269 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.10 - Kolom Plat Joint']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 6 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Joint Kolom'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.11 - Kolom Baut Gewel']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'Gewel Atas'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.11 - Kolom Baut Joint']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 5 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'Joint Kolom'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.2 - Kolom Baja WF 350']
+  * Target Kategori : Structural Columns (ID: -2001330)
+  * Jumlah Baris    : 5 baris data
+  * Fields          : Comments, Type, System Length, Count, Volume, Weight, Kalibrasi Berat, Berat (Kg)
+  * Filters         : Type Equal '814747'
+  * Total Elemen di Model : 269 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.3 - Kolom Baja WF 400']
+  * Target Kategori : Structural Columns (ID: -2001330)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Type, System Length, Count, Volume, Weight, Kalibrasi Berat, Berat (Kg)
+  * Filters         : Type Equal '2416022'
+  * Total Elemen di Model : 269 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.4 - Kolom Baja H 250']
+  * Target Kategori : Structural Columns (ID: -2001330)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Type, System Length, Count, Volume, Weight, Kalibrasi Berat, Berat (Kg)
+  * Filters         : Type Equal '2070761'
+  * Total Elemen di Model : 269 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.4 - Kolom Baja H 300']
+  * Target Kategori : Structural Columns (ID: -2001330)
+  * Jumlah Baris    : 5 baris data
+  * Fields          : Comments, Type, System Length, Count, Volume, Weight, Kalibrasi Berat, Berat (Kg)
+  * Filters         : Type Equal '2416593'
+  * Total Elemen di Model : 269 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.5 - Kolom Base Plat']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 7 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Baseplate Kolom'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.6 - Kolom Stifner Plat']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Stifner Kolom'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.7 - Kolom Top Plat']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Kolom Top Plate'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.8 - Kolom Angkur']
+  * Target Kategori : Anchors (ID: -2009039)
+  * Jumlah Baris    : 9 baris data
+  * Fields          : Comments, Diameter, Length, Number
+  * Filters         : Comments Equal 'Angkur Kolom'
+  * Total Elemen di Model : 115 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'B.1.9 - Kolom Plat Gewel']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Gewel Atas'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'C.1.1 - Rafter Profile RCWF 450']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 9 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Berat (Kg), Volume Kalibrasi
+  * Filters         : Comments Equal 'Rafter' AND Type Equal '2831359'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'C.1.10 - Rafter Baut Joint']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 6 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'Joint Rafter'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'C.1.2 - Rafter Voute WF 450']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 6 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Berat (Kg), Volume Kalibrasi
+  * Filters         : Comments Equal 'Voute Rafter' AND Type Equal '2835643'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'C.1.3 - Rafter Profile RCWF 350']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 15 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Berat (Kg), Volume Kalibrasi
+  * Filters         : Comments Equal 'Rafter' AND Type Equal '819594'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'C.1.4 - Rafter Voute WF 350']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 11 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Berat (Kg), Volume Kalibrasi
+  * Filters         : Comments Equal 'Voute Rafter' AND Type Equal '818601'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'C.1.5 - Rafter End Plat']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 5 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'End Plate Rafter'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'C.1.6 - Rafter Plat Joint']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 7 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Joint Rafter'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'C.1.7 - Rafter Plat Tutup Castela']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Tutup Castela'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'C.1.8 - Rafter Stifner Plat']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Stifner Rafter'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'C.1.9 - Rafter Baut End Plat']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'End Plate Rafter'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'D.1.1 - Cremona Profile 2L 60X60']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 32 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Konfersi Volume, Berat (Kg)
+  * Filters         : Comments Equal 'Cremona Canopy' AND Type Equal '2906461'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'D.1.2 - Cremona Profile Sling 3"']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 5 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Konfersi Volume, Berat (Kg)
+  * Filters         : Comments Equal 'Cremona Canopy' AND Type Equal '4035189'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'D.1.3 - Cremona Plat Joint']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 5 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Cremona Canopy'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'D.1.4 - Cremona Bolt']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'Cremona Canopy'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'DAFTAR GAMBAR']
+  * Target Kategori : Sheets (ID: -2003100)
+  * Jumlah Baris    : 90 baris data
+  * Fields          : NO, KODE GAMBAR, Sheet Name, Current Revision Date, Current Revision
+  * Filters         : Sheet Name NotEqual 'COVER'
+  * Total Elemen di Model : 89 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'E.1.1 - Tie Beam 2CNP']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 7 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Konfersi Volume, Berat (Kg)
+  * Filters         : Comments Equal 'Tie Beam'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'E.1.2 - Tie Beam Plat Joint']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Tie Beam'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'E.1.3 - Tie Beam Baut']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'Tie Beam'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'F.1.1 - Gording']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 14 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Berat (Kg), Volume Kalibrasi
+  * Filters         : Comments Equal 'Gording Atap CNP'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'F.1.2 - Gording Plat Support']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Support Gording'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'F.1.3 - Gording Baut']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'Support Gording'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'F.1.4 - Gording Tie Rod']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 9 baris data
+  * Fields          : Comments, Type, System Length, Panjang Total, Volume, Count, Berat (Kg)
+  * Filters         : Comments Equal 'Tie Rod Atap'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'G.1.2 - Clading C150']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 33 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Berat (Kg), Volume Kalibrasi
+  * Filters         : Comments Equal 'Clading (BU)' AND Type Equal '431222'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'G.1.3 - Clading Plat Support']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Support Clading'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'G.1.4 - Clading Baut']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'Support Clading'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'G.1.5 - Clading Tie Rod']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 48 baris data
+  * Fields          : Comments, Type, System Length, Panjang Total, Volume, Count, Berat (Kg)
+  * Filters         : Comments Equal 'Clading (BU)' AND Type Equal '427926'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'H.1.1 - Regel Bar Dia 12 mm']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 57 baris data
+  * Fields          : Comments, Type, Count, Volume, Berat (Kg), Volume Kalibrasi
+  * Filters         : Comments Equal 'Regel Bar Dia. 12 mm'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'H.1.1 - Regel CNP 200']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 16 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Berat (Kg), Volume Kalibrasi
+  * Filters         : Comments Equal 'Regel CNP'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'H.1.2 - Regel Plat Joint']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 5 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Joint Regel'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'H.1.3 - Regel Baut']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'Joint Regel'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'I.1.1 - Wall Bracing']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 20 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Konfersi Volume, Berat (Kg)
+  * Filters         : Comments Equal 'Wall Bracing' AND Type Equal '631838'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'I.1.2 - Wall Bracing Plat Joint']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 9 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Wall Bracing'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'I.1.3 - Wall Bracing Baut']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'Wall Bracing'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'J.1.1 - Wind Bracing']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 5 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Berat (Kg)
+  * Filters         : Comments Equal 'Wind Brace (BU)'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'J.1.1 - Wind Bracing Watermur']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Type, Count
+  * Filters         : Comments Equal 'Wind Brace (BU)'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'J.1.2 - Wind Brace Plat']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 6 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Wind Brace (BU)'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'J.1.3 - Wind Brace Baut']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'Wind Brace (BU)'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'K.1.1 - Talang - Profile L 40X40']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 9 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Konfersi Volume, Berat (Kg)
+  * Filters         : Comments Equal 'Gutter' AND Type Equal '1329388'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'K.1.3 - Talang - Profile UNP 65']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 6 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Konfersi Volume, Berat (Kg)
+  * Filters         : Comments Equal 'Gutter' AND Type Equal '1311374'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'K.1.4 - Talang - Profile WF 200']
+  * Target Kategori : Structural Framing (ID: -2001320)
+  * Jumlah Baris    : 5 baris data
+  * Fields          : Comments, Type, Cut Length, Count, Volume, Konfersi Volume, Berat (Kg)
+  * Filters         : Comments Equal 'Gutter' AND Type Equal '628176'
+  * Total Elemen di Model : 6913 elemen
+  * CATATAN KOORDINASI: Karena ada 2 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'K.1.5 - Talang - Plat Joint']
+  * Target Kategori : Plates (ID: -2009038)
+  * Jumlah Baris    : 6 baris data
+  * Fields          : Comments, Thickness, Count, Weight
+  * Filters         : Comments Equal 'Gutter'
+  * Total Elemen di Model : 15320 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'K.1.6 - Talang - Baut']
+  * Target Kategori : Bolts (ID: -2009041)
+  * Jumlah Baris    : 5 baris data
+  * Fields          : Comments, Diameter, Number
+  * Filters         : Comments Equal 'Gutter'
+  * Total Elemen di Model : 5634 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'Keynote Legend']
+  * Target Kategori : Keynote Tags (ID: -2005029)
+  * Jumlah Baris    : 2 baris data
+  * Fields          : Key Value, Keynote Text
+  * Filters         : (Tanpa Filter - mencakup seluruh elemen kategori ini)
+  * Total Elemen di Model : 0 elemen
+
+[Schedule: 'L.1.1 - Atap Zincalum']
+  * Target Kategori : Roofs (ID: -2000035)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Type, Area
+  * Filters         : Type Equal '217697'
+  * Total Elemen di Model : 25 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'L.1.2 - Atap Solaf Tuf']
+  * Target Kategori : Roofs (ID: -2000035)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Type, Count, Area
+  * Filters         : Type Equal '1580058'
+  * Total Elemen di Model : 25 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'L.1.2 - Talang Gutter']
+  * Target Kategori : Roofs (ID: -2000035)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Comments, Type, Count, Area
+  * Filters         : Type Equal '1355744'
+  * Total Elemen di Model : 25 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'L.1.3 - Flasing Atap']
+  * Target Kategori : Fascias (ID: -2001390)
+  * Jumlah Baris    : 8 baris data
+  * Fields          : Comments, Type, Length, Luas (M2)
+  * Filters         : (Tanpa Filter - mencakup seluruh elemen kategori ini)
+  * Total Elemen di Model : 6 elemen
+
+[Schedule: 'M.1.1 - Clading Zincalum']
+  * Target Kategori : Walls (ID: -2000011)
+  * Jumlah Baris    : 10 baris data
+  * Fields          : Comments, Type, Count, Area
+  * Filters         : Type Equal '1295982'
+  * Total Elemen di Model : 7 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'M.1.2 - Clading Solar Tuf']
+  * Target Kategori : Windows (ID: -2000014)
+  * Jumlah Baris    : 70 baris data
+  * Fields          : Comments, Width, Height, Count, Luas (M2)
+  * Filters         : (Tanpa Filter - mencakup seluruh elemen kategori ini)
+  * Total Elemen di Model : 67 elemen
+
+[Schedule: 'M.1.3 - Flasing Dinding Clading']
+  * Target Kategori : Wall Sweeps (ID: -2000181)
+  * Jumlah Baris    : 2 baris data
+  * Fields          : Comments, Type, Length, Luas (m2)
+  * Filters         : Comments Equal 'Flashing Dinding'
+  * Total Elemen di Model : 4 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'M.1.4 - Flasing Welded Mesh']
+  * Target Kategori : Wall Sweeps (ID: -2000181)
+  * Jumlah Baris    : 2 baris data
+  * Fields          : Comments, Type, Length, Luas (m2)
+  * Filters         : Comments Equal 'Welded Mesh'
+  * Total Elemen di Model : 4 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[Schedule: 'M.1.5 - Roof Turbin']
+  * Target Kategori : Generic Models (ID: -2000151)
+  * Jumlah Baris    : 4 baris data
+  * Fields          : Type, Family, Count
+  * Filters         : Type Equal '3584630'
+  * Total Elemen di Model : 155 elemen
+  * CATATAN KOORDINASI: Karena ada 1 filter aktif, beberapa elemen di model mungkin terfilter keluar jika tidak memenuhi kriteria filter tersebut.
+
+[ANALISIS KATEGORI MODEL YANG BELUM MEMILIKI SCHEDULE]
+--> Seluruh kategori model utama telah memiliki ViewSchedule yang sesuai.
+

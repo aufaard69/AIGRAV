@@ -1,0 +1,148 @@
+﻿================================================================================
+         CROSS CHECK SCHEDULE, STEEL CONNECTION & VERIFIKASI BERAT BAJA         
+================================================================================
+Project: NTS-SI_01-WRM-ST
+Waktu  : 2026-10-30 10:44:58
+
+--------------------------------------------------------------------------------
+ 1. CROSS CHECK STATUS SCHEDULE (JADWAL KOSONG & FILTER STATUS)                 
+--------------------------------------------------------------------------------
+Total ViewSchedule Diperiksa : 73
+[HASIL CROSS CHECK]
+* Status Schedule Kosong : TIDAK ADA SCHEDULE YANG KOSONG (0 BARIS). Seluruh 73 schedule memuat data.
+* Catatan Filter         : Mayoritas schedule menggunakan Filter berbasis 'Comments' atau 'Type'.
+  Elemen yang tidak memiliki nilai Comments yang sesuai otomatis TERFILTER KELUAR dari schedule terkait.
+
+--------------------------------------------------------------------------------
+ 2. STEEL CONNECTIONS & SUB-ELEMENTS AUDIT (PARAMETER COMMENTS)                  
+--------------------------------------------------------------------------------
+* Kategori: Plates                     | Total:  15320 | Ber-Comment:  15320 | TANPA Comment:      0 (0,0%)
+    Distribusi Comments:
+      - 'Support Gording': 3372 elemen
+      - 'Stifner Rafter': 2508 elemen
+      - 'Tie Beam': 1720 elemen
+      - 'Support Clading': 1670 elemen
+      - 'Tutup Castela': 1524 elemen
+      - 'Wind Brace (BU)': 1388 elemen
+      - 'Cremona Canopy': 480 elemen
+      - 'Stifner Kolom': 468 elemen
+      ... dan 10 variasi comment lainnya
+
+* Kategori: Bolts                      | Total:   5634 | Ber-Comment:   5634 | TANPA Comment:      0 (0,0%)
+    Distribusi Comments:
+      - 'Support Gording': 1686 elemen
+      - 'Support Clading': 835 elemen
+      - 'Wind Brace (BU)': 726 elemen
+      - 'Joint Rafter': 444 elemen
+      - 'Tie Beam': 430 elemen
+      - 'End Plate Rafter': 348 elemen
+      - 'Wall Bracing': 342 elemen
+      - 'Joint Kolom': 300 elemen
+      ... dan 5 variasi comment lainnya
+
+* Kategori: Anchors                    | Total:    115 | Ber-Comment:    115 | TANPA Comment:      0 (0,0%)
+    Distribusi Comments:
+      - 'Angkur Kolom': 115 elemen
+
+[RINGKASAN STEEL CONNECTION]
+* Total Komponen Sambungan (Plates, Bolts, Anchors, Welds): 21069
+* Komponen yang Memiliki Comment : 21069 (100,0%)
+* Komponen TANPA Comment         : 0 (0,0%)
+
+--------------------------------------------------------------------------------
+ 3. VERIFIKASI BERAT BAJA PROFIL DI MODEL VS TABEL BAJA (AIGRAV.SteelDatabase)   
+--------------------------------------------------------------------------------
+Profil / Tipe Revit            | Kategori         | Jml  | Model W (kg/m)  | Tabel Baja   | Status Verifikasi
+---------------------------------------------------------------------------------------------------------
+Tie Rod 12 mm                  | Structural Framing | 3045 | 1,79            | -            | NON-STANDARD   
+C 150                          | Structural Framing |  173 | 1,44            | -            | NON-STANDARD   
+WF 200                         | Structural Framing |   72 | 0,48            | -            | NON-STANDARD   
+2L 60X60X6                     | Structural Framing |  225 | 0,05            | 10,84        | MISMATCH (10,8kg)
+2X C 150                       | Structural Framing |  216 | 1,44            | -            | NON-STANDARD   
+C 200                          | Structural Framing |  216 | 1,44            | -            | NON-STANDARD   
+Wind Brace Dia. 19 mm          | Structural Framing |  390 | -               | -            | NON-STANDARD   
+WF 350                         | Structural Columns |   24 | 1,57            | 0,91         | MISMATCH (0,7kg)
+WF 350                         | Structural Framing |  108 | 0,48            | 0,91         | SESUAI (OK)    
+RCWF.350                       | Structural Framing |  126 | -               | 0,91         | PARAM KOSONG   
+Batu Kali H=1350               | Structural Framing |    6 | -               | 0,91         | PARAM KOSONG   
+S1-A 150 X 200                 | Structural Framing |    5 | -               | -            | NON-STANDARD   
+S2 200 X 300                   | Structural Framing |    3 | -               | -            | NON-STANDARD   
+Pondasi Batu Kali H=600 mm     | Structural Framing |   10 | -               | -            | NON-STANDARD   
+UNP 65X42X5                    | Structural Framing |  192 | 1,44            | -            | NON-STANDARD   
+L 40X40X4                      | Structural Framing |  961 | -               | 2,42         | PARAM KOSONG   
+WF 250                         | Structural Columns |   21 | 1,57            | 29,60        | MISMATCH (28,0kg)
+H 250                          | Structural Columns |   18 | 3,02            | 72,40        | MISMATCH (69,4kg)
+WF 400                         | Structural Columns |   18 | 1,57            | 66,00        | MISMATCH (64,4kg)
+H 300                          | Structural Columns |   72 | 3,02            | 94,00        | MISMATCH (91,0kg)
+RCWF.450                       | Structural Framing |   72 | -               | -            | NON-STANDARD   
+WF 450                         | Structural Framing |   72 | 0,48            | 76,00        | MISMATCH (75,5kg)
+2L 60X60X6                     | Structural Framing |  348 | 0,05            | 10,84        | MISMATCH (10,8kg)
+WF-350 Pedestall 300x450       | Structural Columns |   24 | -               | 0,91         | PARAM KOSONG   
+H-250 Pedestal 360x360         | Structural Columns |   18 | -               | -            | NON-STANDARD   
+Pondasi Tepi Bangunan h=1150   | Structural Framing |    3 | -               | -            | NON-STANDARD   
+Pipa Besi 3"                   | Structural Framing |   24 | 128,15          | -            | NON-STANDARD   
+H-300 Pedestal 410x410         | Structural Columns |   36 | -               | -            | NON-STANDARD   
+WF-400 Pedestall 350x500       | Structural Columns |   18 | -               | 0,91         | PARAM KOSONG   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+WF-250 Pedestal 350x250        | Structural Columns |   20 | -               | 0,91         | PARAM KOSONG   
+Batu Kali H=800                | Structural Framing |    2 | -               | -            | NON-STANDARD   
+SMU_Stoper Barier 4 Kolom      | Structural Framing |    9 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+S1 200 X 300                   | Structural Framing |   12 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Pondasi Tepi Bangunan h=600    | Structural Framing |    2 | -               | -            | NON-STANDARD   
+UNP 100x50x5                   | Structural Framing |   12 | 1,44            | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+Regel Bar Dia. 12 mm           | Structural Framing |    1 | -               | -            | NON-STANDARD   
+WF 300                         | Structural Framing |   24 | 0,48            | -            | NON-STANDARD   
+Pondasi Tepi Bangunan h=1150 2 | Structural Framing |    2 | -               | -            | NON-STANDARD   
+

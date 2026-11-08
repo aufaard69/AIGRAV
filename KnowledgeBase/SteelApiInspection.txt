@@ -1,0 +1,29 @@
+﻿=== STEEL APIS REFLECTION INSPECTION ===
+
+[Methods of Autodesk.Revit.DB.Steel.SteelConnectionUtil]
+  IList`1 GetInputMemberInfos(StructuralConnectionHandler conn)
+  IList`1 GetInputElementIds(StructuralConnectionHandler conn)
+  StructuralConnectionHandler CreateStructuralConnectionHandler(Document doc, IList`1 inputs, ElementId connectionTypeId, String extEntId, IList`1 additionalPointsInfo)
+  Boolean IsIdleBlocked(Document doc)
+  Boolean IsCustomConnectionInEditMode(Document doc, ElementId& id)
+  Boolean IsComponentOfEditedCustomConnection(Document doc, ElementId id)
+  Type GetType()
+  Object MemberwiseClone()
+  Void Finalize()
+  String ToString()
+  Boolean Equals(Object obj)
+  Int32 GetHashCode()
+
+[Autodesk.SteelConnectionsDB Types & Methods]
+  Type: Autodesk.SteelConnectionsDB.SteelConnectionHandler
+    Guid get_ConnectionGuid()
+    Void set_ConnectionGuid(Guid value)
+    StructuralConnectionHandler get_Connection()
+    Void set_Connection(StructuralConnectionHandler value)
+    NodeStatus get_CheckStatus()
+    Void set_CheckStatus(NodeStatus value)
+    Void DisplayConnectionPages()
+  Type: Autodesk.SteelConnectionsDB.SteelConnectionPagesScope
+    Boolean get_IsCreatingPages()
+    Void Dispose()
+

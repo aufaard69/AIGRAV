@@ -1,0 +1,137 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{659F508E-023C-3609-B863-06806F100CE1}|AIGRAV.RevitBridge\\AIGRAV.RevitBridge.csproj|c:\\aigrav\\revit\\aigrav.revitbridge\\aigrav.revitbridge\\aigravwelcomewindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{659F508E-023C-3609-B863-06806F100CE1}|AIGRAV.RevitBridge\\AIGRAV.RevitBridge.csproj|solutionrelative:aigrav.revitbridge\\aigravwelcomewindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C713DEFD-064E-96A0-AC82-E859D052A0E0}|AIGRAV.Skills.QTO\\AIGRAV.Skills.QTO.csproj|c:\\aigrav\\revit\\aigrav.revitbridge\\aigrav.skills.qto\\aigrav.skills.qto.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{C713DEFD-064E-96A0-AC82-E859D052A0E0}|AIGRAV.Skills.QTO\\AIGRAV.Skills.QTO.csproj|solutionrelative:aigrav.skills.qto\\aigrav.skills.qto.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{659F508E-023C-3609-B863-06806F100CE1}|AIGRAV.RevitBridge\\AIGRAV.RevitBridge.csproj|c:\\aigrav\\revit\\aigrav.revitbridge\\aigrav.revitbridge\\aigravskillloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{659F508E-023C-3609-B863-06806F100CE1}|AIGRAV.RevitBridge\\AIGRAV.RevitBridge.csproj|solutionrelative:aigrav.revitbridge\\aigravskillloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C713DEFD-064E-96A0-AC82-E859D052A0E0}|AIGRAV.Skills.QTO\\AIGRAV.Skills.QTO.csproj|c:\\aigrav\\revit\\aigrav.revitbridge\\aigrav.skills.qto\\qtoexternalskill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C713DEFD-064E-96A0-AC82-E859D052A0E0}|AIGRAV.Skills.QTO\\AIGRAV.Skills.QTO.csproj|solutionrelative:aigrav.skills.qto\\qtoexternalskill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{130D9951-CE91-B24B-8E05-B8AF33042C0F}|AIGRAV.Skills.HotReloadDemo\\AIGRAV.Skills.HotReloadDemo.csproj|c:\\aigrav\\revit\\aigrav.revitbridge\\aigrav.skills.hotreloaddemo\\hotreloaddemoskill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{130D9951-CE91-B24B-8E05-B8AF33042C0F}|AIGRAV.Skills.HotReloadDemo\\AIGRAV.Skills.HotReloadDemo.csproj|solutionrelative:aigrav.skills.hotreloaddemo\\hotreloaddemoskill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6949DA2F-42DD-52F6-78C5-B9D2813288D2}|AIGRAV.Contracts\\AIGRAV.Contracts.csproj|c:\\aigrav\\revit\\aigrav.revitbridge\\aigrav.contracts\\aigrav.contracts.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{6949DA2F-42DD-52F6-78C5-B9D2813288D2}|AIGRAV.Contracts\\AIGRAV.Contracts.csproj|solutionrelative:aigrav.contracts\\aigrav.contracts.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{659F508E-023C-3609-B863-06806F100CE1}|AIGRAV.RevitBridge\\AIGRAV.RevitBridge.csproj|c:\\aigrav\\revit\\aigrav.revitbridge\\aigrav.revitbridge\\revitmodelquerytool.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{659F508E-023C-3609-B863-06806F100CE1}|AIGRAV.RevitBridge\\AIGRAV.RevitBridge.csproj|solutionrelative:aigrav.revitbridge\\revitmodelquerytool.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AIGRAVWelcomeWindow.xaml",
+              "DocumentMoniker": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.RevitBridge\\AIGRAVWelcomeWindow.xaml",
+              "RelativeDocumentMoniker": "AIGRAV.RevitBridge\\AIGRAVWelcomeWindow.xaml",
+              "ToolTip": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.RevitBridge\\AIGRAVWelcomeWindow.xaml",
+              "RelativeToolTip": "AIGRAV.RevitBridge\\AIGRAVWelcomeWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-09T07:01:34.884Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "QTOExternalSkill.cs",
+              "DocumentMoniker": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.Skills.QTO\\QTOExternalSkill.cs",
+              "RelativeDocumentMoniker": "AIGRAV.Skills.QTO\\QTOExternalSkill.cs",
+              "ToolTip": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.Skills.QTO\\QTOExternalSkill.cs",
+              "RelativeToolTip": "AIGRAV.Skills.QTO\\QTOExternalSkill.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-09T04:55:26.233Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AIGRAV.Skills.QTO",
+              "DocumentMoniker": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.Skills.QTO\\AIGRAV.Skills.QTO.csproj",
+              "RelativeDocumentMoniker": "AIGRAV.Skills.QTO\\AIGRAV.Skills.QTO.csproj",
+              "ToolTip": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.Skills.QTO\\AIGRAV.Skills.QTO.csproj",
+              "RelativeToolTip": "AIGRAV.Skills.QTO\\AIGRAV.Skills.QTO.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-10-09T04:48:13.805Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AIGRAVSkillLoader.cs",
+              "DocumentMoniker": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.RevitBridge\\AIGRAVSkillLoader.cs",
+              "RelativeDocumentMoniker": "AIGRAV.RevitBridge\\AIGRAVSkillLoader.cs",
+              "ToolTip": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.RevitBridge\\AIGRAVSkillLoader.cs",
+              "RelativeToolTip": "AIGRAV.RevitBridge\\AIGRAVSkillLoader.cs",
+              "ViewState": "AgIAAHIAAAAAAAAAAAAMwIUAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-09T04:21:20.209Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "HotReloadDemoSkill.cs",
+              "DocumentMoniker": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.Skills.HotReloadDemo\\HotReloadDemoSkill.cs",
+              "RelativeDocumentMoniker": "AIGRAV.Skills.HotReloadDemo\\HotReloadDemoSkill.cs",
+              "ToolTip": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.Skills.HotReloadDemo\\HotReloadDemoSkill.cs",
+              "RelativeToolTip": "AIGRAV.Skills.HotReloadDemo\\HotReloadDemoSkill.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-09T03:09:08.263Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "AIGRAV.Contracts",
+              "DocumentMoniker": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.Contracts\\AIGRAV.Contracts.csproj",
+              "RelativeDocumentMoniker": "AIGRAV.Contracts\\AIGRAV.Contracts.csproj",
+              "ToolTip": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.Contracts\\AIGRAV.Contracts.csproj",
+              "RelativeToolTip": "AIGRAV.Contracts\\AIGRAV.Contracts.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-10-08T10:26:38.185Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "RevitModelQueryTool.cs",
+              "DocumentMoniker": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.RevitBridge\\RevitModelQueryTool.cs",
+              "RelativeDocumentMoniker": "AIGRAV.RevitBridge\\RevitModelQueryTool.cs",
+              "ToolTip": "C:\\AIGRAV\\Revit\\AIGRAV.RevitBridge\\AIGRAV.RevitBridge\\RevitModelQueryTool.cs",
+              "RelativeToolTip": "AIGRAV.RevitBridge\\RevitModelQueryTool.cs",
+              "ViewState": "AgIAAN8AAAAAAAAAAAAswAkBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-07T11:16:55.878Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

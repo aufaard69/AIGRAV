@@ -1,0 +1,380 @@
+<Window x:Class="AIGRAV.RevitBridge.AIGRAVWelcomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AIGRAV"
+        Width="900"
+        Height="540"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False">
+
+	<Border
+        CornerRadius="18"
+        Background="#0A111D"
+        BorderBrush="#2A405E"
+        BorderThickness="1">
+
+		<Grid>
+
+			<!-- HEADER -->
+
+			<Border
+                Height="62"
+                VerticalAlignment="Top"
+                Background="#0D1725"
+                CornerRadius="18,18,0,0">
+
+				<Grid Margin="22,0">
+
+					<StackPanel
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+
+						<Border
+                            Width="34"
+                            Height="34"
+                            CornerRadius="8"
+                            Background="#10213A">
+
+							<Image
+                                Source="/AIGRAV.RevitBridge;component/Assets/AIGRAV_Gemini_Icon.png"
+                                Margin="4"/>
+						</Border>
+
+						<TextBlock
+                            Text="AIGRAV"
+                            Margin="11,0,0,0"
+                            FontSize="20"
+                            FontWeight="SemiBold"
+                            Foreground="White"
+                            VerticalAlignment="Center"/>
+
+					</StackPanel>
+
+					<Button
+                        Content="×"
+                        Width="35"
+                        Height="35"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="#91A2B8"
+                        FontSize="25"
+                        Cursor="Hand"
+                        Click="CloseButton_Click"/>
+
+				</Grid>
+
+			</Border>
+
+
+			<!-- MAIN -->
+
+			<Grid Margin="0,62,0,0">
+
+				<Grid.ColumnDefinitions>
+
+					<ColumnDefinition Width="43*"/>
+					<ColumnDefinition Width="57*"/>
+
+				</Grid.ColumnDefinitions>
+
+
+				<!-- LEFT -->
+
+				<Border
+                    Grid.Column="0"
+                    Background="#071525"
+                    CornerRadius="0,0,0,18">
+
+					<Grid>
+
+						<Ellipse
+                            Width="350"
+                            Height="350"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+							<Ellipse.Fill>
+
+								<RadialGradientBrush>
+
+									<GradientStop
+                                        Color="#173B76"
+                                        Offset="0"/>
+
+									<GradientStop
+                                        Color="#0C213E"
+                                        Offset="0.55"/>
+
+									<GradientStop
+                                        Color="#071525"
+                                        Offset="1"/>
+
+								</RadialGradientBrush>
+
+							</Ellipse.Fill>
+
+						</Ellipse>
+
+
+						<StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+							<Border
+                                Width="145"
+                                Height="145"
+                                CornerRadius="28"
+                                Background="#0D2343"
+                                BorderBrush="#2D6AB0"
+                                BorderThickness="1">
+
+								<Image
+                                    Source="/AIGRAV.RevitBridge;component/Assets/AIGRAV_Gemini_Icon.png"
+                                    Margin="18"/>
+
+							</Border>
+
+
+							<TextBlock
+                                Text="AIGRAV"
+                                Margin="0,24,0,0"
+                                FontSize="40"
+                                FontWeight="Bold"
+                                Foreground="White"
+                                HorizontalAlignment="Center"/>
+
+
+							<TextBlock
+                                Text="AI BRIDGE FOR REVIT"
+                                Margin="0,5,0,0"
+                                FontSize="11"
+                                FontWeight="SemiBold"
+                                Foreground="#718AA9"
+                                HorizontalAlignment="Center"/>
+							<TextBlock
+    Text="AIGRAV V0.1  •  Gemini + MCP + Revit API"
+    HorizontalAlignment="Center"
+    Margin="0,14,0,0"
+    FontSize="10"
+    Foreground="#5C718C"/>
+
+							<TextBlock
+								Text="Developed by Aufaard"
+								HorizontalAlignment="Center"
+								Margin="0,5,0,0"
+								FontSize="12"
+								Foreground="WHITE"/>
+
+						</StackPanel>
+
+					</Grid>
+
+				</Border>
+
+
+				<!-- RIGHT -->
+
+				<Border
+                    Grid.Column="1"
+                    Background="#0B1421"
+                    CornerRadius="0,0,18,0">
+
+					<StackPanel
+                        Margin="42,38,42,30">
+
+						<TextBlock
+                            FontSize="30"
+                            FontWeight="Bold">
+
+							<Run
+                                Text="AIGRAV is "
+                                Foreground="White"/>
+
+							<Run
+                                Text="AI ANTIGRAVITY"
+                                Foreground="#54A8FF"/>
+
+						</TextBlock>
+
+
+						<TextBlock
+                            Text="AI Bridge for Autodesk Revit • Runtime Active"
+                            Margin="0,5,0,0"
+                            FontSize="18"
+                            Foreground="#A8B8CC"/>
+
+
+						<Border
+                            Height="1"
+                            Background="#26384F"
+                            Margin="0,22,0,20"/>
+
+
+						<TextBlock
+                            Text="AIGRAV is active. Revit Bridge, Core Runtime, and MCP communication are ready."
+                            FontSize="14"
+                            Foreground="#C4CFDD"
+                            TextWrapping="Wrap"
+                            LineHeight="23"/>
+
+
+						<!-- STATUS -->
+
+						<Border
+                            Margin="0,22,0,0"
+                            Padding="20"
+                            CornerRadius="13"
+                            Background="#0E1928"
+                            BorderBrush="#26394F"
+                            BorderThickness="1">
+
+							<StackPanel>
+
+
+								<Grid
+                                    Margin="0,0,0,15">
+
+									<TextBlock
+                                        Text="◈   Revit Bridge"
+                                        FontSize="14"
+                                        Foreground="#DCE6F3"/>
+
+									<StackPanel
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Right">
+
+										<Ellipse
+                                            Width="8"
+                                            Height="8"
+                                            Fill="#32D583"
+                                            Margin="0,0,7,0"/>
+
+										<TextBlock
+                                            Text="Running"
+                                            FontSize="13"
+                                            Foreground="#AAB8CC"/>
+
+									</StackPanel>
+
+								</Grid>
+
+
+								<Grid
+                                    Margin="0,0,0,15">
+
+									<TextBlock
+                                        Text="▣   HTTP Server :8765"
+                                        FontSize="14"
+                                        Foreground="#DCE6F3"/>
+
+									<StackPanel
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Right">
+
+										<Ellipse
+                                            Width="8"
+                                            Height="8"
+                                            Fill="#32D583"
+                                            Margin="0,0,7,0"/>
+
+										<TextBlock
+                                            Text="Running"
+                                            FontSize="13"
+                                            Foreground="#AAB8CC"/>
+
+									</StackPanel>
+
+								</Grid>
+
+
+								<Grid>
+
+									<TextBlock
+                                        Text="◇   MCP Server"
+                                        FontSize="14"
+                                        Foreground="#DCE6F3"/>
+
+									<StackPanel
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Right">
+
+										<Ellipse
+                                            Width="8"
+                                            Height="8"
+                                            Fill="#32D583"
+                                            Margin="0,0,7,0"/>
+
+										<TextBlock
+                                            Text="Ready"
+                                            FontSize="13"
+                                            Foreground="#AAB8CC"/>
+
+									</StackPanel>
+
+								</Grid>
+
+							</StackPanel>
+
+						</Border>
+
+
+						<!-- LAUNCH -->
+
+						<Button
+                            Content="AIGRAV ACTIVE  •  Close Window"
+                            Height="50"
+                            Margin="0,22,0,0"
+                            FontSize="15"
+                            FontWeight="SemiBold"
+                            Foreground="White"
+                            Background="#1976D2"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="LaunchButton_Click">
+
+							<Button.Template>
+
+								<ControlTemplate
+                                    TargetType="Button">
+
+									<Border
+                                        Background="{TemplateBinding Background}"
+                                        CornerRadius="9">
+
+										<ContentPresenter
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+
+									</Border>
+
+								</ControlTemplate>
+
+							</Button.Template>
+
+						</Button>
+
+
+						<TextBlock
+                            Text="AIGRAV V0.1  •  Gemini + MCP + Revit API • Aufa Ardianto"
+                            HorizontalAlignment="Center"
+                            Margin="0,14,0,0"
+                            FontSize="10"
+                            Foreground="#5C718C"/>
+
+					</StackPanel>
+
+				</Border>
+
+			</Grid>
+
+		</Grid>
+
+	</Border>
+
+</Window>

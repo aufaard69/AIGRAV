@@ -1,0 +1,18 @@
+--------------------------------------------------------------------------------
+                    2. MODEL ELEMENTS WITHOUT COMMENTS AUDIT                    
+--------------------------------------------------------------------------------
+* Kategori: Structural Columns        | Total:  268 | Ber-Comment:  268 | TANPA Comment:    0 (0,0%)
+* Kategori: Structural Framing        | Total: 5262 | Ber-Comment: 5262 | TANPA Comment:    0 (0,0%)
+* Kategori: Structural Foundations    | Total: 2559 | Ber-Comment: 2559 | TANPA Comment:    0 (0,0%)
+* Kategori: Floors                    | Total:    2 | Ber-Comment:    0 | TANPA Comment:    2 (100,0%)
+    Contoh Element IDs: 4192441, 6429805
+* Kategori: Walls                     | Total:    6 | Ber-Comment:    6 | TANPA Comment:    0 (0,0%)
+* Kategori: Roofs                     | Total:   23 | Ber-Comment:   23 | TANPA Comment:    0 (0,0%)
+* Kategori: Generic Models            | Total:  153 | Ber-Comment:  125 | TANPA Comment:   28 (18,3%)
+    Contoh Element IDs: 6805258, 6805259, 6805260, 6805261, 6805262, 6805263, 6805264, 6805265 ... (dan lainnya)
+* Kategori: Windows                   | Total:   72 | Ber-Comment:   72 | TANPA Comment:    0 (0,0%)
+
+[RINGKASAN PARAMETER COMMENT]
+* Total Elemen Utama Diperiksa : 8345
+* Elemen Memiliki Comment       : 8315 (99,6%)
+* Elemen TANPA Comment          : 30 (0,4%)

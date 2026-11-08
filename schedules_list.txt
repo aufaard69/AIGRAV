@@ -1,0 +1,206 @@
+﻿Total Schedules in Doc: 205
+Schedule: 'Keynote Legend' | Id: 147536 | IsTemplate: False
+Schedule: 'C.1.5 - Rafter Profile WF 300' | Id: 422634 | IsTemplate: False
+Schedule: 'F.1.2 - Gording Plat Support' | Id: 524339 | IsTemplate: False
+Schedule: 'C.1.8 - Rafter  Joint Plat' | Id: 667729 | IsTemplate: False
+Schedule: 'C.1.11 - Rafter Baut End Plat' | Id: 667954 | IsTemplate: False
+Schedule: 'D.1.3 - Cremona Plat Joint' | Id: 668360 | IsTemplate: False
+Schedule: 'F.1.3 - Gording Baut' | Id: 668367 | IsTemplate: False
+Schedule: 'A.1.7 - Kolom Pedestall' | Id: 668374 | IsTemplate: False
+Schedule: 'A.1.2 - Pondasi Pile Cap' | Id: 668397 | IsTemplate: False
+Schedule: 'B.1.3 - Kolom Baja WF 300' | Id: 672123 | IsTemplate: False
+Schedule: 'B.1.5 - Kolom Base Plat' | Id: 672413 | IsTemplate: False
+Schedule: 'B.1.8 - Kolom Angkur' | Id: 672435 | IsTemplate: False
+Schedule: 'F.1.1 - Gording' | Id: 672653 | IsTemplate: False
+Schedule: 'A.1.1 - Pondasi Tiang Pancang' | Id: 672660 | IsTemplate: False
+Schedule: 'D.1.2 - Cremona Profile 2L 70X70' | Id: 672667 | IsTemplate: False
+Schedule: 'D.1.1 - Cremona Profile 2L 60X60' | Id: 672674 | IsTemplate: False
+Schedule: 'G.1.2 - Clading C150' | Id: 673022 | IsTemplate: False
+Schedule: 'F.1.4 - Gording Tie Rod' | Id: 675045 | IsTemplate: False
+Schedule: 'G.1.5 - Clading Tie Rod' | Id: 676939 | IsTemplate: False
+Schedule: 'E.1.1 - Tie Beam 2CNP' | Id: 686067 | IsTemplate: False
+Schedule: 'G.1.3 - Clading Plat Support' | Id: 686074 | IsTemplate: False
+Schedule: 'E.1.2 - Tie Beam Plat Joint' | Id: 686489 | IsTemplate: False
+Schedule: 'E.1.3 - Tie Beam Baut' | Id: 687632 | IsTemplate: False
+Schedule: 'G.1.4 - Clading Baut' | Id: 687639 | IsTemplate: False
+Schedule: 'H.1.1 - Regel CNP 200' | Id: 698499 | IsTemplate: False
+Schedule: 'H.1.2 - Regel Plat Joint' | Id: 703408 | IsTemplate: False
+Schedule: 'H.1.3 - Regel Baut' | Id: 704090 | IsTemplate: False
+Schedule: 'I.1.1 - Wall Bracing' | Id: 717872 | IsTemplate: False
+Schedule: 'I.1.2 - Wall Bracing Plat Joint' | Id: 718336 | IsTemplate: False
+Schedule: 'I.1.3 - Wall Bracing Baut' | Id: 719436 | IsTemplate: False
+Schedule: 'J.1.1 - Wind Bracing' | Id: 754833 | IsTemplate: False
+Schedule: 'J.1.2 - Wind Brace Plat' | Id: 754858 | IsTemplate: False
+Schedule: 'J.1.3 - Wind Brace Baut' | Id: 754922 | IsTemplate: False
+Schedule: 'B.2.1 - Kolom Baja WF 350 Mezzanine' | Id: 851714 | IsTemplate: False
+Schedule: 'C.2.1 - Beam Mezzanine WF 350' | Id: 851763 | IsTemplate: False
+Schedule: 'C.2.2 - End Plate Mezzanine' | Id: 851801 | IsTemplate: False
+Schedule: 'C.2.1 - Beam Mezzanine WF 250' | Id: 864628 | IsTemplate: False
+Schedule: 'B.1.4 - Kolom Baja H 250' | Id: 1052328 | IsTemplate: False
+Schedule: 'B.1.1 - Kolom Baja WF 250' | Id: 1052335 | IsTemplate: False
+Schedule: 'M.1.1 - Clading Zincalum' | Id: 1305516 | IsTemplate: False
+Schedule: 'L.1.1 - Atap Zincalum' | Id: 1355192 | IsTemplate: False
+Schedule: 'K.1.1 - Talang - Profile L 40X40' | Id: 1449543 | IsTemplate: False
+Schedule: 'K.1.5 - Talang - Plat Joint' | Id: 1449550 | IsTemplate: False
+Schedule: 'K.1.6 - Talang - Baut' | Id: 1449557 | IsTemplate: False
+Schedule: 'C.1.1 - Rafter Profile RCWF 450' | Id: 1449564 | IsTemplate: False
+Schedule: 'H.1.1 - Regel Bar Dia 12 mm' | Id: 1544822 | IsTemplate: False
+Schedule: 'A.1.4 - Pondasi Batu Kali' | Id: 1545380 | IsTemplate: False
+Schedule: 'A.1.5 - Balok Sloof' | Id: 1546107 | IsTemplate: False
+Schedule: 'A.1.8- Plat Lantai Lt. Dasar' | Id: 1546397 | IsTemplate: False
+Schedule: 'C.1.9 - Rafter Plat Tutup Castela' | Id: 1578971 | IsTemplate: False
+Schedule: 'L.1.2 - Atap Solaf Tuf' | Id: 1580757 | IsTemplate: False
+Schedule: 'L.1.2 - Talang Gutter' | Id: 1580800 | IsTemplate: False
+Schedule: 'L.1.3 - Flasing Atap' | Id: 1589196 | IsTemplate: False
+Schedule: 'M.1.3 - Flasing Dinding Clading' | Id: 1591002 | IsTemplate: False
+Schedule: 'B.1.6 - Kolom Stifner Plat' | Id: 1614919 | IsTemplate: False
+Schedule: 'B.1.7 - Kolom Top Plat' | Id: 1614940 | IsTemplate: False
+Schedule: 'C.1.10 - Rafter Stifner Plat' | Id: 1615440 | IsTemplate: False
+Schedule: 'C.1.6 - Rafter Voute WF 300' | Id: 1616860 | IsTemplate: False
+Schedule: 'C.1.7 - Rafter End Plat' | Id: 1616927 | IsTemplate: False
+Schedule: 'C.2.1 - Voute Mezzanine WF 350' | Id: 1618862 | IsTemplate: False
+Schedule: 'J.1.1 - Wind Bracing Watermur' | Id: 1618918 | IsTemplate: False
+Schedule: 'K.1.3 - Talang - Profile UNP 65' | Id: 1618925 | IsTemplate: False
+Schedule: 'K.1.4 - Talang - Profile WF 200' | Id: 1618932 | IsTemplate: False
+Schedule: 'B.1.9 - Kolom Plat Gewel' | Id: 1620644 | IsTemplate: False
+Schedule: 'B.1.10 - Kolom Baut Gewel' | Id: 1620686 | IsTemplate: False
+Schedule: 'M.1.4 - Flasing Welded Mesh' | Id: 1632418 | IsTemplate: False
+Schedule: 'DAFTAR GAMBAR' | Id: 1837566 | IsTemplate: False
+Schedule: 'C.2.3 - Baut End Plat Mezzanine' | Id: 1891146 | IsTemplate: False
+Schedule: 'C.2.2 - Plat Stifner Mezzanine' | Id: 1891153 | IsTemplate: False
+Schedule: 'C.1.2 - Rafter Voute WF 450' | Id: 1892945 | IsTemplate: False
+Schedule: 'B.1.2 - Kolom Baja WF 350' | Id: 1894708 | IsTemplate: False
+Schedule: 'A.1.3 - Bekisting Pondasi' | Id: 1917639 | IsTemplate: False
+Schedule: 'A.1.6 - Bekisting Sloof' | Id: 1917654 | IsTemplate: False
+Schedule: 'RUCIKA KELLEN GREEN FITTING AND ACCESSORIES' | Id: 3327185 | IsTemplate: True
+Schedule: 'RUCIKA KELLEN GREEN PIPE' | Id: 3327189 | IsTemplate: True
+Schedule: '2. SALURAN' | Id: 3327206 | IsTemplate: True
+Schedule: '3. PAGAR' | Id: 3327211 | IsTemplate: True
+Schedule: '3. DPT' | Id: 3327216 | IsTemplate: True
+Schedule: 'ZZ' | Id: 3327582 | IsTemplate: True
+Schedule: '4. LANDSCAPE' | Id: 3327587 | IsTemplate: True
+Schedule: '5. JALAN LINGKUNGAN' | Id: 3327592 | IsTemplate: True
+Schedule: '-' | Id: 3327597 | IsTemplate: True
+Schedule: '1. TANAH' | Id: 3327611 | IsTemplate: True
+Schedule: '<Revision Schedule>' | Id: 5670354 | IsTemplate: False
+Schedule: '<Revision Schedule> 2' | Id: 5670359 | IsTemplate: False
+Schedule: '<Revision Schedule> 3' | Id: 5670364 | IsTemplate: False
+Schedule: '<Revision Schedule> 4' | Id: 5670369 | IsTemplate: False
+Schedule: '<Revision Schedule> 5' | Id: 5670374 | IsTemplate: False
+Schedule: '<Revision Schedule> 6' | Id: 5670379 | IsTemplate: False
+Schedule: '<Revision Schedule> 9' | Id: 5670384 | IsTemplate: False
+Schedule: '<Revision Schedule> 10' | Id: 5670389 | IsTemplate: False
+Schedule: '<Revision Schedule> 14' | Id: 5670399 | IsTemplate: False
+Schedule: '<Revision Schedule> 16' | Id: 5670404 | IsTemplate: False
+Schedule: '<Revision Schedule> 19' | Id: 5670414 | IsTemplate: False
+Schedule: '<Revision Schedule> 20' | Id: 5670419 | IsTemplate: False
+Schedule: '<Revision Schedule> 21' | Id: 5670424 | IsTemplate: False
+Schedule: '<Revision Schedule> 22' | Id: 5670429 | IsTemplate: False
+Schedule: '<Revision Schedule> 29' | Id: 5670434 | IsTemplate: False
+Schedule: '<Revision Schedule> 30' | Id: 5670439 | IsTemplate: False
+Schedule: '<Revision Schedule> 33' | Id: 5670444 | IsTemplate: False
+Schedule: '<Revision Schedule> 36' | Id: 5670449 | IsTemplate: False
+Schedule: '<Revision Schedule> 37' | Id: 5670454 | IsTemplate: False
+Schedule: '<Revision Schedule> 38' | Id: 5670459 | IsTemplate: False
+Schedule: '<Revision Schedule> 42' | Id: 5670464 | IsTemplate: False
+Schedule: '<Revision Schedule> 43' | Id: 5670469 | IsTemplate: False
+Schedule: '<Revision Schedule> 44' | Id: 5670474 | IsTemplate: False
+Schedule: '<Revision Schedule> 45' | Id: 5670479 | IsTemplate: False
+Schedule: '<Revision Schedule> 46' | Id: 5670484 | IsTemplate: False
+Schedule: '<Revision Schedule> 48' | Id: 5670489 | IsTemplate: False
+Schedule: '<Revision Schedule> 49' | Id: 5670494 | IsTemplate: False
+Schedule: '<Revision Schedule> 50' | Id: 5670499 | IsTemplate: False
+Schedule: '<Revision Schedule> 51' | Id: 5670504 | IsTemplate: False
+Schedule: '<Revision Schedule> 52' | Id: 5670509 | IsTemplate: False
+Schedule: '<Revision Schedule> 54' | Id: 5670514 | IsTemplate: False
+Schedule: '<Revision Schedule> 55' | Id: 5670519 | IsTemplate: False
+Schedule: '<Revision Schedule> 8' | Id: 5670524 | IsTemplate: False
+Schedule: '<Revision Schedule> 32' | Id: 5670544 | IsTemplate: False
+Schedule: '<Revision Schedule> 65' | Id: 5670549 | IsTemplate: False
+Schedule: '<Revision Schedule> 23' | Id: 5670554 | IsTemplate: False
+Schedule: '<Revision Schedule> 24' | Id: 5670559 | IsTemplate: False
+Schedule: '<Revision Schedule> 25' | Id: 5670564 | IsTemplate: False
+Schedule: '<Revision Schedule> 26' | Id: 5670569 | IsTemplate: False
+Schedule: '<Revision Schedule> 27' | Id: 5670574 | IsTemplate: False
+Schedule: '<Revision Schedule> 28' | Id: 5670579 | IsTemplate: False
+Schedule: '<Revision Schedule> 57' | Id: 5670584 | IsTemplate: False
+Schedule: '<Revision Schedule> 58' | Id: 5670589 | IsTemplate: False
+Schedule: '<Revision Schedule> 67' | Id: 5670594 | IsTemplate: False
+Schedule: '<Revision Schedule> 68' | Id: 5670599 | IsTemplate: False
+Schedule: '<Revision Schedule> 69' | Id: 5670604 | IsTemplate: False
+Schedule: '<Revision Schedule> 70' | Id: 5670609 | IsTemplate: False
+Schedule: '<Revision Schedule> 72' | Id: 5670619 | IsTemplate: False
+Schedule: '<Revision Schedule> 73' | Id: 5670624 | IsTemplate: False
+Schedule: '<Revision Schedule> 74' | Id: 5670629 | IsTemplate: False
+Schedule: '<Revision Schedule> 75' | Id: 5670634 | IsTemplate: False
+Schedule: '<Revision Schedule> 76' | Id: 5670639 | IsTemplate: False
+Schedule: '<Revision Schedule> 7' | Id: 5670644 | IsTemplate: False
+Schedule: '<Revision Schedule> 15' | Id: 5670679 | IsTemplate: False
+Schedule: '<Revision Schedule> 17' | Id: 5670684 | IsTemplate: False
+Schedule: '<Revision Schedule> 31' | Id: 5670689 | IsTemplate: False
+Schedule: '<Revision Schedule> 34' | Id: 5670694 | IsTemplate: False
+Schedule: '<Revision Schedule> 35' | Id: 5670699 | IsTemplate: False
+Schedule: '<Revision Schedule> 39' | Id: 5670704 | IsTemplate: False
+Schedule: '<Revision Schedule> 40' | Id: 5670709 | IsTemplate: False
+Schedule: '<Revision Schedule> 41' | Id: 5670714 | IsTemplate: False
+Schedule: '<Revision Schedule> 47' | Id: 5670719 | IsTemplate: False
+Schedule: '<Revision Schedule> 53' | Id: 5670724 | IsTemplate: False
+Schedule: '<Revision Schedule> 56' | Id: 5670729 | IsTemplate: False
+Schedule: '<Revision Schedule> 59' | Id: 5670734 | IsTemplate: False
+Schedule: '<Revision Schedule> 60' | Id: 5670739 | IsTemplate: False
+Schedule: '<Revision Schedule> 62' | Id: 5670744 | IsTemplate: False
+Schedule: '<Revision Schedule> 80' | Id: 5670749 | IsTemplate: False
+Schedule: '<Revision Schedule> 81' | Id: 5670754 | IsTemplate: False
+Schedule: '<Revision Schedule> 82' | Id: 5670759 | IsTemplate: False
+Schedule: '<Revision Schedule> 83' | Id: 5670764 | IsTemplate: False
+Schedule: '<Revision Schedule> 84' | Id: 5670769 | IsTemplate: False
+Schedule: '<Revision Schedule> 13' | Id: 5716716 | IsTemplate: False
+Schedule: '<Revision Schedule> 85' | Id: 5716749 | IsTemplate: False
+Schedule: '<Revision Schedule> 86' | Id: 5763636 | IsTemplate: False
+Schedule: '<Revision Schedule> 18' | Id: 5773242 | IsTemplate: False
+Schedule: '<Revision Schedule> 71' | Id: 5834309 | IsTemplate: False
+Schedule: '<Revision Schedule> 87' | Id: 5839017 | IsTemplate: False
+Schedule: '<Revision Schedule> 88' | Id: 5872581 | IsTemplate: False
+Schedule: '<Revision Schedule> 89' | Id: 5872872 | IsTemplate: False
+Schedule: '<Revision Schedule> 90' | Id: 5872887 | IsTemplate: False
+Schedule: '<Revision Schedule> 11' | Id: 5976902 | IsTemplate: False
+Schedule: '<Revision Schedule> 12' | Id: 5976968 | IsTemplate: False
+Schedule: '<Revision Schedule> 61' | Id: 5977692 | IsTemplate: False
+Schedule: '<Revision Schedule> 63' | Id: 5979993 | IsTemplate: False
+Schedule: '<Revision Schedule> 64' | Id: 5990174 | IsTemplate: False
+Schedule: '<Revision Schedule> 66' | Id: 5992975 | IsTemplate: False
+Schedule: '<Revision Schedule> 77' | Id: 5992990 | IsTemplate: False
+Schedule: 'B.1.4 - Kolom Baja H 300' | Id: 6221357 | IsTemplate: False
+Schedule: 'C.1.3 - Rafter Profile RCWF 350' | Id: 6221416 | IsTemplate: False
+Schedule: 'C.1.4 - Rafter Voute WF 350' | Id: 6221423 | IsTemplate: False
+Schedule: 'C.1.12 - Rafter Baut Joint Plat' | Id: 6221430 | IsTemplate: False
+Schedule: 'C.2.2 - Gusset Plat Mezzanine' | Id: 6221572 | IsTemplate: False
+Schedule: 'C.2.3 - Baut Gusset Plat Mezzanine' | Id: 6221579 | IsTemplate: False
+Schedule: 'N.1.4 - Angkur Tangga' | Id: 6411372 | IsTemplate: False
+Schedule: 'N.1.1 - Balok Tangga' | Id: 6411379 | IsTemplate: False
+Schedule: 'N.1.2 - Base Plate Tangga' | Id: 6412023 | IsTemplate: False
+Schedule: 'N.1.3 - Checker Plate Tangga' | Id: 6412030 | IsTemplate: False
+Schedule: 'A.1.13 - Pondasi Power House' | Id: 6414423 | IsTemplate: False
+Schedule: 'A.1.16 - Plat Bak Pit Power House' | Id: 6414446 | IsTemplate: False
+Schedule: 'A.1.10 - Pondasi Blending Tank' | Id: 6414506 | IsTemplate: False
+Schedule: 'A.1.17 - Plat Lantai Mezzanine' | Id: 6414513 | IsTemplate: False
+Schedule: 'A.1.2 - Pondasi Tapak' | Id: 6414616 | IsTemplate: False
+Schedule: 'A.1.3 - Bekisting Pondasi Tapak' | Id: 6414698 | IsTemplate: False
+Schedule: 'A.1.2 - Pondasi Umpak Batu Kali' | Id: 6416574 | IsTemplate: False
+Schedule: 'D.1.4 - Cremona Canopy Plat Joint' | Id: 6416928 | IsTemplate: False
+Schedule: 'N.1.1 - Balok Tangga L 40x40x4' | Id: 6456340 | IsTemplate: False
+Schedule: 'M.1.6 - Roof Drain' | Id: 6473377 | IsTemplate: False
+Schedule: 'M.1.1 - Stopper Barrier' | Id: 6478321 | IsTemplate: False
+Schedule: 'A.1.12 - Pondasi Cup Printing' | Id: 6514756 | IsTemplate: False
+Schedule: 'A.1.11 - Pondasi Cup Making' | Id: 6514763 | IsTemplate: False
+Schedule: 'A.1.13 - Pondasi Mixing Tank' | Id: 6514770 | IsTemplate: False
+Schedule: 'A.1.14 - Pondasi Mesin Line Galon' | Id: 6521198 | IsTemplate: False
+Schedule: 'A.1.15 - Pondasi Preform' | Id: 6521205 | IsTemplate: False
+Schedule: 'A.1.9 - Pondasi Waterline' | Id: 6521226 | IsTemplate: False
+Schedule: 'O. 1.1 - Rafter End Plat WF 400' | Id: 6647125 | IsTemplate: False
+Schedule: 'O. 1.2 - Rafter Voute WF 400' | Id: 6647129 | IsTemplate: False
+Schedule: 'O. 1.3 - Rafter Stifner Plat WF 400' | Id: 6647133 | IsTemplate: False
+Schedule: 'O. 1.4 - Rafter Baut WF 400' | Id: 6647137 | IsTemplate: False
+Schedule: '_VALIDASI CLASH - STRUCTURAL FRAMING' | Id: 6840761 | IsTemplate: False
+Schedule: '_VALIDASI CLASH - SAMBUNGAN BAJA' | Id: 6840765 | IsTemplate: False
+Schedule: '_VALIDASI CLASH - KOLOM & PEDESTAL' | Id: 6840769 | IsTemplate: False

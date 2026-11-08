@@ -1,0 +1,163 @@
+[
+  {
+    "scenario": 1,
+    "name": "10 Consecutive Messages on Single Session",
+    "passed": true,
+    "type": "LIVE_SERVER",
+    "details": {
+      "initial_session_id": "e0c4cba8-3aeb-43b4-8a85-aaa0790f643f",
+      "all_10_turns_used_same_session": true,
+      "brain_conversations_before": 16,
+      "brain_conversations_after": 16,
+      "new_conversation_calls": 0,
+      "total_turns_completed": 10,
+      "avg_duration": "8.38s"
+    }
+  },
+  {
+    "scenario": 2,
+    "name": "Browser Reload / Reconnect Persistence",
+    "passed": true,
+    "type": "LIVE_SERVER",
+    "details": {
+      "reloads_tested": 3,
+      "session_before": "e0c4cba8-3aeb-43b4-8a85-aaa0790f643f",
+      "session_after": "e0c4cba8-3aeb-43b4-8a85-aaa0790f643f",
+      "session_retained": true
+    }
+  },
+  {
+    "scenario": 3,
+    "name": "Backend Server Restart Session Restoration",
+    "passed": true,
+    "type": "LIVE_SERVER",
+    "details": {
+      "persisted_id_on_disk": "e0c4cba8-3aeb-43b4-8a85-aaa0790f643f",
+      "restored_id_in_booted_adapter": "e0c4cba8-3aeb-43b4-8a85-aaa0790f643f",
+      "persisted_history_count": 11,
+      "restored_history_count": 11,
+      "new_conversation_called": false
+    }
+  },
+  {
+    "scenario": 4,
+    "name": "Explicit Session Reset with Audit Log",
+    "passed": true,
+    "type": "LIVE_SERVER",
+    "details": {
+      "old_conversation_id": "e0c4cba8-3aeb-43b4-8a85-aaa0790f643f",
+      "new_conversation_id": "9f575e08-06c8-4ade-9cd6-450e28b4c079",
+      "replacement_log_entries": 3,
+      "last_log_entry": {
+        "timestamp": "2026-10-11 11:16:00",
+        "old_conversation_id": "e0c4cba8-3aeb-43b4-8a85-aaa0790f643f",
+        "new_conversation_id": "9f575e08-06c8-4ade-9cd6-450e28b4c079",
+        "reason": "Permintaan reset eksplisit via API"
+      },
+      "status": null
+    }
+  },
+  {
+    "scenario": 5,
+    "name": "Slow Male TTS Buffering & Delivery",
+    "passed": true,
+    "type": "LIVE_SERVER",
+    "details": {
+      "status_code": 200,
+      "content_type": "audio/mpeg",
+      "audio_bytes_received": 110592,
+      "duration_to_buffer": "2.04s",
+      "valid_mp3_header": true,
+      "voice": "id-ID-ArdiNeural"
+    }
+  },
+  {
+    "scenario": 6,
+    "name": "Primary TTS Failure Clean Fallback",
+    "passed": true,
+    "type": "LIVE_SERVER",
+    "details": {
+      "input_invalid_voice": "invalid-voice-xyz",
+      "server_fallback_voice": "id-ID-ArdiNeural",
+      "double_voice_prevented": true,
+      "audio_url_generated": true
+    }
+  },
+  {
+    "scenario": 7,
+    "name": "Stale Audio Callback Dropped via Generation Token",
+    "passed": true,
+    "type": "SIMULATED_UNIT",
+    "details": {
+      "token_1": 1,
+      "token_2": 2,
+      "token_1_dropped": true,
+      "token_2_played": true,
+      "rejected_tokens": [
+        1
+      ],
+      "active_token": 2
+    }
+  },
+  {
+    "scenario": 8,
+    "name": "Mic Restart Blocked During Speaking/Thinking",
+    "passed": true,
+    "type": "SIMULATED_UNIT",
+    "details": {
+      "restart_allowed_while_speaking": false,
+      "restart_allowed_while_thinking": false,
+      "restart_allowed_while_idle": true,
+      "acoustic_echo_loop_prevented": true
+    }
+  },
+  {
+    "scenario": 9,
+    "name": "STT Resumes with 500ms Acoustic Echo Guard",
+    "passed": true,
+    "type": "SIMULATED_UNIT",
+    "details": {
+      "state_after_playback_ended": "LISTENING",
+      "echo_protection_delay_ms": 500,
+      "speaker_feedback_absorbed": true
+    }
+  },
+  {
+    "scenario": 10,
+    "name": "Single Response Exactly One Playback Guarantee",
+    "passed": true,
+    "type": "SIMULATED_UNIT",
+    "details": {
+      "first_playback_count": 1,
+      "second_playback_stops_first": true,
+      "simultaneous_playback_count": 1,
+      "guarantee_passed": true
+    }
+  },
+  {
+    "scenario": 11,
+    "name": "Revit Lifecycle Transitions Without History Wipe",
+    "passed": true,
+    "type": "LIVE_REVIT",
+    "details": {
+      "live_revit_bridge_connected": true,
+      "session_id_preserved": "9f575e08-06c8-4ade-9cd6-450e28b4c079",
+      "history_count_preserved": 1,
+      "lifecycle_transition_states": "ACTIVE -> DETACHED -> RECONNECTED",
+      "session_wiped": false
+    }
+  },
+  {
+    "scenario": 12,
+    "name": "Runtime Failure Resilience Without Infinite Sessions",
+    "passed": true,
+    "type": "LIVE_SERVER",
+    "details": {
+      "session_before": "9f575e08-06c8-4ade-9cd6-450e28b4c079",
+      "session_after": "9f575e08-06c8-4ade-9cd6-450e28b4c079",
+      "brain_conversations_delta": 0,
+      "infinite_loop_detected": false,
+      "error_handled_honestly": true
+    }
+  }
+]

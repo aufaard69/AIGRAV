@@ -1,0 +1,148 @@
+﻿=== DEEP STEEL MACRO & JOURNALING API EXPLORATION ===
+
+[Type: Autodesk.SteelConnectionsUI.Journaling]
+  Boolean get_IsRecording()
+  Void set_IsRecording(Boolean value)
+  Void WriteJournal(Document doc, StructuralConnectionHandler connection)
+  List`1 FillConnectionParameters()
+  Void WriteParamSet(SteelConnectionParameters parameters)
+  Type GetType()
+  Object MemberwiseClone()
+  Void Finalize()
+  String ToString()
+  Boolean Equals(Object obj)
+  Int32 GetHashCode()
+  field ExternalCommandData m_commandData
+  field Boolean m_bIsRecording
+  field IDictionary`2 m_dataMap
+  field Int32 m_nDataSetIndex
+  field String SEPARATOR
+
+[Searching for Parameter Data Classes in SteelConnections assemblies]
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.ChangeInfo_BasicChange
+    prop SteelElementChangeType ChangeType
+    prop HashSet`1 TargetSteelElementIds
+    prop String Description
+    meth SteelElementChangeType get_ChangeType()
+    meth HashSet`1 get_TargetSteelElementIds()
+    meth String get_Description()
+    meth Void SaveTo(MemoryStream ms)
+    meth Void SetFrom(Byte[] buff, Int32& nIdx)
+    meth Boolean Execute(Document doc)
+    meth Void ReportChanges(RegenClosure rc)
+    meth Void Dispose(Boolean disposing)
+    meth Void Finalize()
+    meth Void Dispose()
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.ChangeInfo_CreateCustomJoint
+    prop String Description
+    meth String get_Description()
+    meth Void SaveTo(MemoryStream ms)
+    meth Void SetFrom(Byte[] buff, Int32& nIdx)
+    meth Boolean Execute(Document doc)
+    meth Void ReportChanges(RegenClosure rc)
+    meth Void Dispose(Boolean disposing)
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.ChangeInfo_CreateJoint
+    prop String Description
+    meth String get_Description()
+    meth Void SaveTo(MemoryStream ms)
+    meth Void SetFrom(Byte[] buff, Int32& nIdx)
+    meth Boolean Execute(Document doc)
+    meth Void ReportChanges(RegenClosure rc)
+    meth Void Dispose(Boolean disposing)
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.ChangeInfo_CustomJointTypeOrInputChange
+    prop String Description
+    meth String get_Description()
+    meth Void SaveTo(MemoryStream ms)
+    meth Void SetFrom(Byte[] buff, Int32& nIdx)
+    meth Boolean Execute(Document doc)
+    meth Void ReportChanges(RegenClosure rc)
+    meth Void Dispose(Boolean disposing)
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.ChangeInfo_JointDesignChange
+    prop String Description
+    meth String get_Description()
+    meth Void SaveTo(MemoryStream ms)
+    meth Void SetFrom(Byte[] buff, Int32& nIdx)
+    meth Boolean Execute(Document doc)
+    meth Void ReportChanges(RegenClosure rc)
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.ChangeInfo_JointDesignEffortsChange
+    prop String Description
+    meth String get_Description()
+    meth Void SaveTo(MemoryStream ms)
+    meth Void SetFrom(Byte[] buff, Int32& nIdx)
+    meth Boolean Execute(Document doc)
+    meth Void ReportChanges(RegenClosure rc)
+    meth Void Dispose(Boolean disposing)
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.ChangeInfo_JointDesignModuleChange
+    prop String Description
+    meth String get_Description()
+    meth Void SaveTo(MemoryStream ms)
+    meth Void SetFrom(Byte[] buff, Int32& nIdx)
+    meth Boolean Execute(Document doc)
+    meth Void ReportChanges(RegenClosure rc)
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.ChangeInfo_JointDesignModuleUseDetailedTorsorsChange
+    prop String Description
+    meth String get_Description()
+    meth Void SaveTo(MemoryStream ms)
+    meth Void SetFrom(Byte[] buff, Int32& nIdx)
+    meth Boolean Execute(Document doc)
+    meth Void ReportChanges(RegenClosure rc)
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.ChangeInfo_JointDesignParameterChange
+    prop String Description
+    meth String get_Description()
+    meth Void SaveTo(MemoryStream ms)
+    meth Void SetFrom(Byte[] buff, Int32& nIdx)
+    meth Boolean Execute(Document doc)
+    meth Void ReportChanges(RegenClosure rc)
+    meth Void Dispose(Boolean disposing)
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.ChangeInfo_JointDialogChange
+    prop IFiler JointFiler
+    prop String Description
+    meth IFiler get_JointFiler()
+    meth String get_Description()
+    meth Void SaveTo(MemoryStream ms)
+    meth Void SetFrom(Byte[] buff, Int32& nIdx)
+    meth Boolean Execute(Document doc)
+    meth Void ReportChanges(RegenClosure rc)
+    meth Void Dispose(Boolean disposing)
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.ChangeInfo_JointTypeOrInputChange
+    prop String Description
+    meth String get_Description()
+    meth Void SaveTo(MemoryStream ms)
+    meth Void SetFrom(Byte[] buff, Int32& nIdx)
+    meth Boolean Execute(Document doc)
+    meth Void ReportChanges(RegenClosure rc)
+    meth Void Dispose(Boolean disposing)
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.SteelConnectionParametersType
+  [Autodesk.SteelConnectionsDB] Autodesk.SteelConnectionsDB.SteelConnectionParameters
+    prop String HeaderName
+    prop IFiler Filer
+    meth String get_HeaderName()
+    meth Void set_HeaderName(String value)
+    meth IFiler get_Filer()
+    meth Void set_Filer(IFiler value)
+
+[Type: Autodesk.SteelConnectionsDB.SteelConnectionHandler (All Members)]
+  Guid get_ConnectionGuid()
+  Void set_ConnectionGuid(Guid value)
+  StructuralConnectionHandler get_Connection()
+  Void set_Connection(StructuralConnectionHandler value)
+  NodeStatus get_CheckStatus()
+  Void set_CheckStatus(NodeStatus value)
+  Void MakeRequest(RequestId reqType, ChangeInfo_BasicChange changeInfo)
+  Void FreeResources()
+  Boolean ShowConnectionPages()
+  Void DisplayConnectionPages()
+  Void UpdateParameters(Document doc, ChangeInfo_BasicChange changeInfo)
+  Type GetType()
+  Object MemberwiseClone()
+  Void Finalize()
+  String ToString()
+  Boolean Equals(Object obj)
+  Int32 GetHashCode()
+  field Document _doc
+  field Guid <ConnectionGuid>k__BackingField
+  field StructuralConnectionHandler <Connection>k__BackingField
+  field NodeStatus <CheckStatus>k__BackingField
+
+[Testing SteelConnectionHandler instance on Handler 1668214]
+

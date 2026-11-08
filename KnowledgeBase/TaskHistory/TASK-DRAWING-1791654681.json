@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-DRAWING-1791654681",
+  "user_request": "Otomatisasi Drawing Struktur Tekla-like (ELEVATION)",
+  "execution_status": "COMPLETED",
+  "created_at": "2026-10-10T17:51:21.802281+00:00",
+  "updated_at": "2026-10-10T17:51:21.802296+00:00",
+  "steps": [
+    {
+      "step_id": "step_drawing_package",
+      "title": "Pembuatan Sheet & Penataan Viewport (ELEVATION)",
+      "tool_name": "drawing_engine.execute_drawing_package_in_revit",
+      "argument": null,
+      "dependencies": [],
+      "execution_status": "COMPLETED",
+      "retry_count": 0,
+      "max_retries": 2,
+      "timeout_seconds": 30.0,
+      "verification_criteria": null,
+      "output": {
+        "success": true,
+        "summary": "Paket gambar kerja struktur berhasil dibuat di Revit. Sebanyak 1 sheet resmi (ST-102) telah disiapkan dengan Title Block standar proyek.",
+        "sheets_created": [
+          "ST-102"
+        ],
+        "raw_result": "Existing Sheet updated: PN-BG-001 - BARIER GATE MOTOR (Id: 400335)\nExisting Sheet updated: PN-BG-002 - DETAIL ATAP KANOPI BARIER GATE MOTOR (Id: 400340)\nExisting Sheet updated: PN-BG-003 - DETAIL PONDASI KANOPI BARIER GATE (Id: 400345)\nExisting Sheet updated: PN-BG-004 - DETAIL TIANG RF-ID & CCTV (Id: 400350)\nExisting Sheet updated: PN-BG-005 - DETAIL BARIER GATE & PAGAR BRC (Id: 400355)"
+      },
+      "errors": []
+    }
+  ],
+  "final_report": null
+}

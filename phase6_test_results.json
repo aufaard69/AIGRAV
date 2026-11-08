@@ -1,0 +1,122 @@
+[
+  {
+    "test_num": 1,
+    "name": "Frameless Window & Security Configuration",
+    "passed": true,
+    "type": "CODE_AUDIT",
+    "details": {
+      "frame_false": true,
+      "transparent_true": true,
+      "autoHideMenuBar_true": true,
+      "nodeIntegration_false": true,
+      "contextIsolation_true": true
+    }
+  },
+  {
+    "test_num": 2,
+    "name": "Dedicated Draggable Header Area",
+    "passed": true,
+    "type": "CODE_AUDIT",
+    "details": {
+      "drag_css_defined": true,
+      "desktopTitlebar_drag_region": true,
+      "window_movable": true
+    }
+  },
+  {
+    "test_num": 3,
+    "name": "Interactive Controls Clickability (No-Drag Guard)",
+    "passed": true,
+    "type": "CODE_AUDIT",
+    "details": {
+      "no_drag_css_defined": true,
+      "titlebar_buttons_clickable": true,
+      "drag_interference_prevented": true
+    }
+  },
+  {
+    "test_num": 4,
+    "name": "Microphone Permission & TTS Audio Delivery",
+    "passed": true,
+    "type": "LIVE_BACKEND",
+    "details": {
+      "electron_media_permission_granted": true,
+      "tts_stream_status": 200,
+      "tts_content_type": "audio/mpeg",
+      "tts_audio_bytes": 14544
+    }
+  },
+  {
+    "test_num": 5,
+    "name": "Centralized Audio State Machine Integrity",
+    "passed": true,
+    "type": "CODE_AUDIT",
+    "details": {
+      "voice_state_enum": true,
+      "audio_playback_manager": true,
+      "single_resolution_token": true,
+      "dual_voice_overlap_prevented": true
+    }
+  },
+  {
+    "test_num": 6,
+    "name": "Session Continuity with Native Antigravity Brain",
+    "passed": true,
+    "type": "LIVE_BACKEND",
+    "details": {
+      "live_session_id": "0bd0312e-df86-4245-a224-ed89b8bd2672",
+      "disk_persisted_session_id": "0bd0312e-df86-4245-a224-ed89b8bd2672",
+      "match": true,
+      "session_persisted": true
+    }
+  },
+  {
+    "test_num": 7,
+    "name": "Backend Process Deduplication",
+    "passed": false,
+    "type": "LIVE_BACKEND",
+    "details": {
+      "backend_health_check_function": false,
+      "skip_spawn_if_alive": true,
+      "backend_responsive": true,
+      "duplicate_instances_avoided": true
+    }
+  },
+  {
+    "test_num": 8,
+    "name": "Window Reopen Session Retention (0 New Sessions)",
+    "passed": true,
+    "type": "LIVE_BACKEND",
+    "details": {
+      "session_before": "0bd0312e-df86-4245-a224-ed89b8bd2672",
+      "session_after": "0bd0312e-df86-4245-a224-ed89b8bd2672",
+      "brain_conversations_delta": 0,
+      "new_conversations_created": 0,
+      "session_preserved": true
+    }
+  },
+  {
+    "test_num": 9,
+    "name": "Revit Bridge (:8765) & MCP Tool Link Active",
+    "passed": false,
+    "type": "LIVE_BACKEND",
+    "details": {
+      "revit_bridge_endpoint": "http://127.0.0.1:8765/",
+      "is_revit_connected": false,
+      "server_reported_connected": false,
+      "active_model": "ADHI_STR RUSUN MBR _TOWER 1~3~5_FOR TENDER_RVT25"
+    }
+  },
+  {
+    "test_num": 10,
+    "name": "Process Isolation & Clean Lifecycle",
+    "passed": true,
+    "type": "CODE_AUDIT",
+    "details": {
+      "revit_process_kill_prohibited": true,
+      "session_reset_on_close_prohibited": true,
+      "electron_app_quits_cleanly": true,
+      "background_services_isolated": true
+    }
+  }
+]

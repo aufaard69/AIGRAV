@@ -1,0 +1,19 @@
+﻿================================================================================
+     UPDATE FILTER PONDASI PILECAP & FOOTPLAT SERTA COMMENTS FLASHING           
+================================================================================
+[STATUS COMMENTS STRUCTURAL FOUNDATIONS (602 elemen)]:
+  - '(kosong)': 403 elemen
+  - 'Pondasi Pilecap': 110 elemen
+  - 'Pondasi Mesin': 64 elemen
+  - 'Pondasi Footplat': 25 elemen
+
+[STEP 1 - FLASHING DINDING]: Berhasil mengisi Comments='Flashing Dinding' pada 10 elemen Wall Sweeps.
+[STEP 1 - FLASHING ATAP]: Berhasil mengisi Comments='Flashing Atap' pada 1 elemen Fascia.
+[STEP 2 - SCHEDULE A.1.2]: Filter disesuaikan agar HANYA 'Pondasi Pilecap' dan 'Pondasi Footplat' yang muncul (Comments BeginsWith 'Pondasi' AND NotContains 'Mesin').
+[STEP 3 - SCHEDULE A.1.3]: Filter disesuaikan memasukkan 'Pondasi Pilecap' dan 'Pondasi Footplat' ke dalam Bekisting.
+
+[VERIFIKASI HASIL UPDATE SCHEDULE]:
+* Schedule 'A.1.2 - Pondasi Pile Cap': 135 elemen lolos filter.
+* Schedule 'A.1.3 - Bekisting Pondasi Pile Cap': 135 elemen lolos filter (sebelumnya 0).
+* Schedule 'M.1.3 - Flasing Dinding Clading': 10 elemen lolos filter (sebelumnya 0).
+

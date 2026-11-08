@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIGRAV - Autonomous Voice BIM Intelligence</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=JetBrains+Mono:wght@300;400;600&display=swap');
+
+    :root {
+      --hud-cyan: #00f0ff;
+      --hud-blue: #0077ff;
+      --hud-mic: #f43f5e;
+      --hud-glow: rgba(0, 240, 255, 0.45);
+      --hud-bg: #030712;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--hud-bg);
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .font-hud {
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .grid-bg {
+      background-size: 36px 36px;
+      background-image: 
+        linear-gradient(to right, rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+    }
+
+    .hud-glow {
+      box-shadow: 0 0 25px var(--hud-glow), inset 0 0 15px rgba(0, 240, 255, 0.2);
+    }
+    .hud-glow-mic {
+      box-shadow: 0 0 40px rgba(244, 63, 94, 0.7), inset 0 0 20px rgba(244, 63, 94, 0.35);
+    }
+    .hud-glow-exec {
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.7), inset 0 0 20px rgba(16, 185, 129, 0.35);
+    }
+    .hud-glow-process {
+      box-shadow: 0 0 35px rgba(234, 179, 8, 0.6), inset 0 0 20px rgba(234, 179, 8, 0.3);
+    }
+
+    .hud-text-glow {
+      text-shadow: 0 0 12px var(--hud-cyan), 0 0 24px rgba(0, 119, 255, 0.8);
+    }
+
+    @keyframes spin-cw {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    @keyframes spin-ccw {
+      0% { transform: translate(-50%, -50%) rotate(360deg); }
+      100% { transform: translate(-50%, -50%) rotate(0deg); }
+    }
+
+    .rotate-slow-cw {
+      animation: spin-cw 24s linear infinite;
+    }
+    .rotate-medium-ccw {
+      animation: spin-ccw 14s linear infinite;
+    }
+    .rotate-fast-cw {
+      animation: spin-cw 8s linear infinite;
+    }
+
+    /* Desktop Frameless Floating HUD Mode */
+    body.desktop-hud-mode {
+      border-radius: 18px;
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      background: rgba(3, 7, 18, 0.94);
+      backdrop-filter: blur(24px);
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 240, 255, 0.25);
+      overflow: hidden !important;
+      min-height: auto;
+      height: 100vh;
+      box-sizing: border-box;
+      padding: 8px 12px 12px 12px !important;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Fixed Window Header Bar (Hanya Satu-Satunya Panel Fixed) */
+    #desktopTitlebar {
+      flex-shrink: 0;
+      width: 100%;
+      z-index: 40;
+    }
+
+    /* Scrollable Main Content Container (Seluruh panel lain ikut scroll di sini) */
+    #hudScrollContainer {
+      flex: 1 1 0%;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* Sleek Custom Scrollbar for HUD */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(3, 7, 18, 0.5);
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(0, 240, 255, 0.3);
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 240, 255, 0.6);
+    }
+
+    .drag-region {
+      -webkit-app-region: drag;
+    }
+    .no-drag-region {
+      -webkit-app-region: no-drag;
+    }
+
+    /* Compact Mode: Sleek minimal pill for placing over Revit */
+    body.compact-mode header,
+    body.compact-mode footer,
+    body.compact-mode #dialogHistory,
+    body.compact-mode #quickDirectControls,
+    body.compact-mode #taskWorkflowDrawer,
+    body.compact-mode #connectionStatusBar {
+      display: none !important;
+    }
+
+    body.compact-mode #hudScrollContainer {
+      overflow-y: hidden !important;
+      justify-content: center !important;
+    }
+
+    body.compact-mode main {
+      margin: 0 !important;
+      padding: 0 !important;
+      justify-content: center !important;
+    }
+
+    body.compact-mode .orb-container {
+      width: 130px !important;
+      height: 130px !important;
+    }
+
+    body.compact-mode #compactControls {
+      display: flex !important;
+    }
+  </style>
+</head>
+<body class="grid-bg h-screen flex flex-col overflow-hidden p-2 sm:p-3 md:p-4" onclick="unlockAudioContext()">
+
+  <!-- SATU-SATUNYA PANEL FIXED / WINDOW CONTROL HEADER -->
+  <div id="desktopTitlebar" class="hidden select-none flex-shrink-0 flex items-center justify-between px-3 py-1.5 mb-2 rounded-t-xl bg-cyan-950/80 border border-cyan-800/60 drag-region z-40" ondblclick="handleTitlebarDoubleClick(event)">
+    <div class="flex items-center gap-2 drag-region">
+      <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff] animate-pulse"></span>
+      <span class="font-hud text-xs font-bold tracking-widest text-cyan-300">AIGRAV // FLOATING HUD</span>
+    </div>
+    <div class="flex items-center gap-1.5 no-drag-region">
+      <button id="btnToggleCompact" title="Toggle Compact / Full" onclick="toggleCompactMode()" class="px-2 py-0.5 rounded text-xs font-mono text-cyan-400 hover:bg-cyan-900/60 hover:text-cyan-200 transition-colors border border-cyan-900/40">⤢</button>
+      <button id="btnPinWindow" title="Pin Always on Top" onclick="toggleAlwaysOnTop()" class="px-2 py-0.5 rounded text-xs font-mono text-cyan-400 hover:bg-cyan-900/60 hover:text-cyan-200 transition-colors border border-cyan-900/40">📌</button>
+      <button id="btnMinWindow" title="Minimize" onclick="if(window.desktopAPI) window.desktopAPI.minimize()" class="px-2 py-0.5 rounded text-xs font-mono text-cyan-400 hover:bg-cyan-900/60 hover:text-cyan-200 transition-colors border border-cyan-900/40">─</button>
+      <button id="btnCloseWindow" title="Close HUD" onclick="if(window.desktopAPI) window.desktopAPI.close()" class="px-2 py-0.5 rounded text-xs font-mono text-rose-400 hover:bg-rose-950/80 hover:text-rose-200 transition-colors border border-rose-900/40">✕</button>
+    </div>
+  </div>
+
+  <!-- CONTAINER KONTEN SCROLLABLE UTAMA (SEMUA PANEL LAIN IKUT SCROLL DI SINI) -->
+  <div id="hudScrollContainer" class="flex-1 overflow-y-auto overflow-x-hidden min-h-0 flex flex-col justify-between custom-scrollbar pt-1">
+
+    <!-- HEADER TELEMETRI MODEL (IKUT SCROLL) -->
+    <header class="flex flex-wrap items-center justify-between gap-4 border-b border-cyan-900/50 pb-3 flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <div id="statusDot" class="w-3.5 h-3.5 rounded-full bg-cyan-400 animate-ping"></div>
+        <div>
+          <h1 class="text-xl font-bold tracking-widest font-hud text-cyan-400 hud-text-glow">AIGRAV // DEDICATED VOICE AGENT</h1>
+          <p class="text-xs text-cyan-500/70 tracking-wider">PROJECT: ADHI_STR RUSUN MBR _TOWER 1~3~5 (RVT 2025)</p>
+        </div>
+      </div>
+
+      <!-- Status & Kontrol Suara / Mic -->
+      <div class="flex items-center flex-wrap gap-2 text-xs">
+        <!-- Selector Suara Pria / Wanita -->
+        <div class="px-3 py-1.5 rounded-lg border border-cyan-800 bg-cyan-950/70 text-cyan-300 flex items-center gap-2 shadow-md">
+          <span class="text-[10px] text-cyan-400 font-hud tracking-wider font-semibold">PILIH SUARA AIGRAV:</span>
+          <button id="btnVoicePria" onclick="setVoice('id-ID-ArdiNeural')" class="px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-cyan-400 bg-cyan-500/20 text-cyan-200 font-bold shadow-[0_0_10px_rgba(0,240,255,0.4)]">
+            Pria
+          </button>
+          <button id="btnVoiceWanita" onclick="setVoice('id-ID-GadisNeural')" class="px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-cyan-900 bg-black/40 text-cyan-400/60 hover:text-cyan-200">
+            Wanita
+          </button>
+          <button id="btnTestVoice" onclick="testVoicePreview()" class="ml-1 px-2.5 py-0.5 rounded bg-blue-600/80 hover:bg-blue-500 text-white font-mono text-xs border border-blue-400/50 flex items-center gap-1 shadow-sm transition-all">
+            <span>🔊 TEST SUARA</span>
+          </button>
+        </div>
+
+        <!-- Selector Mode AI (Mode Cepat vs Mode Analisis) -->
+        <div class="px-3 py-1.5 rounded-lg border border-cyan-800 bg-cyan-950/70 text-cyan-300 flex items-center gap-2 shadow-md">
+          <span class="text-[10px] text-cyan-400 font-hud tracking-wider font-semibold">MODE AI:</span>
+          <button id="btnModeFast" onclick="switchAIMode('fast')" title="Mode Cepat: Gemini 3.5 Flash Lite (Respons instan ~2.6s untuk percakapan lisan)" class="px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-cyan-400 bg-cyan-500/20 text-cyan-200 font-bold shadow-[0_0_10px_rgba(0,240,255,0.4)]">
+            ⚡ CEPAT (Flash Lite)
+          </button>
+          <button id="btnModeAnalysis" onclick="switchAIMode('analysis')" title="Mode Analisis: Gemini 3.8 Flash High (Penalaran rekayasa struktur mendalam)" class="px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-cyan-900 bg-black/40 text-cyan-400/60 hover:text-cyan-200">
+            🔬 ANALISIS (Flash High)
+          </button>
+        </div>
+
+        <!-- Toggle Mic Mute -->
+        <button id="btnMicToggle" onclick="toggleMicMute()" class="px-3 py-1.5 rounded-lg border border-rose-800/80 bg-rose-950/60 text-rose-300 hover:bg-rose-900/80 font-mono text-xs flex items-center gap-1.5 transition-all shadow-md">
+          <span id="micStatusDot" class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+          <span id="micToggleText">MIC: AKTIF</span>
+        </button>
+
+        <!-- Status Eksekusi -->
+        <div class="px-3 py-1.5 rounded-lg border border-cyan-800 bg-cyan-950/50 text-cyan-300 flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+          STATUS: <span id="execBadge" class="text-emerald-300 font-bold">MENUNGGU INSTRUKSI</span>
+        </div>
+        <div class="px-3 py-1.5 rounded-lg border border-cyan-800 bg-cyan-950/50 text-cyan-300 flex items-center gap-2">
+          MODE: <span id="hudStateBadge" class="text-cyan-200 font-semibold">MENDENGARKAN...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- BAR STATUS KONEKSI & REFRESH RUNTIME (IKUT SCROLL) -->
+    <div id="connectionStatusBar" class="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 mt-2 rounded-lg border border-cyan-900/60 bg-cyan-950/40 text-xs font-mono select-none flex-shrink-0">
+      <div class="flex items-center flex-wrap gap-3">
+        <!-- 1. Backend Status -->
+        <div id="indicatorBackend" class="flex items-center gap-1.5 text-emerald-400">
+          <span id="dotBackend" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]"></span>
+          <span class="text-[11px]">BACKEND: <b id="textBackend">ONLINE</b></span>
+        </div>
+        <!-- 2. Antigravity Agent Runtime Status -->
+        <div id="indicatorAgent" class="flex items-center gap-1.5 text-emerald-400">
+          <span id="dotAgent" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]"></span>
+          <span class="text-[11px]">AGEN: <b id="textAgent">TERHUBUNG</b></span>
+        </div>
+        <!-- 3. Revit Bridge Status -->
+        <div id="indicatorRevit" class="flex items-center gap-1.5 text-cyan-400/80">
+          <span id="dotRevit" class="w-2 h-2 rounded-full bg-cyan-400/60"></span>
+          <span class="text-[11px]">REVIT: <b id="textRevit">STANDBY</b></span>
+        </div>
+        <!-- 4. Mode AI Indicator -->
+        <div id="indicatorMode" class="flex items-center gap-1.5 text-cyan-300">
+          <span id="dotMode" class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_#00f0ff]"></span>
+          <span class="text-[11px]">AI: <b id="textMode">CEPAT (Flash Lite)</b></span>
+        </div>
+      </div>
+
+      <!-- Refresh Button & Feedback Badge -->
+      <div class="flex items-center gap-2">
+        <span id="refreshFeedback" class="text-[10px] text-cyan-300 font-mono hidden"></span>
+        <button id="btnRefreshConnection" onclick="refreshConnection()" title="Segarkan koneksi Antigravity Language Server & Revit Bridge tanpa restart HUD" class="px-2.5 py-1 rounded bg-cyan-900/60 hover:bg-cyan-800/80 active:scale-95 border border-cyan-500/50 text-cyan-100 text-[10px] font-bold font-hud tracking-wider flex items-center gap-1.5 transition-all shadow-sm">
+          <span id="refreshIcon" class="inline-block transition-transform duration-300">🔄</span>
+          <span id="refreshText">REFRESH KONEKSI</span>
+        </button>
+      </div>
+    </div>
+
+  <!-- AREA VISUALISASI UTAMA -->
+  <main class="relative flex-1 flex flex-col items-center justify-center my-4">
+    
+    <!-- Wadah HUD Lingkaran -->
+    <div class="orb-container relative w-[340px] h-[340px] sm:w-[420px] sm:h-[420px] flex items-center justify-center">
+      
+      <canvas id="visualizerCanvas" width="460" height="460" class="absolute inset-0 w-full h-full z-10 pointer-events-none"></canvas>
+
+      <!-- Lingkaran Dekoratif -->
+      <div id="outerRing1" class="absolute top-1/2 left-1/2 w-[95%] h-[95%] rounded-full border border-dashed border-cyan-500/25 rotate-slow-cw transition-colors duration-300"></div>
+      <div id="outerRing2" class="absolute top-1/2 left-1/2 w-[82%] h-[82%] rounded-full border border-cyan-500/30 rotate-medium-ccw transition-colors duration-300"></div>
+      <div id="outerRing3" class="absolute top-1/2 left-1/2 w-[72%] h-[72%] rounded-full border-2 border-t-cyan-400 border-r-transparent border-b-cyan-600 border-l-transparent rotate-fast-cw transition-colors duration-300"></div>
+      
+      <!-- Inti Lingkaran (Core Orb) -->
+      <div id="coreOrb" class="relative z-20 w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-gradient-to-tr from-cyan-950/90 via-blue-900/50 to-cyan-900/80 border-2 border-cyan-400 flex flex-col items-center justify-center hud-glow transition-all duration-300 cursor-pointer" onclick="handleMicButtonClick()">
+        <div class="absolute inset-2 rounded-full border border-cyan-300/40 pointer-events-none"></div>
+        <div class="text-center z-10">
+          <div id="coreSubLabel" class="text-[10px] tracking-[0.25em] text-cyan-400/80 font-hud mb-1">VOICE ON</div>
+          <div id="coreLabel" class="text-2xl sm:text-3xl font-black font-hud tracking-widest text-cyan-200 hud-text-glow">AIGRAV</div>
+          <div id="vocalStateText" class="text-[11px] text-cyan-400/90 font-mono tracking-wider mt-1 font-bold">MENDENGAR</div>
+        </div>
+        <div id="coreAura" class="absolute inset-0 rounded-full bg-cyan-400/10 blur-md pointer-events-none transition-all duration-200"></div>
+      </div>
+    </div>
+
+    <!-- Compact Mode Floating Controls (Hanya tampil saat Compact Mode) -->
+    <div id="compactControls" class="hidden flex-col items-center gap-1.5 mt-2 no-drag-region">
+      <div class="flex items-center gap-2">
+        <span id="compactBadge" class="text-xs font-hud font-bold text-cyan-300">MENDENGARKAN...</span>
+        <button onclick="toggleMicMute()" class="px-2.5 py-0.5 rounded text-[10px] font-mono border border-cyan-700 bg-cyan-950 text-cyan-300 hover:bg-cyan-900 transition-colors">MUTE</button>
+      </div>
+    </div>
+
+    <!-- Kotak Percakapan Dua Arah -->
+    <div class="w-full max-w-2xl text-center mt-3 min-h-[90px] flex flex-col items-center justify-center px-4">
+      <div id="conversationRole" class="text-[11px] text-rose-400 font-mono uppercase tracking-widest mb-1 font-bold">
+        🎙️ SILAKAN BICARA SEKARANG (BEBAS TOPIK):
+      </div>
+      <p id="speechSubtitle" class="text-base sm:text-lg text-cyan-100 font-mono tracking-wide italic font-medium px-4 py-2.5 bg-black/50 border border-cyan-900/70 rounded-xl shadow-xl w-full">
+        "Halo. Saya mendengarkan suara Anda. Tanyakan hal apa saja seputar model atau katakan instruksi Anda."
+      </p>
+
+      <!-- Tombol Kontrol Task Terpadu -->
+      <div class="mt-3 flex items-center flex-wrap justify-center gap-2">
+        <button onclick="sendTaskControl('pause')" class="px-3 py-1 bg-amber-600/80 hover:bg-amber-500 text-white font-semibold text-xs rounded-lg border border-amber-400/40">
+          <span>⏸️ PAUSE</span>
+        </button>
+        <button onclick="sendTaskControl('resume')" class="px-3 py-1 bg-blue-600/80 hover:bg-blue-500 text-white font-semibold text-xs rounded-lg border border-blue-400/40">
+          <span>▶️ RESUME</span>
+        </button>
+        <button onclick="sendTaskControl('cancel')" class="px-3 py-1 bg-rose-600/80 hover:bg-rose-500 text-white font-semibold text-xs rounded-lg border border-rose-400/40">
+          <span>⏹️ BATAL</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Osiloskop Bar Frekuensi -->
+    <div class="w-full max-w-md flex items-center justify-center gap-1.5 h-6 mt-3 px-4">
+      <div class="text-[10px] text-cyan-500/70 mr-2 font-mono">SPEKTRUM GELOMBANG:</div>
+      <div id="miniWaveBars" class="flex items-center gap-1 flex-1 h-full"></div>
+      <div id="rmsDbText" class="text-[10px] text-cyan-400 ml-2 font-mono">-18 dB</div>
+    </div>
+  </main>
+
+  <!-- PANEL RIWAYAT PERCAKAPAN -->
+  <footer class="w-full max-w-3xl mx-auto bg-cyan-950/40 border border-cyan-900/60 rounded-2xl p-4 sm:p-5 backdrop-blur-md">
+    
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-2">
+      <div>
+        <div class="text-xs font-bold text-cyan-200 font-mono flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>ATURAN EKSEKUSI: PERCAKAPAN LISAN $\rightarrow$ EKSEKUSI HANYA JIKA ANDA BERKATA "OKE EKSEKUSI"</span>
+        </div>
+        <div class="text-[11px] text-cyan-400/70 font-mono mt-0.5">
+          Diskusikan apa saja secara bebas. Ketika setuju pada langkah akhir, katakan: <strong>"Oke, eksekusi"</strong>.
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="btnMicAction" onclick="handleMicButtonClick()" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center gap-1">
+          <span id="btnMicActionIcon">🎤</span> <span id="btnMicActionText">MULAI BICARA</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Riwayat Dialog Langsung -->
+    <div id="dialogHistory" class="space-y-1.5 max-h-36 overflow-y-auto text-xs font-mono pt-2 border-t border-cyan-900/40">
+      <div class="text-cyan-400">🤖 <strong class="text-cyan-300">AIGRAV:</strong> "Sistem suara siap. Anda dapat bertanya hal apa pun secara bebas."</div>
+    </div>
+
+    <!-- Input Instruksi Cepat (Bicara atau Ketik) -->
+    <div class="mt-2 pt-2 border-t border-cyan-900/40 flex items-center gap-2">
+      <input id="quickTextInput" type="text" placeholder="Ketik instruksi BIM atau pesan di sini (Enter untuk kirim)..." 
+        class="flex-1 bg-black/60 border border-cyan-800/80 rounded-lg px-3 py-1.5 text-xs font-mono text-cyan-200 placeholder-cyan-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all"
+        onkeydown="if(event.key==='Enter' || event.keyCode===13) { event.preventDefault(); submitQuickText(); }" />
+      <button id="btnQuickSubmit" onclick="submitQuickText()" class="px-3 py-1.5 bg-cyan-700/80 hover:bg-cyan-600 active:scale-95 text-cyan-100 font-mono text-xs rounded-lg border border-cyan-500/50 transition-all flex items-center gap-1 font-semibold shadow-sm">
+        <span>KIRIM ↵</span>
+      </button>
+    </div>
+  </footer>
+  </div>
+
+  <audio id="nativeAudioPlayer" preload="auto"></audio>
+
+  <!-- SCRIPT LOGIKA PERCAKAPAN DINAMIS & EKSEKUSI TERKONTROL (PHASE 5) -->
+  <script>
+    // -------------------------------------------------------------------------
+    // 1. STATE MACHINE STT / TTS DEFINITION
+    // IDLE -> LISTENING -> THINKING -> SPEAKING -> LISTENING
+    // -------------------------------------------------------------------------
+    const VoiceState = {
+      IDLE: 'IDLE',
+      LISTENING: 'LISTENING',
+      THINKING: 'THINKING',
+      SPEAKING: 'SPEAKING',
+      ERROR: 'ERROR'
+    };
+
+    let currentState = VoiceState.IDLE;
+    let isMuted = false;
+    let selectedVoice = localStorage.getItem('aigrav_voice_preference') || 'id-ID-ArdiNeural';
+
+    let recognition = null;
+    let audioCtx = null;
+    let lastHandledPrompt = "";
+    let wavePhase = 0;
+    let speechEnergy = 0;
+    let pendingAction = null;
+
+    // Robust Speech Endpointing Configuration (2.000 ms silence delay)
+    const ENDPOINTING_DELAY_MS = 2000;
+    let endpointTimer = null;
+    let countdownInterval = null;
+    let accumulatedFinalTranscript = "";
+    let currentInterimTranscript = "";
+    let remainingCountdownMs = 0;
+
+    // Timing Diagnostics Instrumentation
+    const timingDiagnostics = {
+      last_speech_detected_at: null,
+      endpointing_started_at: null,
+      transcript_finalized_at: null,
+      prompt_submitted_at: null,
+      ai_response_received_at: null,
+      tts_started_at: null
+    };
+
+    const canvas = document.getElementById('visualizerCanvas');
+    const ctx = canvas.getContext('2d');
+    const coreOrb = document.getElementById('coreOrb');
+    const coreLabel = document.getElementById('coreLabel');
+    const coreSubLabel = document.getElementById('coreSubLabel');
+    const vocalStateText = document.getElementById('vocalStateText');
+    const conversationRole = document.getElementById('conversationRole');
+    const speechSubtitle = document.getElementById('speechSubtitle');
+    const hudStateBadge = document.getElementById('hudStateBadge');
+    const execBadge = document.getElementById('execBadge');
+    const dialogHistory = document.getElementById('dialogHistory');
+    const rmsDbText = document.getElementById('rmsDbText');
+    const miniWaveBarsContainer = document.getElementById('miniWaveBars');
+
+    const outerRing1 = document.getElementById('outerRing1');
+    const outerRing2 = document.getElementById('outerRing2');
+    const outerRing3 = document.getElementById('outerRing3');
+
+    // State Machine UI Synchronizer
+    function setVoiceState(newState, meta = {}) {
+      const prevState = currentState;
+      currentState = newState;
+      console.log(`[STATE_MACHINE]: ${prevState} -> ${newState}`, meta);
+
+      switch (newState) {
+        case VoiceState.IDLE:
+          hudStateBadge.textContent = meta.customText || "Siap (Ketik atau Bicara)";
+          hudStateBadge.className = "text-cyan-400 font-bold";
+          vocalStateText.textContent = "STANDBY";
+          vocalStateText.className = "text-[11px] text-cyan-400 font-mono tracking-widest font-bold";
+          coreSubLabel.textContent = "KLIK MIC / KETIK";
+          conversationRole.textContent = "💬 SIAP MENERIMA INSTRUKSI:";
+          conversationRole.className = "text-[11px] text-cyan-400 font-mono uppercase tracking-widest mb-1 font-bold";
+          coreOrb.className = "relative z-20 w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-gradient-to-tr from-cyan-950/70 via-blue-900/40 to-cyan-900/60 border-2 border-cyan-500/60 flex flex-col items-center justify-center hud-glow transition-all duration-300 cursor-pointer shadow-[0_0_20px_rgba(0,240,255,0.3)]";
+          coreLabel.className = "text-2xl sm:text-3xl font-black font-hud tracking-widest text-cyan-200";
+          break;
+
+        case VoiceState.LISTENING:
+          hudStateBadge.textContent = isMuted ? "MIC DIBISUKAN" : (meta.customText || "Mendengarkan Anda");
+          hudStateBadge.className = isMuted ? "text-amber-400 font-bold" : "text-rose-400 font-bold animate-pulse";
+          vocalStateText.textContent = isMuted ? "BISU" : "MENDENGAR";
+          vocalStateText.className = isMuted ? "text-[11px] text-amber-400 font-mono tracking-widest font-bold" : "text-[11px] text-rose-300 font-mono tracking-widest font-bold";
+          coreSubLabel.textContent = isMuted ? "MIC MATI" : "BICARALAH SEKARANG";
+          conversationRole.textContent = "🎙️ ANDA BERBICARA:";
+          conversationRole.className = "text-[11px] text-rose-400 font-mono uppercase tracking-widest mb-1 font-bold";
+          coreOrb.className = "relative z-20 w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-gradient-to-tr from-rose-950 via-red-900/60 to-rose-900/80 border-2 border-rose-400 flex flex-col items-center justify-center hud-glow-mic transition-all duration-300 cursor-pointer";
+          coreLabel.className = "text-2xl sm:text-3xl font-black font-hud tracking-widest text-rose-200";
+          break;
+
+        case VoiceState.THINKING:
+          hudStateBadge.textContent = "Sedang berpikir";
+          hudStateBadge.className = "text-amber-400 font-bold animate-pulse";
+          vocalStateText.textContent = "BERPIKIR";
+          vocalStateText.className = "text-[11px] text-amber-300 font-mono tracking-widest font-bold";
+          coreSubLabel.textContent = "ANALISIS INTENT";
+          conversationRole.textContent = "⚙️ MEMPROSES:";
+          conversationRole.className = "text-[11px] text-amber-400 font-mono uppercase tracking-widest mb-1 font-bold";
+          coreOrb.className = "relative z-20 w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-gradient-to-tr from-amber-950 via-yellow-900/60 to-amber-900/80 border-2 border-amber-400 flex flex-col items-center justify-center hud-glow-process transition-all duration-300 cursor-pointer";
+          coreLabel.className = "text-2xl sm:text-3xl font-black font-hud tracking-widest text-amber-200";
+          break;
+
+        case VoiceState.SPEAKING:
+          hudStateBadge.textContent = meta.customText || "AIGRAV sedang berbicara";
+          hudStateBadge.className = "text-cyan-400 font-bold animate-pulse";
+          vocalStateText.textContent = "BERBICARA";
+          vocalStateText.className = "text-[11px] text-cyan-300 font-mono tracking-widest font-bold";
+          coreSubLabel.textContent = "AIGRAV BICARA";
+          conversationRole.textContent = "🔊 AIGRAV MENJAWAB:";
+          conversationRole.className = "text-[11px] text-cyan-400 font-mono uppercase tracking-widest mb-1 font-bold";
+          coreOrb.className = "relative z-20 w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-gradient-to-tr from-cyan-950/90 via-blue-900/50 to-cyan-900/80 border-2 border-cyan-300 flex flex-col items-center justify-center hud-glow transition-all duration-300 cursor-pointer shadow-[0_0_35px_rgba(0,240,255,0.7)]";
+          coreLabel.className = "text-2xl sm:text-3xl font-black font-hud tracking-widest text-cyan-200 hud-text-glow";
+          break;
+
+        case VoiceState.ERROR:
+          hudStateBadge.textContent = "Audio mengalami kendala";
+          hudStateBadge.className = "text-red-400 font-bold animate-pulse";
+          vocalStateText.textContent = "KENDALA";
+          vocalStateText.className = "text-[11px] text-red-400 font-mono tracking-widest font-bold";
+          coreSubLabel.textContent = "PEMULIHAN SUARA";
+          break;
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // 2. AUDIO PLAYBACK MANAGER (SINGLE ACTIVE PLAYBACK + NO OVERLAP)
+    // -------------------------------------------------------------------------
+    const AudioPlaybackManager = {
+      activeToken: 0,
+      currentAudio: null,
+      isPlaying: false,
+
+      stopAll() {
+        this.activeToken++; // Invalidate previous requests
+        this.isPlaying = false;
+        if (this.currentAudio) {
+          try {
+            this.currentAudio.pause();
+            this.currentAudio.currentTime = 0;
+            this.currentAudio.src = "";
+            this.currentAudio.onended = null;
+            this.currentAudio.onerror = null;
+          } catch(e) {}
+          this.currentAudio = null;
+        }
+        if (window.speechSynthesis) {
+          try { window.speechSynthesis.cancel(); } catch(e) {}
+        }
+      },
+
+      playAudio(audioUrl, replyText, voiceId, onComplete, reqId = null) {
+        this.stopAll();
+        const token = ++this.activeToken;
+        this.isPlaying = true;
+
+        let hasResolved = false;
+        const resolveOnce = (success, reason = "") => {
+          if (hasResolved) return;
+          if (token !== this.activeToken) {
+            console.log(`[AUDIO_MGR][${reqId || 'anon'}]: Stale callback ignored (token ${token} vs active ${this.activeToken})`);
+            return;
+          }
+          hasResolved = true;
+          this.isPlaying = false;
+          if (onComplete) onComplete(success, reason);
+        };
+
+        // Primary: Edge Neural TTS via HTML5 Audio
+        if (audioUrl) {
+          const audio = new Audio();
+          this.currentAudio = audio;
+          audio.preload = "auto";
+          audio.src = audioUrl;
+
+          // Timeout safety: if audio takes > 25s
+          const timeoutId = setTimeout(() => {
+            if (!hasResolved && token === this.activeToken) {
+              console.warn(`[AUDIO_MGR][${reqId || 'anon'}]: Playback timeout for token ${token}`);
+              this.stopAll();
+              resolveOnce(false, "TIMEOUT");
+            }
+          }, 25000);
+
+          audio.onended = () => {
+            clearTimeout(timeoutId);
+            resolveOnce(true, "ENDED");
+          };
+
+          audio.onerror = (err) => {
+            clearTimeout(timeoutId);
+            console.warn(`[AUDIO_MGR][${reqId || 'anon'}]: Native audio error (token ${token}):`, err);
+            // Confirmed failure: fallback to Web Speech Synthesis ONLY NOW
+            this.fallbackSynth(replyText, voiceId, token, resolveOnce);
+          };
+
+          audio.play().catch((playErr) => {
+            console.warn(`[AUDIO_MGR][${reqId || 'anon'}]: Audio play() caught:`, playErr);
+            if (audio.error) {
+              clearTimeout(timeoutId);
+              this.fallbackSynth(replyText, voiceId, token, resolveOnce);
+            }
+          });
+        } else {
+          this.fallbackSynth(replyText, voiceId, token, resolveOnce);
+        }
+      },
+
+      playChunks(chunks, replyText, voiceId, onComplete, timingData = null, reqId = null) {
+        this.stopAll();
+        if (!chunks || chunks.length === 0) {
+          if (onComplete) onComplete(true, "NO_CHUNKS");
+          return;
+        }
+
+        const token = ++this.activeToken;
+        this.isPlaying = true;
+        let currentIndex = 0;
+        const totalChunks = chunks.length;
+        const prefetchedAudio = new Map();
+
+        // Helper to prefetch next chunk
+        const prefetchChunk = (idx) => {
+          if (idx < totalChunks && !prefetchedAudio.has(idx)) {
+            const nextChunk = chunks[idx];
+            if (nextChunk && nextChunk.audio_url) {
+              const audioObj = new Audio();
+              audioObj.preload = "auto";
+              audioObj.src = nextChunk.audio_url;
+              prefetchedAudio.set(idx, audioObj);
+            }
+          }
+        };
+
+        const playNext = () => {
+          if (token !== this.activeToken) {
+            console.log(`[AUDIO_MGR][${reqId || 'anon'}]: Chunk playback cancelled (token ${token} vs active ${this.activeToken})`);
+            return;
+          }
+
+          if (currentIndex >= totalChunks) {
+            this.isPlaying = false;
+            this.currentAudio = null;
+            if (onComplete) onComplete(true, "CHUNKS_ENDED");
+            return;
+          }
+
+          const chunk = chunks[currentIndex];
+          let audio = prefetchedAudio.get(currentIndex);
+          if (!audio) {
+            audio = new Audio();
+            audio.preload = "auto";
+            audio.src = chunk.audio_url;
+          }
+          this.currentAudio = audio;
+
+          // Update subtitle with current speaking chunk
+          if (speechSubtitle) {
+            speechSubtitle.textContent = `"${chunk.text}"`;
+          }
+
+          let hasEnded = false;
+          const onChunkEnd = () => {
+            if (hasEnded) return;
+            hasEnded = true;
+            currentIndex++;
+            playNext();
+          };
+
+          audio.onended = onChunkEnd;
+          audio.onerror = (err) => {
+            console.warn(`[AUDIO_MGR][${reqId || 'anon'}]: Chunk ${currentIndex} failed to load/play:`, err);
+            onChunkEnd();
+          };
+
+          // Step 1 Diagnostics: Measure exact 'play()' call vs 'playing' event vs audible output
+          const tPlayCall = performance.now();
+          audio.addEventListener('playing', () => {
+            if (token !== this.activeToken) return;
+            const tPlaying = performance.now();
+            if (currentIndex === 0 && timingDiagnostics) {
+              timingDiagnostics.play_call_at = tPlayCall;
+              timingDiagnostics.playback_started_at = tPlaying;
+              timingDiagnostics.first_playing_event_at = tPlaying;
+              const decodeBufferMs = tPlaying - tPlayCall;
+              const respToPlayingMs = timingDiagnostics.ai_response_received_at ?
+                (tPlaying - timingDiagnostics.ai_response_received_at) : 0;
+              console.log(`[AUDIO_MGR][${reqId || 'anon'}]: Chunk 0 'playing' event fired! (Decode/buffer: ${decodeBufferMs.toFixed(1)}ms | Response-to-Playing: ${respToPlayingMs.toFixed(1)}ms)`);
+            }
+            // CRITICAL PHASE 6.4.3: Dedicate 100% network bandwidth to Chunk 0 during load.
+            // Only prefetch Chunk N+1 now while Chunk N is actively audible!
+            prefetchChunk(currentIndex + 1);
+          }, { once: true });
+
+          audio.addEventListener('timeupdate', () => {
+            if (token !== this.activeToken) return;
+            if (currentIndex === 0 && audio.currentTime > 0 && timingDiagnostics && !timingDiagnostics.first_audible_confirmed_at) {
+              timingDiagnostics.first_audible_confirmed_at = performance.now();
+              console.log(`[AUDIO_MGR][${reqId || 'anon'}]: Chunk 0 audible output confirmed at t=${audio.currentTime.toFixed(2)}s`);
+            }
+          }, { once: true });
+
+          audio.play().catch((playErr) => {
+            console.warn(`[AUDIO_MGR][${reqId || 'anon'}]: Chunk ${currentIndex} play() error:`, playErr);
+            onChunkEnd();
+          });
+        };
+
+        playNext();
+      },
+
+      fallbackSynth(text, voiceId, token, resolveOnce) {
+        if (token !== this.activeToken) return;
+        if (!window.speechSynthesis) {
+          resolveOnce(false, "NO_SYNTH");
+          return;
+        }
+        window.speechSynthesis.cancel();
+
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'id-ID';
+        u.rate = 1.0;
+
+        const isFemale = voiceId === 'id-ID-GadisNeural';
+        u.pitch = isFemale ? 1.15 : 0.95;
+
+        const voices = window.speechSynthesis.getVoices() || [];
+        const targetName = isFemale ? 'Gadis' : 'Ardi';
+        let matchedVoice = voices.find(v => v.name.includes(targetName) && v.lang.startsWith('id'));
+        if (!matchedVoice) {
+          matchedVoice = voices.find(v => v.lang.startsWith('id'));
+        }
+        if (matchedVoice) u.voice = matchedVoice;
+
+        u.onend = () => resolveOnce(true, "SYNTH_ENDED");
+        u.onerror = (e) => resolveOnce(false, "SYNTH_ERROR");
+
+        window.speechSynthesis.speak(u);
+      }
+    };
+
+    // Pengaturan Suara & State Persistence
+    function setVoice(voiceId, announce = true) {
+      selectedVoice = voiceId;
+      localStorage.setItem('aigrav_voice_preference', voiceId);
+
+      const btnPria = document.getElementById('btnVoicePria');
+      const btnWanita = document.getElementById('btnVoiceWanita');
+
+      if (btnPria && btnWanita) {
+        if (voiceId === 'id-ID-ArdiNeural') {
+          btnPria.className = "px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-cyan-400 bg-cyan-500/20 text-cyan-200 font-bold shadow-[0_0_10px_rgba(0,240,255,0.4)]";
+          btnWanita.className = "px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-cyan-900 bg-black/40 text-cyan-400/60 hover:text-cyan-200";
+        } else {
+          btnWanita.className = "px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-pink-400 bg-pink-500/20 text-pink-200 font-bold shadow-[0_0_10px_rgba(244,114,182,0.4)]";
+          btnPria.className = "px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-cyan-900 bg-black/40 text-cyan-400/60 hover:text-cyan-200";
+        }
+      }
+    }
+
+    function toggleMicMute() {
+      isMuted = !isMuted;
+      const btn = document.getElementById('btnMicToggle');
+      const dot = document.getElementById('micStatusDot');
+      const txt = document.getElementById('micToggleText');
+
+      if (isMuted) {
+        if (isRecordingLocal) {
+          stopLocalRecording();
+        }
+        if (btn) btn.className = "px-3 py-1.5 rounded-lg border border-amber-600 bg-amber-950/80 text-amber-200 font-mono text-xs flex items-center gap-1.5 transition-all shadow-md";
+        if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400";
+        if (txt) txt.textContent = "MIC: DIBISUKAN (MUTED)";
+        setVoiceState(VoiceState.LISTENING);
+      } else {
+        if (btn) btn.className = "px-3 py-1.5 rounded-lg border border-rose-800/80 bg-rose-950/60 text-rose-300 hover:bg-rose-900/80 font-mono text-xs flex items-center gap-1.5 transition-all shadow-md";
+        if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse";
+        if (txt) txt.textContent = "MIC: AKTIF";
+        setVoiceState(VoiceState.IDLE);
+      }
+    }
+
+    function testVoicePreview() {
+      unlockAudioContext();
+      if (recognition) { try { recognition.abort(); } catch(e){} }
+
+      const previewText = "Halo, saya AIGRAV. Saya siap membantu pekerjaan BIM Anda.";
+      const audioUrl = `/api/tts?text=${encodeURIComponent(previewText)}&voice=${encodeURIComponent(selectedVoice)}`;
+
+      speechSubtitle.textContent = `"${previewText}"`;
+      setVoiceState(VoiceState.SPEAKING, { customText: `TEST SUARA (${selectedVoice === 'id-ID-ArdiNeural' ? 'Pria' : 'Wanita'})...` });
+
+      AudioPlaybackManager.playAudio(audioUrl, previewText, selectedVoice, (success, reason) => {
+        onSpeechCycleEnd();
+      });
+    }
+
+    // 28 Mini bars
+    const miniBars = [];
+    for (let i = 0; i < 28; i++) {
+      const b = document.createElement('div');
+      b.className = 'flex-1 bg-cyan-700/40 rounded-full transition-all duration-75';
+      b.style.height = '15%';
+      miniWaveBarsContainer.appendChild(b);
+      miniBars.push(b);
+    }
+
+    function unlockAudioContext() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playBeep(freq = 880, duration = 0.08) {
+      try {
+        unlockAudioContext();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.4, audioCtx.currentTime + duration);
+        gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function addDialogLog(role, text, visualMd = null, artifacts = null) {
+      const row = document.createElement('div');
+      if (role === 'user') {
+        row.className = 'text-rose-300';
+        row.innerHTML = `👤 <strong class="text-rose-200">Anda:</strong> "${text}"`;
+      } else {
+        row.className = 'text-cyan-400 space-y-1.5';
+        let html = `🤖 <strong class="text-cyan-300">AIGRAV:</strong> "${text}"`;
+        if (visualMd) {
+          html += `<div class="mt-1.5 p-2 bg-black/60 border border-cyan-800/60 rounded-lg text-cyan-200 text-[11px] font-mono whitespace-pre-wrap overflow-x-auto max-h-40 overflow-y-auto">${visualMd}</div>`;
+        }
+        if (artifacts && Array.isArray(artifacts) && artifacts.length > 0) {
+          html += `<div class="mt-2 p-2 bg-cyan-950/70 border border-cyan-800/80 rounded-xl space-y-1.5">
+            <div class="text-[10px] text-cyan-300 font-bold uppercase tracking-wider flex items-center justify-between">
+              <span class="flex items-center gap-1.5">📁 ARTIFAK OUTPUT TERVERIFIKASI</span>
+              <span class="text-emerald-400 text-[9px] bg-emerald-950/90 border border-emerald-600/60 px-1.5 py-0.5 rounded font-mono font-bold">✓ EXPLORER DIBUKA</span>
+            </div>`;
+          artifacts.forEach(art => {
+            const kb = art.size_bytes ? (art.size_bytes / 1024).toFixed(1) + ' KB' : 'OK';
+            html += `<div class="p-1.5 bg-black/50 rounded border border-cyan-900/50 text-[11px] font-mono flex items-center justify-between">
+              <div class="truncate mr-2">
+                <span class="text-cyan-200 font-bold">${art.file_name || 'Output File'}</span>
+                <span class="text-cyan-500/80 text-[10px] block truncate font-mono">${art.absolute_path || ''}</span>
+              </div>
+              <span class="text-cyan-300 text-[10px] whitespace-nowrap font-mono">${kb}</span>
+            </div>`;
+          });
+          html += `</div>`;
+        }
+        row.innerHTML = html;
+      }
+      dialogHistory.appendChild(row);
+      dialogHistory.scrollTop = dialogHistory.scrollHeight;
+    }
+
+    function sendTaskControl(action) {
+      fetch('/api/task/' + action, { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+          if (data.badge_text) {
+            execBadge.textContent = data.badge_text;
+            execBadge.className = data.badge_class || "text-cyan-300 font-bold";
+          }
+          if (data.reply_text) {
+            speakAiResponse(data.reply_text, data.audio_url, data.visual_markdown);
+          }
+        })
+        .catch(e => console.error(e));
+    }
+
+    // -------------------------------------------------------------------------
+    // LOCAL OFFLINE STT (whisper.cpp) RECORDER, RESAMPLER & VAD AUTO-STOP
+    // -------------------------------------------------------------------------
+    let isRecordingLocal = false;
+    let localMediaStream = null;
+    let localAudioSource = null;
+    let localAudioProcessor = null;
+    let localZeroGain = null;
+    let recordedPcmBuffers = [];
+    let localRecordingStartTime = 0;
+
+    // Phase 6.3.2 - Silence Auto-Stop (VAD) Configuration
+    const VAD_CONFIG = {
+      silenceThresholdRms: 0.012,     // RMS level below which audio is considered silence
+      speechTriggerRms: 0.020,        // RMS level required to arm speech detection (tuned for natural conversational speech)
+      silenceDurationMs: 2200,        // 2200ms (2.2s) continuous silence after speech -> auto-stop
+      minRecordingDurationMs: 500     // Minimum duration required for valid speech
+    };
+
+    let hasSpeechStarted = false;
+    let silenceStartTime = null;
+    let isTranscribingAudio = false;
+    let isAgentRequestInFlight = false;
+    let pendingVoiceCommand = null;
+
+    // High-fidelity band-limited resampler to exactly 16,000 Hz using Web Audio OfflineAudioContext
+    async function resampleTo16000Hz(samples, sourceRate) {
+      if (sourceRate === 16000) return samples;
+
+      const numChannels = 1;
+      const targetRate = 16000;
+      const targetLength = Math.max(1, Math.round(samples.length * (targetRate / sourceRate)));
+
+      try {
+        const offlineCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(
+          numChannels,
+          targetLength,
+          targetRate
+        );
+        const audioBuffer = offlineCtx.createBuffer(numChannels, samples.length, sourceRate);
+        audioBuffer.copyToChannel(samples, 0);
+
+        const bufferSource = offlineCtx.createBufferSource();
+        bufferSource.buffer = audioBuffer;
+        bufferSource.connect(offlineCtx.destination);
+        bufferSource.start(0);
+
+        const renderedBuffer = await offlineCtx.startRendering();
+        return renderedBuffer.getChannelData(0);
+      } catch (err) {
+        console.warn('[LOCAL_STT]: OfflineAudioContext resampling fallback to linear:', err);
+        const ratio = sourceRate / targetRate;
+        const result = new Float32Array(targetLength);
+        for (let i = 0; i < targetLength; i++) {
+          const srcIndex = i * ratio;
+          const index1 = Math.floor(srcIndex);
+          const index2 = Math.min(index1 + 1, samples.length - 1);
+          const frac = srcIndex - index1;
+          result[i] = samples[index1] * (1 - frac) + samples[index2] * frac;
+        }
+        return result;
+      }
+    }
+
+    // Helper: Encode Float32 PCM samples into a standard 16kHz 16-bit Mono WAV
+    function encodeWAV(samples, sampleRate = 16000) {
+      const buffer = new ArrayBuffer(44 + samples.length * 2);
+      const view = new DataView(buffer);
+
+      function writeString(offset, string) {
+        for (let i = 0; i < string.length; i++) {
+          view.setUint8(offset + i, string.charCodeAt(i));
+        }
+      }
+
+      writeString(0, 'RIFF');
+      view.setUint32(4, 36 + samples.length * 2, true);
+      writeString(8, 'WAVE');
+      writeString(12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true); // PCM
+      view.setUint16(22, 1, true); // Mono
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true); // Byte rate
+      view.setUint16(32, 2, true); // Block align
+      view.setUint16(34, 16, true); // Bits per sample
+      writeString(36, 'data');
+      view.setUint32(40, samples.length * 2, true);
+
+      let offset = 44;
+      for (let i = 0; i < samples.length; i++, offset += 2) {
+        let s = Math.max(-1, Math.min(1, samples[i]));
+        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+      }
+
+      return new Uint8Array(buffer);
+    }
+
+    function updateMicButtonState(recording, isProcessing = false) {
+      const btn = document.getElementById('btnMicAction');
+      const icon = document.getElementById('btnMicActionIcon');
+      const text = document.getElementById('btnMicActionText');
+      const vocalText = document.getElementById('vocalStateText');
+      
+      if (isProcessing) {
+        if (btn) btn.className = "px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center gap-1 animate-pulse border border-amber-400";
+        if (icon) icon.textContent = "⏳";
+        if (text) text.textContent = "MEMPROSES...";
+        if (vocalText) vocalText.textContent = "TRANSKRIPSI...";
+      } else if (recording) {
+        if (btn) btn.className = "px-4 py-2 bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center gap-1 animate-pulse border border-rose-400";
+        if (icon) icon.textContent = "⏹️";
+        if (text) text.textContent = "SELESAI BICARA";
+        if (vocalText) vocalText.textContent = "MEREKAM...";
+      } else {
+        if (btn) btn.className = "px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center gap-1";
+        if (icon) icon.textContent = "🎤";
+        if (text) text.textContent = "MULAI BICARA";
+        if (vocalText) vocalText.textContent = "MENDENGAR";
+      }
+    }
+
+    async function handleMicButtonClick() {
+      if (isMuted) {
+        toggleMicMute();
+      }
+      if (isRecordingLocal) {
+        await stopLocalRecording();
+      } else {
+        await startLocalRecording();
+      }
+    }
+
+    async function startLocalRecording() {
+      if (isAgentRequestInFlight || currentState === VoiceState.SPEAKING || isMuted) {
+        console.log(`[LOCAL_STT]: Recording skipped. isAgentInFlight=${isAgentRequestInFlight}, State=${currentState}, isMuted=${isMuted}`);
+        if (isAgentRequestInFlight) {
+          hudStateBadge.textContent = "Agen Sedang Memproses...";
+          hudStateBadge.className = "text-amber-400 font-bold animate-pulse";
+          speechSubtitle.textContent = "[Mohon tunggu, agen sedang menyelesaikan pemrosesan instruksi sebelumnya...]";
+        }
+        return;
+      }
+      if (isRecordingLocal) {
+        return;
+      }
+
+      try {
+        unlockAudioContext();
+        AudioPlaybackManager.stopAll();
+
+        console.log('[LOCAL_STT]: Requesting microphone access for recording...');
+        setVoiceState(VoiceState.LISTENING);
+        hudStateBadge.textContent = "Menunggu Suara Anda...";
+        hudStateBadge.className = "text-rose-400 font-bold animate-pulse";
+        speechSubtitle.textContent = "[Silakan bicara dalam Bahasa Indonesia... Sistem akan otomatis berhenti 3 detik setelah Anda selesai]";
+        updateMicButtonState(true);
+
+        // Reset VAD state
+        hasSpeechStarted = false;
+        silenceStartTime = null;
+
+        localMediaStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            channelCount: 1,
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+        recordedPcmBuffers = [];
+        localAudioSource = audioCtx.createMediaStreamSource(localMediaStream);
+        
+        // ScriptProcessorNode routing to a zero-gain node to completely avoid acoustic feedback to speakers
+        localAudioProcessor = audioCtx.createScriptProcessor(4096, 1, 1);
+        localZeroGain = audioCtx.createGain();
+        localZeroGain.gain.value = 0.0;
+
+        localAudioProcessor.onaudioprocess = (e) => {
+          if (!isRecordingLocal) return;
+          const inputData = e.inputBuffer.getChannelData(0);
+          recordedPcmBuffers.push(new Float32Array(inputData));
+
+          // Compute RMS level for visualizer & VAD
+          let sum = 0;
+          for (let i = 0; i < inputData.length; i++) {
+            sum += inputData[i] * inputData[i];
+          }
+          const rms = Math.sqrt(sum / inputData.length);
+          speechEnergy = Math.min(1.0, Math.max(0.12, rms * 14));
+
+          // Phase 6.3.2 - Voice Silence Auto-Stop (VAD) Logic
+          const now = performance.now();
+          if (!hasSpeechStarted) {
+            if (rms >= VAD_CONFIG.speechTriggerRms) {
+              hasSpeechStarted = true;
+              silenceStartTime = null;
+              console.log('[LOCAL_STT_VAD]: User speech detected (RMS: ' + rms.toFixed(4) + '). VAD armed.');
+              hudStateBadge.textContent = "Mendengarkan Ucapan...";
+              hudStateBadge.className = "text-rose-400 font-bold animate-pulse";
+            }
+          } else {
+            // Speech has been detected earlier
+            if (rms >= VAD_CONFIG.silenceThresholdRms) {
+              // Active voice or brief pause between words (< 3s) -> reset silence countdown
+              if (silenceStartTime !== null) {
+                silenceStartTime = null;
+                hudStateBadge.textContent = "Mendengarkan Ucapan...";
+                hudStateBadge.className = "text-rose-400 font-bold animate-pulse";
+              }
+            } else {
+              // Current buffer is below silence threshold
+              if (silenceStartTime === null) {
+                silenceStartTime = now;
+              } else {
+                const silenceElapsed = now - silenceStartTime;
+                const remainingSec = Math.max(0, Math.ceil((VAD_CONFIG.silenceDurationMs - silenceElapsed) / 1000));
+                
+                if (remainingSec <= 2 && remainingSec > 0) {
+                  hudStateBadge.textContent = `Hening terdeteksi (${remainingSec}s)...`;
+                  hudStateBadge.className = "text-amber-400 font-bold";
+                }
+
+                if (silenceElapsed >= VAD_CONFIG.silenceDurationMs) {
+                  console.log(`[LOCAL_STT_VAD]: Auto-stop triggered (${Math.round(silenceElapsed)}ms silence). Stopping...`);
+                  silenceStartTime = null;
+                  hasSpeechStarted = false;
+                  stopLocalRecording();
+                }
+              }
+            }
+          }
+        };
+
+        localAudioSource.connect(localAudioProcessor);
+        localAudioProcessor.connect(localZeroGain);
+        localZeroGain.connect(audioCtx.destination);
+
+        isRecordingLocal = true;
+        localRecordingStartTime = performance.now();
+        console.log('[LOCAL_STT]: Microphone recording active at ' + audioCtx.sampleRate + ' Hz (Zero-feedback routing).');
+      } catch (err) {
+        console.error('[LOCAL_STT]: Failed to start recording:', err);
+        isRecordingLocal = false;
+        hasSpeechStarted = false;
+        silenceStartTime = null;
+        updateMicButtonState(false);
+        setVoiceState(VoiceState.ERROR, { customText: "KENDALA MIC" });
+        hudStateBadge.textContent = "Akses Mic Gagal";
+        hudStateBadge.className = "text-rose-400 font-bold";
+        speechSubtitle.textContent = `[Gagal mengakses mikrofon: ${err.message || 'Izin ditolak'}. Anda dapat mengetik instruksi di bawah.]`;
+      }
+    }
+
+    async function stopLocalRecording() {
+      if (!isRecordingLocal) return;
+      isRecordingLocal = false;
+      const trailingSilenceMs = silenceStartTime ? (performance.now() - silenceStartTime) : 0;
+      hasSpeechStarted = false;
+      silenceStartTime = null;
+      console.log(`[LOCAL_STT]: Stopping microphone recording (trailing silence: ${Math.round(trailingSilenceMs)}ms)...`);
+      updateMicButtonState(false, true);
+
+      if (localAudioProcessor) {
+        try { localAudioProcessor.disconnect(); } catch (e) {}
+        localAudioProcessor = null;
+      }
+      if (localZeroGain) {
+        try { localZeroGain.disconnect(); } catch (e) {}
+        localZeroGain = null;
+      }
+      if (localAudioSource) {
+        try { localAudioSource.disconnect(); } catch (e) {}
+        localAudioSource = null;
+      }
+      if (localMediaStream) {
+        try {
+          localMediaStream.getTracks().forEach(t => t.stop());
+        } catch (e) {}
+        localMediaStream = null;
+      }
+
+      playBeep(660, 0.05);
+
+      const durationMs = performance.now() - localRecordingStartTime;
+      console.log(`[LOCAL_STT]: Recorded duration: ${Math.round(durationMs)}ms, buffers: ${recordedPcmBuffers.length}`);
+
+      if (durationMs < VAD_CONFIG.minRecordingDurationMs || recordedPcmBuffers.length === 0) {
+        hudStateBadge.textContent = "Suara Terlalu Singkat";
+        speechSubtitle.textContent = "[Rekaman terlalu singkat. Silakan klik mic dan bicara kembali.]";
+        updateMicButtonState(false);
+        setTimeout(() => {
+          if (currentState === VoiceState.LISTENING) setVoiceState(VoiceState.IDLE);
+        }, 1500);
+        return;
+      }
+
+      // Combine raw PCM Float32 buffers
+      let totalLength = 0;
+      for (const b of recordedPcmBuffers) totalLength += b.length;
+      const combinedSamples = new Float32Array(totalLength);
+      let offset = 0;
+      for (const b of recordedPcmBuffers) {
+        combinedSamples.set(b, offset);
+        offset += b.length;
+      }
+      recordedPcmBuffers = [];
+
+      const capturedRate = audioCtx ? audioCtx.sampleRate : 48000;
+
+      // Trim excessive dead trailing silence from VAD countdown while preserving 350ms natural acoustic cushion
+      let speechSamples = combinedSamples;
+      if (trailingSilenceMs > 450) {
+        const excessSilenceMs = trailingSilenceMs - 350;
+        const excessSilenceSamples = Math.round((excessSilenceMs / 1000) * capturedRate);
+        const minPreservedSamples = Math.round(0.4 * capturedRate);
+        const trimmedLength = Math.max(minPreservedSamples, combinedSamples.length - excessSilenceSamples);
+        speechSamples = combinedSamples.subarray(0, trimmedLength);
+        console.log(`[LOCAL_STT]: Trimmed ${excessSilenceSamples} samples of dead air (${Math.round(excessSilenceMs)}ms). Clean speech length: ${speechSamples.length}.`);
+      }
+
+      console.log(`[LOCAL_STT]: Resampling ${speechSamples.length} samples from ${capturedRate}Hz to exactly 16000Hz...`);
+
+      // Band-limited sinc resampling to 16,000 Hz
+      const resampledSamples = await resampleTo16000Hz(speechSamples, capturedRate);
+
+      // Trailing silence padding (200ms = 3200 samples at 16kHz) to preserve word endings
+      const padLength = Math.round(16000 * 0.2);
+      const paddedSamples = new Float32Array(resampledSamples.length + padLength);
+      paddedSamples.set(resampledSamples, 0);
+
+      // Encode strictly 16kHz Mono 16-bit signed PCM WAV
+      const wavUint8 = encodeWAV(paddedSamples, 16000);
+      console.log(`[LOCAL_STT]: Clean 16kHz WAV generated: ${wavUint8.byteLength} bytes.`);
+
+      setVoiceState(VoiceState.THINKING, { customText: "TRANSKRIPSI..." });
+      hudStateBadge.textContent = "Memproses Suara (whisper.cpp)...";
+      hudStateBadge.className = "text-amber-400 font-bold animate-pulse";
+      speechSubtitle.textContent = "[Mentranskripsi suara dengan model offline lokal whisper.cpp...]";
+
+      if (isTranscribingAudio) {
+        console.warn('[LOCAL_STT]: Transkripsi audio sedang berjalan, mengabaikan pemicu duplikat.');
+        return;
+      }
+      isTranscribingAudio = true;
+
+      try {
+        if (!window.desktopAPI || !window.desktopAPI.transcribeAudio) {
+          throw new Error('desktopAPI.transcribeAudio tidak tersedia.');
+        }
+
+        const res = await window.desktopAPI.transcribeAudio(wavUint8);
+        console.log('[LOCAL_STT]: Transcribe result received:', res);
+        updateMicButtonState(false);
+
+        if (res && res.success && res.text && res.text.trim().length > 0) {
+          const recognizedText = res.text.trim();
+          console.log('[LOCAL_STT]: Final recognized transcript:', recognizedText);
+
+          // Update UI subtitle to show what was recognized
+          speechSubtitle.innerHTML = `🎙️ Terdeteksi: <strong class="text-cyan-200">"${recognizedText}"</strong>`;
+
+          // Clear transient transcription state back to IDLE before dispatching
+          setVoiceState(VoiceState.IDLE);
+
+          // AUTO-SUBMIT: Automatically submit recognized transcript to unified agent pipeline!
+          // Voice input does NOT require clicking KIRIM or pressing Enter.
+          // Does NOT overwrite or clear any unrelated text user typed in quickTextInput.
+          submitUserInstruction(recognizedText, 'voice');
+        } else {
+          const errMsg = (res && res.error) ? res.error : "Suara percakapan tidak dapat dikenali.";
+          console.warn('[LOCAL_STT]: Recognition produced no valid text:', errMsg);
+          setVoiceState(VoiceState.IDLE);
+          hudStateBadge.textContent = "Suara Tidak Terdeteksi";
+          speechSubtitle.textContent = `[${errMsg}] Anda dapat mencoba lagi atau mengetik instruksi pada kolom di bawah.`;
+        }
+      } catch (sttErr) {
+        console.error('[LOCAL_STT]: Error during transcription:', sttErr);
+        updateMicButtonState(false);
+        setVoiceState(VoiceState.ERROR, { customText: "KENDALA STT" });
+        hudStateBadge.textContent = "Kendala STT Lokal";
+        hudStateBadge.className = "text-rose-400 font-bold";
+        speechSubtitle.textContent = `[Terjadi kendala transkripsi: ${sttErr.message || 'Gagal'}. Silakan gunakan kolom input teks.]`;
+      } finally {
+        isTranscribingAudio = false;
+      }
+    }
+
+    // Keyboard shortcut: Spacebar toggles voice recording (unless inside input/textarea)
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        handleMicButtonClick();
+      }
+    });
+
+    // PEMROSESAN MAKSUD UCAPAN (TRANSISI LISTENING -> THINKING)
+    function processContextualVoiceInput(promptText) {
+      const lower = promptText.toLowerCase().trim();
+
+      // Filter echo kata-kata AI sendiri (hanya jika persis sama dengan kalimat sambutan bot untuk mencegah false drop)
+      const CANCELED_ECHOES = [
+        "saya siap membantu pekerjaan bim anda",
+        "halo saya siap membantu pekerjaan bim anda",
+        "katakan oke eksekusi"
+      ];
+      if (CANCELED_ECHOES.includes(lower)) {
+        console.warn('[HUD_ECHO_FILTER]: Dropping acoustic echo of canned bot phrase:', lower);
+        return;
+      }
+
+      // STATE MACHINE: TRANSISI KE THINKING
+      setVoiceState(VoiceState.THINKING);
+
+      // Matikan mic dan blokir input baru
+      if (recognition) {
+        try { recognition.abort(); } catch(e){}
+      }
+
+      // CRITICAL PHASE 6.4.4: Hentikan pemutaran audio aktif seketika (Zero Overlap & Immediate Interruption)
+      AudioPlaybackManager.stopAll();
+
+      const reqId = 'req_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+      timingDiagnostics.req_id = reqId;
+      timingDiagnostics.prompt_submitted_at = performance.now();
+
+      isAgentRequestInFlight = true;
+      fetch('/api/voice-input', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: promptText, voice: selectedVoice, req_id: reqId, timestamp: Date.now() })
+      })
+      .then(res => res.json())
+      .then(data => {
+        isAgentRequestInFlight = false;
+        timingDiagnostics.ai_response_received_at = performance.now();
+        if (!data || !data.reply_text) {
+          onSpeechCycleEnd();
+          return;
+        }
+
+        if (data.badge_text) {
+          execBadge.textContent = data.badge_text;
+          execBadge.className = data.badge_class || "text-cyan-300 font-bold";
+        }
+
+        speakAiResponse(data.reply_text, data.audio_url, data.visual_markdown, data.artifacts, data.audio_chunks, data.timing, data.req_id || reqId);
+      })
+      .catch(err => {
+        isAgentRequestInFlight = false;
+        console.error("Voice input error:", err);
+        setVoiceState(VoiceState.ERROR);
+        speakAiResponse("Maaf, terjadi kendala koneksi ke server AIGRAV.", null);
+      });
+    }
+
+    // FUNGSI SUARA TANGGAPAN AIGRAV (TRANSISI THINKING -> SPEAKING)
+    function speakAiResponse(replyText, audioUrl, visualMd = null, artifacts = null, audioChunks = null, timingData = null, reqId = null) {
+      timingDiagnostics.tts_started_at = performance.now();
+      if (timingData) {
+        timingDiagnostics.server_timing = timingData;
+      }
+      if (reqId) {
+        timingDiagnostics.req_id = reqId;
+      }
+
+      // 1. STATE MACHINE: SET KE SPEAKING SEBELUM AUDIO DIMULAI
+      setVoiceState(VoiceState.SPEAKING);
+      unlockAudioContext();
+
+      // 2. MATIKAN MIC DAN PASTIKAN TIDAK BISA MENANGKAP SUARA AI
+      if (recognition) {
+        try { recognition.abort(); } catch(e){}
+      }
+
+      speechSubtitle.textContent = `"${replyText}"`;
+      addDialogLog('bot', replyText, visualMd, artifacts);
+
+      const onPlaybackDone = (success, reason) => {
+        console.log(`[AUDIO_MGR][${reqId || 'anon'}]: Playback finished with result: ${success} (${reason})`);
+        if (!success && reason !== "TIMEOUT" && reason !== "ENDED" && reason !== "SYNTH_ENDED" && reason !== "CHUNKS_ENDED") {
+          setVoiceState(VoiceState.ERROR);
+          setTimeout(onSpeechCycleEnd, 1000);
+        } else {
+          onSpeechCycleEnd();
+        }
+      };
+
+      // 3. AUDIO PLAYBACK MANAGER: PUTAR PROGRESIF ATAU MONOLITHIC AUDIO
+      if (audioChunks && Array.isArray(audioChunks) && audioChunks.length > 0) {
+        AudioPlaybackManager.playChunks(audioChunks, replyText, selectedVoice, onPlaybackDone, timingData, reqId);
+      } else {
+        AudioPlaybackManager.playAudio(audioUrl, replyText, selectedVoice, onPlaybackDone, reqId);
+      }
+    }
+
+    // AKHIR SIKLUS BICARA: TRANSISI SPEAKING -> IDLE DENGAN BUFFER AKUSTIK
+    function onSpeechCycleEnd() {
+      // Tunggu 500ms jeda buffer reverberasi agar mic tidak menangkap gema speaker
+      setTimeout(() => {
+        if (currentState === VoiceState.SPEAKING || currentState === VoiceState.ERROR) {
+          setVoiceState(VoiceState.IDLE);
+          hudStateBadge.textContent = "STT Offline Siap (whisper.cpp)";
+          hudStateBadge.className = "text-emerald-400 font-bold";
+        }
+
+        // Dequeue any pending voice command that arrived while agent was processing
+        if (pendingVoiceCommand) {
+          const nextCommand = pendingVoiceCommand;
+          pendingVoiceCommand = null;
+          console.log('[HUD_QUEUE]: Menjalankan perintah suara yang tertunda dari antrean:', nextCommand);
+          submitUserInstruction(nextCommand, 'voice');
+        }
+      }, 500);
+    }
+
+    // Inisialisasi Voice Preference saat DOM siap
+    window.addEventListener('DOMContentLoaded', () => {
+      setVoice(selectedVoice, false);
+    });
+
+    // RENDER LOOP
+    function render() {
+      requestAnimationFrame(render);
+      wavePhase += 0.055;
+
+      const isListening = (currentState === VoiceState.LISTENING);
+      const isProcessing = (currentState === VoiceState.THINKING);
+      const isSpeaking = (currentState === VoiceState.SPEAKING);
+      const activeState = (currentState !== VoiceState.IDLE);
+      const targetEnergy = activeState ? 1.0 : 0.12;
+      speechEnergy += (targetEnergy - speechEnergy) * 0.14;
+
+      if (activeState) {
+        const mod = Math.sin(wavePhase * 2.8) * 0.4 + Math.cos(wavePhase * 4.5) * 0.35;
+        const simDb = -16 + Math.round(mod * 8);
+        rmsDbText.textContent = `${simDb} dB`;
+      } else {
+        rmsDbText.textContent = "-24 dB";
+      }
+
+      miniBars.forEach((bar, idx) => {
+        let heightPct = 12;
+        if (activeState) {
+          const w = Math.sin(wavePhase * 3.8 + idx * 0.35) * 0.5 + 0.5;
+          heightPct = Math.min(100, Math.max(15, w * 95 * speechEnergy));
+          bar.style.backgroundColor = isListening ? '#f43f5e' : (isProcessing ? '#eab308' : (heightPct > 70 ? '#00f0ff' : '#0284c7'));
+        } else {
+          heightPct = 15 + Math.sin(wavePhase + idx * 0.25) * 6;
+          bar.style.backgroundColor = 'rgba(14, 116, 144, 0.4)';
+        }
+        bar.style.height = `${heightPct}%`;
+      });
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const numBars = 64;
+      const innerRadius = 105;
+      const maxBarHeight = 65;
+
+      for (let i = 0; i < numBars; i++) {
+        const angle = (i / numBars) * (Math.PI * 2) + (wavePhase * 0.1);
+        let wave = Math.sin(i * 0.4 + wavePhase * 3) * 0.4 + Math.sin(i * 0.9 - wavePhase * 2.2) * 0.35;
+        let barHeight = (8 + (wave * 0.5 + 0.5) * maxBarHeight) * speechEnergy;
+        if (!activeState) barHeight = 4 + Math.sin(i * 0.2 + wavePhase) * 3;
+
+        const r1 = innerRadius;
+        const r2 = innerRadius + barHeight;
+        const x1 = cx + Math.cos(angle) * r1;
+        const y1 = cy + Math.sin(angle) * r1;
+        const x2 = cx + Math.cos(angle) * r2;
+        const y2 = cy + Math.sin(angle) * r2;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        
+        if (isListening) {
+          ctx.strokeStyle = `rgba(244, 63, 94, ${0.6 + (barHeight / maxBarHeight) * 0.4})`;
+        } else if (isProcessing) {
+          ctx.strokeStyle = `rgba(234, 179, 8, ${0.6 + (barHeight / maxBarHeight) * 0.4})`;
+        } else if (isSpeaking && barHeight > 35) {
+          ctx.strokeStyle = `rgba(0, 240, 255, ${0.7 + (barHeight / maxBarHeight) * 0.3})`;
+        } else {
+          ctx.strokeStyle = `rgba(0, 150, 255, ${0.25 + speechEnergy * 0.4})`;
+        }
+        ctx.lineWidth = 2.2;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      }
+
+      ctx.beginPath();
+      for (let a = 0; a <= Math.PI * 2; a += 0.05) {
+        const waveOffset = Math.sin(a * 8 + wavePhase * 4) * (8 * speechEnergy);
+        const r = (innerRadius + 5) + waveOffset;
+        const px = cx + Math.cos(a) * r;
+        const py = cy + Math.sin(a) * r;
+        if (a === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = isListening ? `rgba(244, 63, 94, 0.7)` : (isProcessing ? `rgba(234, 179, 8, 0.7)` : `rgba(0, 240, 255, ${0.2 + speechEnergy * 0.6})`);
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+
+    // -------------------------------------------------------------------------
+    // DESKTOP FLOATING HUD INTEGRATION (ELECTRON SHELL)
+    // -------------------------------------------------------------------------
+    let isCompact = false;
+    let isPinned = false;
+
+    function toggleCompactMode() {
+      isCompact = !isCompact;
+      const btn = document.getElementById('btnToggleCompact');
+      if (isCompact) {
+        document.body.classList.add('compact-mode');
+        if (btn) {
+          btn.textContent = '🗖';
+          btn.title = "Restore / Expand Full HUD";
+        }
+        if (window.desktopAPI) window.desktopAPI.setWindowMode('compact');
+      } else {
+        document.body.classList.remove('compact-mode');
+        if (btn) {
+          btn.textContent = '⤢';
+          btn.title = "Toggle Compact / Full";
+        }
+        if (window.desktopAPI) window.desktopAPI.setWindowMode('expanded');
+      }
+    }
+
+    async function toggleAlwaysOnTop() {
+      if (window.desktopAPI && window.desktopAPI.toggleAlwaysOnTop) {
+        isPinned = await window.desktopAPI.toggleAlwaysOnTop();
+      } else {
+        isPinned = !isPinned; // Visual preview fallback for non-Electron browsers
+      }
+      const btn = document.getElementById('btnPinWindow');
+      if (btn) {
+        if (isPinned) {
+          btn.className = "px-2 py-0.5 rounded text-xs font-mono text-cyan-200 bg-cyan-500/30 border border-cyan-400 shadow-[0_0_10px_rgba(0,240,255,0.4)]";
+          btn.title = "Pinned (Always on Top Active)";
+        } else {
+          btn.className = "px-2 py-0.5 rounded text-xs font-mono text-cyan-400 hover:bg-cyan-900/60 hover:text-cyan-200 transition-colors border border-cyan-900/40";
+          btn.title = "Pin Always on Top";
+        }
+      }
+    }
+
+    async function handleTitlebarDoubleClick(e) {
+      if (e.target && e.target.closest && e.target.closest('.no-drag-region')) return;
+      if (window.desktopAPI && window.desktopAPI.toggleMaximize) {
+        await window.desktopAPI.toggleMaximize();
+      }
+    }
+
+    // UNIFIED INSTRUCTION SUBMISSION PIPELINE (VOICE AUTO-SUBMIT & MANUAL TEXT)
+    function submitUserInstruction(text, source = 'text') {
+      const cleaned = (text || '').trim();
+      // Guard against empty or blank submissions
+      if (!cleaned) {
+        console.log(`[HUD_SUBMIT][${source}]: Instruksi kosong, pengiriman dibatalkan.`);
+        return false;
+      }
+
+      // Concurrency guard: Only if a backend agent request is genuinely in flight
+      if (isAgentRequestInFlight) {
+        console.warn(`[HUD_SUBMIT][${source}]: Agen sedang memproses permintaan aktif.`);
+        if (source === 'voice') {
+          // Do not silently lose valid spoken command: queue for execution upon cycle completion
+          pendingVoiceCommand = cleaned;
+          hudStateBadge.textContent = "Antrean: Menunggu Agen...";
+          hudStateBadge.className = "text-amber-300 font-bold animate-pulse";
+          const snip = cleaned.length > 45 ? cleaned.substring(0, 42) + '...' : cleaned;
+          speechSubtitle.textContent = `[Permintaan suara masuk antrean: "${snip}"]`;
+          console.log('[HUD_SUBMIT]: Perintah suara berhasil dimasukkan ke antrean.');
+          return true;
+        } else {
+          hudStateBadge.textContent = "Agen Sedang Sibuk";
+          speechSubtitle.textContent = "[Agen sedang memproses instruksi. Mohon tunggu hingga selesai.]";
+          return false;
+        }
+      }
+
+      // Exactly ONE dialog history bubble per accepted user instruction
+      addDialogLog('user', cleaned);
+
+      // Immediate visual submission feedback
+      hudStateBadge.textContent = source === 'voice' ? "Memproses Perintah Suara..." : "Mengirim ke Agen...";
+      hudStateBadge.className = "text-amber-400 font-bold animate-pulse";
+      const snippet = cleaned.length > 55 ? cleaned.substring(0, 52) + '...' : cleaned;
+      speechSubtitle.textContent = `"[Memproses: '${snippet}']"`;
+
+      // Dispatch to agent runtime via existing /api/voice-input pipeline
+      processContextualVoiceInput(cleaned);
+      return true;
+    }
+
+    function submitQuickText() {
+      const input = document.getElementById('quickTextInput');
+      if (!input) return;
+      const text = input.value.trim();
+      // Guard against empty submissions
+      if (!text) {
+        console.log('[HUD_SUBMIT][text]: Teks kosong, pengiriman dibatalkan.');
+        return;
+      }
+      if (isAgentRequestInFlight) {
+        console.warn('[HUD_SUBMIT][text]: Agen sedang sibuk memproses instruksi aktif.');
+        return;
+      }
+      // Clear input and notify DOM listeners for manual text mode
+      input.value = '';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+
+      submitUserInstruction(text, 'text');
+    }
+
+    async function testMicrophoneHardware() {
+      console.log('[MIC_HW_CHECK]: Testing physical microphone hardware access...');
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.warn('[MIC_HW_CHECK]: navigator.mediaDevices.getUserMedia is NOT supported in this environment.');
+        return { supported: false, error: 'mediaDevices_unavailable' };
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const tracks = stream.getAudioTracks();
+        const trackInfos = tracks.map(t => ({
+          label: t.label || 'Default Mic',
+          enabled: t.enabled,
+          muted: t.muted,
+          readyState: t.readyState
+        }));
+        console.log('[MIC_HW_CHECK]: Physical microphone hardware access GRANTED. Detected tracks:', trackInfos);
+        tracks.forEach(t => t.stop());
+        return { supported: true, tracks: trackInfos };
+      } catch (hwErr) {
+        console.error('[MIC_HW_CHECK]: Physical microphone access FAILED:', {
+          name: hwErr.name,
+          message: hwErr.message
+        });
+        return { supported: false, error: hwErr.name };
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // AI MODE SWITCHING & HUD CONTROLS (PHASE 6.8)
+    // -------------------------------------------------------------------------
+    let currentAIMode = 'fast';
+
+    function updateAIModeUI(mode, tier, convId) {
+      currentAIMode = mode || 'fast';
+      const btnFast = document.getElementById('btnModeFast');
+      const btnAnalysis = document.getElementById('btnModeAnalysis');
+      const textMode = document.getElementById('textMode');
+      const dotMode = document.getElementById('dotMode');
+
+      if (currentAIMode === 'analysis') {
+        if (btnAnalysis) {
+          btnAnalysis.className = "px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-amber-400 bg-amber-500/20 text-amber-200 font-bold shadow-[0_0_10px_rgba(251,191,36,0.4)]";
+        }
+        if (btnFast) {
+          btnFast.className = "px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-cyan-900 bg-black/40 text-cyan-400/60 hover:text-cyan-200";
+        }
+        if (textMode) {
+          textMode.textContent = "ANALISIS (Flash High)";
+        }
+        if (dotMode) {
+          dotMode.className = "w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24]";
+        }
+      } else {
+        if (btnFast) {
+          btnFast.className = "px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-cyan-400 bg-cyan-500/20 text-cyan-200 font-bold shadow-[0_0_10px_rgba(0,240,255,0.4)]";
+        }
+        if (btnAnalysis) {
+          btnAnalysis.className = "px-2.5 py-0.5 rounded font-mono text-xs transition-all border border-cyan-900 bg-black/40 text-cyan-400/60 hover:text-cyan-200";
+        }
+        if (textMode) {
+          textMode.textContent = "CEPAT (Flash Lite)";
+        }
+        if (dotMode) {
+          dotMode.className = "w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_#00f0ff]";
+        }
+      }
+    }
+
+    async function switchAIMode(targetMode) {
+      if (isAgentRequestInFlight) {
+        alert("Agen sedang memproses instruksi aktif. Mohon tunggu hingga selesai sebelum berpindah mode.");
+        return;
+      }
+      if (targetMode === currentAIMode) {
+        return;
+      }
+
+      const modeName = targetMode === 'analysis' ? 'Mode Analisis (Flash High)' : 'Mode Cepat (Flash Lite)';
+      if (hudStateBadge) {
+        hudStateBadge.textContent = `Beralih ke ${modeName}...`;
+        hudStateBadge.className = "text-amber-400 font-bold animate-pulse";
+      }
+
+      try {
+        const resp = await fetch('/api/mode/switch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: targetMode, forward_context: true })
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data.success) {
+            updateAIModeUI(data.active_mode, data.active_model_tier, data.conversation_id);
+            const shortId = data.conversation_id ? data.conversation_id.substring(0, 8) + '...' : '-';
+            addDialogLog('system', `ℹ️ [MODE AI]: Berhasil beralih ke ${data.mode_label} (Sesi: ${shortId})`);
+            if (speechSubtitle) {
+              speechSubtitle.textContent = `"[Mode AI aktif: ${data.mode_label}]"`;
+            }
+          }
+        }
+      } catch (err) {
+        console.error("[HUD_MODE]: Gagal berpindah mode:", err);
+      } finally {
+        if (hudStateBadge) {
+          hudStateBadge.textContent = "MENDENGARKAN...";
+          hudStateBadge.className = "text-cyan-200 font-semibold";
+        }
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // CONNECTION STATUS TELEMETRY & USER-TRIGGERED RUNTIME REFRESH
+    // -------------------------------------------------------------------------
+    function updateConnectionStatus(data) {
+      if (!data) return;
+
+      // 1. Backend indicator
+      const dotBackend = document.getElementById('dotBackend');
+      const textBackend = document.getElementById('textBackend');
+      const indBackend = document.getElementById('indicatorBackend');
+      const isBackendOk = data.backend_connected !== false;
+      if (dotBackend && textBackend && indBackend) {
+        if (isBackendOk) {
+          dotBackend.className = 'w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]';
+          textBackend.textContent = 'ONLINE';
+          indBackend.className = 'flex items-center gap-1.5 text-emerald-400';
+        } else {
+          dotBackend.className = 'w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_#f43f5e] animate-pulse';
+          textBackend.textContent = 'OFFLINE';
+          indBackend.className = 'flex items-center gap-1.5 text-rose-400';
+        }
+      }
+
+      // 2. Antigravity Agent Runtime indicator
+      const dotAgent = document.getElementById('dotAgent');
+      const textAgent = document.getElementById('textAgent');
+      const indAgent = document.getElementById('indicatorAgent');
+      const isAgentOk = Boolean(data.agent_connected);
+      if (dotAgent && textAgent && indAgent) {
+        if (isAgentOk) {
+          dotAgent.className = 'w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]';
+          textAgent.textContent = 'TERHUBUNG';
+          indAgent.className = 'flex items-center gap-1.5 text-emerald-400';
+        } else {
+          dotAgent.className = 'w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_#f43f5e] animate-pulse';
+          textAgent.textContent = data.status === 'session_warning' ? 'DORMANT' : 'TERPUTUS';
+          indAgent.className = 'flex items-center gap-1.5 text-rose-400';
+        }
+      }
+
+      // 3. Revit Bridge indicator
+      const dotRevit = document.getElementById('dotRevit');
+      const textRevit = document.getElementById('textRevit');
+      const indRevit = document.getElementById('indicatorRevit');
+      const isRevitOk = Boolean(data.revit_connected);
+      if (dotRevit && textRevit && indRevit) {
+        if (isRevitOk) {
+          dotRevit.className = 'w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]';
+          textRevit.textContent = 'TERHUBUNG';
+          indRevit.className = 'flex items-center gap-1.5 text-emerald-400';
+        } else {
+          dotRevit.className = 'w-2 h-2 rounded-full bg-cyan-400/60';
+          textRevit.textContent = 'STANDBY';
+          indRevit.className = 'flex items-center gap-1.5 text-cyan-400/80';
+        }
+      }
+
+      // 4. Mode AI indicator & buttons
+      if (data.active_mode) {
+        updateAIModeUI(data.active_mode, data.active_model_tier, data.antigravity_session_id);
+      }
+    }
+
+    async function fetchConnectionStatus() {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const resp = await fetch('/api/status', { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (resp.ok) {
+          const data = await resp.json();
+          updateConnectionStatus(data);
+        } else {
+          updateConnectionStatus({ backend_connected: false, agent_connected: false, revit_connected: false });
+        }
+      } catch (e) {
+        updateConnectionStatus({ backend_connected: false, agent_connected: false, revit_connected: false });
+      }
+    }
+
+    async function refreshConnection() {
+      const btn = document.getElementById('btnRefreshConnection');
+      const icon = document.getElementById('refreshIcon');
+      const txt = document.getElementById('refreshText');
+      const feedback = document.getElementById('refreshFeedback');
+
+      function showFeedback(msg, colorClass = 'text-cyan-400') {
+        if (!feedback) return;
+        feedback.textContent = msg;
+        feedback.className = `text-[10px] ${colorClass} font-mono`;
+        feedback.classList.remove('hidden');
+        setTimeout(() => {
+          if (feedback) feedback.classList.add('hidden');
+        }, 5000);
+      }
+
+      if (!btn) return;
+      btn.disabled = true;
+      btn.classList.add('opacity-75', 'cursor-not-allowed');
+      if (icon) icon.classList.add('animate-spin');
+      if (txt) txt.textContent = 'MEMERIKSA...';
+
+      let backendOk = false;
+      let refreshData = null;
+
+      try {
+        // Step 1: Probe backend & refresh runtime
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        const resp = await fetch('/api/runtime/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (resp.ok) {
+          backendOk = true;
+          refreshData = await resp.json();
+        }
+      } catch (netErr) {
+        console.warn('[HUD_REFRESH]: Direct /api/runtime/refresh unreachable:', netErr);
+        backendOk = false;
+      }
+
+      // Step 2: If backend is offline, attempt controlled recovery via Desktop API
+      if (!backendOk) {
+        updateConnectionStatus({ backend_connected: false, agent_connected: false, revit_connected: false });
+
+        if (window.desktopAPI && typeof window.desktopAPI.ensureBackend === 'function') {
+          showFeedback('Backend offline. Memulai server AIGRAV...', 'text-amber-400');
+          if (txt) txt.textContent = 'MEMULAI BACKEND...';
+
+          try {
+            console.log('[HUD_REFRESH]: Invoking desktopAPI.ensureBackend()...');
+            const startRes = await window.desktopAPI.ensureBackend();
+            console.log('[HUD_REFRESH]: desktopAPI.ensureBackend returned:', startRes);
+
+            if (startRes && startRes.success) {
+              // Wait briefly for server socket readiness
+              await new Promise(r => setTimeout(r, 1200));
+
+              // Retry runtime refresh on the now-active backend
+              try {
+                const retryResp = await fetch('/api/runtime/refresh', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' }
+                });
+                if (retryResp.ok) {
+                  backendOk = true;
+                  refreshData = await retryResp.json();
+                }
+              } catch (retryErr) {
+                console.error('[HUD_REFRESH]: Secondary refresh probe failed:', retryErr);
+              }
+            } else {
+              showFeedback(`Gagal memulai backend: ${startRes?.message || 'Timeout'}`, 'text-rose-400');
+            }
+          } catch (desktopErr) {
+            console.error('[HUD_REFRESH]: desktopAPI.ensureBackend threw error:', desktopErr);
+            showFeedback('Gagal menghubungi proses Electron.', 'text-rose-400');
+          }
+        } else {
+          showFeedback('Backend offline. Jalankan launch_floating_hud.bat.', 'text-rose-400');
+        }
+      }
+
+      // Step 3: Present granular status based on confirmed components
+      if (backendOk && refreshData) {
+        updateConnectionStatus(refreshData);
+
+        if (refreshData.agent_connected) {
+          showFeedback(refreshData.message || 'Koneksi backend & agen terverifikasi!', 'text-emerald-400');
+        } else if (refreshData.status === 'session_warning') {
+          showFeedback(refreshData.message || 'Backend online, sesi agen dormant.', 'text-amber-400');
+        } else if (refreshData.status === 'runtime_unavailable') {
+          showFeedback('Backend online, namun Antigravity IDE/LS tidak terdeteksi.', 'text-amber-400');
+        } else {
+          showFeedback(refreshData.message || 'Koneksi backend pulih.', 'text-cyan-300');
+        }
+      }
+
+      // Restore button state
+      btn.disabled = false;
+      btn.classList.remove('opacity-75', 'cursor-not-allowed');
+      if (icon) icon.classList.remove('animate-spin');
+      if (txt) txt.textContent = 'REFRESH KONEKSI';
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Initialize Desktop Shell features if running in Electron or requested via URL parameter
+      const isDesktopEnv = (window.desktopAPI && window.desktopAPI.isDesktop) || 
+                           window.location.search.includes('desktop') || 
+                           window.location.search.includes('hud');
+      if (isDesktopEnv) {
+        document.body.classList.add('desktop-hud-mode');
+        const titlebar = document.getElementById('desktopTitlebar');
+        if (titlebar) titlebar.classList.remove('hidden');
+      }
+
+      setVoiceState(VoiceState.IDLE);
+
+      // Check offline STT status via preload bridge
+      if (window.desktopAPI && window.desktopAPI.getSTTStatus) {
+        try {
+          const sttStatus = await window.desktopAPI.getSTTStatus();
+          console.log('[LOCAL_STT]: Engine status:', sttStatus);
+          if (sttStatus && sttStatus.available) {
+            hudStateBadge.textContent = "STT Offline Siap (whisper.cpp)";
+            hudStateBadge.className = "text-emerald-400 font-bold";
+            speechSubtitle.innerHTML = '"Halo! Saya AIGRAV. STT offline whisper.cpp aktif. Klik tombol mic atau ketik teks untuk mulai."';
+          } else {
+            hudStateBadge.textContent = "STT Model Belum Siap";
+            hudStateBadge.className = "text-amber-400 font-bold";
+            speechSubtitle.innerHTML = `"[STT offline: ${sttStatus?.error || 'Tidak tersedia'}]. Gunakan kolom teks untuk input."`;
+          }
+        } catch (e) {
+          console.error('[LOCAL_STT]: Failed to query STT status:', e);
+        }
+      }
+
+      // Test physical microphone hardware access immediately
+      testMicrophoneHardware();
+
+      // Initialize connection telemetry and polling
+      fetchConnectionStatus();
+      setInterval(fetchConnectionStatus, 6000);
+    });
+  </script>
+</body>
+</html>

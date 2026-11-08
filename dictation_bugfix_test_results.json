@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-10-12T05:16:22.141Z",
+  "total": 8,
+  "passed": 8,
+  "all_passed": true,
+  "tests": [
+    {
+      "name": "Test 1: Type a manual instruction and submit using KIRIM",
+      "passed": true,
+      "detail": "Input cleared: true, Logged to history: true, Dispatched to /api/voice-input: true"
+    },
+    {
+      "name": "Test 2: Type a manual instruction and submit using Enter",
+      "passed": true,
+      "detail": "Enter triggered submit, prevented default: true, Dispatched: true"
+    },
+    {
+      "name": "Test 3: Dictate a short Indonesian instruction, review it, and submit using KIRIM",
+      "passed": true,
+      "detail": "No premature log before submit: true, Single log after submit: true, Dispatched: true"
+    },
+    {
+      "name": "Test 4: Dictate an instruction, edit the transcript, and submit using Enter",
+      "passed": true,
+      "detail": "Submitted edited string, not raw: true, Logged correctly: true"
+    },
+    {
+      "name": "Test 5: Dictate while a draft already exists; verify existing draft preserved",
+      "passed": true,
+      "detail": "Combined value: \"Model struktur utama kolom baja WF\""
+    },
+    {
+      "name": "Test 6: Submit an empty transcript; verify no request is sent",
+      "passed": true,
+      "detail": "Requests sent: 0, History entries: 0"
+    },
+    {
+      "name": "Test 7: Test a long dictated instruction without truncation",
+      "passed": true,
+      "detail": "Transmitted length: 142 chars, matched exactly: true"
+    },
+    {
+      "name": "Test 8: Verify one click / single submit (No duplicate requests while thinking)",
+      "passed": true,
+      "detail": "Total network requests dispatched: 1 (Expected exactly 1)"
+    }
+  ]
+}

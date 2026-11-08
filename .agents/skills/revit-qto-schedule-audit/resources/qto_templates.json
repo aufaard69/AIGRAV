@@ -1,0 +1,138 @@
+{
+  "qto_standards_version": "2.0.0",
+  "project_reference": "NTS-SI_01-PA-ST.rvt",
+  "last_updated": "2026-11-05",
+  "schedule_templates": {
+    "PelatSambungan": {
+      "category": "OST_StructConnectionPlates",
+      "categoryId": -2009038,
+      "total_columns": 4,
+      "columns": [
+        { "index": 0, "name": "Lokasi", "heading": "Lokasi", "hidden": false },
+        { "index": 1, "name": "Type of Connection", "heading": "Tipe Sambungan", "hidden": false },
+        { "index": 2, "name": "Count", "heading": "Qty", "hidden": false },
+        { "index": 3, "name": "Weight", "heading": "Berat (Kg)", "hidden": false }
+      ],
+      "hidden_fields": ["Thickness", "Width", "Length", "Comments", "Tipe Detail Sambungan"],
+      "sort_group": [
+        { "field": "Type of Connection", "order": "Ascending", "show_header": false, "show_footer": false }
+      ],
+      "filters": [
+        { "field": "Lokasi", "type": "Equal", "value_source": "LocationName" },
+        { "field": "Type of Connection", "type": "Contains", "value_source": "ConnectionName" }
+      ],
+      "grand_totals": true,
+      "itemize_instances": false
+    },
+    "BautSambungan": {
+      "category": "OST_StructConnectionBolts",
+      "categoryId": -2009041,
+      "total_columns": 3,
+      "columns": [
+        { "index": 0, "name": "Lokasi", "heading": "Lokasi", "hidden": false },
+        { "index": 1, "name": "Type of Connection", "heading": "Tipe Sambungan", "hidden": false },
+        { "index": 2, "name": "Number", "heading": "Qty", "hidden": false }
+      ],
+      "hidden_fields": ["Comments", "Standard", "Diameter"],
+      "sort_group": [
+        { "field": "Type of Connection", "order": "Ascending", "show_header": false, "show_footer": false }
+      ],
+      "filters": [
+        { "field": "Lokasi", "type": "Equal", "value_source": "LocationName" },
+        { "field": "Type of Connection", "type": "Contains", "value_source": "ConnectionName" }
+      ],
+      "grand_totals": true,
+      "itemize_instances": false
+    },
+    "BaseplateKolom": {
+      "category": "OST_StructConnectionPlates",
+      "categoryId": -2009038,
+      "total_columns": 7,
+      "columns": [
+        { "index": 0, "name": "Lokasi", "heading": "Lokasi", "hidden": false },
+        { "index": 1, "name": "Comments", "heading": "Keterangan", "hidden": false },
+        { "index": 2, "name": "Thickness", "heading": "Thickness (mm)", "hidden": false },
+        { "index": 3, "name": "Width", "heading": "Width (mm)", "hidden": false },
+        { "index": 4, "name": "Length", "heading": "Length (mm)", "hidden": false },
+        { "index": 5, "name": "Count", "heading": "Qty", "hidden": false },
+        { "index": 6, "name": "Weight", "heading": "Berat (Kg)", "hidden": false }
+      ],
+      "hidden_fields": ["Type of Connection"],
+      "sort_group": [
+        { "field": "Comments", "order": "Ascending" },
+        { "field": "Thickness", "order": "Ascending" },
+        { "field": "Width", "order": "Ascending" },
+        { "field": "Length", "order": "Ascending" }
+      ],
+      "filters": [
+        { "field": "Lokasi", "type": "Equal", "value_source": "LocationName" },
+        { "field": "Comments", "type": "Contains", "value": "Baseplate" }
+      ],
+      "grand_totals": true,
+      "itemize_instances": false
+    },
+    "FramingBalokKolom": {
+      "category": "OST_StructuralFraming / OST_StructuralColumns",
+      "total_columns": 6,
+      "columns": [
+        { "index": 0, "name": "Lokasi", "heading": "Lokasi", "hidden": false },
+        { "index": 1, "name": "Family and Type", "heading": "Family and Type", "hidden": false },
+        { "index": 2, "name": "Length", "heading": "Length (mm)", "hidden": false },
+        { "index": 3, "name": "Comments", "heading": "Comments", "hidden": false },
+        { "index": 4, "name": "Count", "heading": "Qty", "hidden": false },
+        { "index": 5, "name": "Weight", "heading": "Berat (Kg)", "hidden": false }
+      ],
+      "filters": [
+        { "field": "Lokasi", "type": "Equal", "value_source": "LocationName" },
+        { "field": "Type", "type": "Contains", "value_source": "ProfileName" }
+      ],
+      "grand_totals": true,
+      "itemize_instances": false
+    },
+    "AngkurKolom": {
+      "category": "OST_StructuralFraming",
+      "total_columns": 5,
+      "columns": [
+        { "index": 0, "name": "Lokasi", "heading": "Lokasi", "hidden": false },
+        { "index": 1, "name": "Comments", "heading": "Comments", "hidden": false },
+        { "index": 2, "name": "Diameter", "heading": "Diameter", "hidden": false },
+        { "index": 3, "name": "Count", "heading": "Qty", "hidden": false },
+        { "index": 4, "name": "Length", "heading": "Length", "hidden": false }
+      ],
+      "filters": [
+        { "field": "Lokasi", "type": "Equal", "value_source": "LocationName" }
+      ],
+      "grand_totals": true,
+      "itemize_instances": false
+    }
+  },
+  "anti_double_counting_rules": {
+    "bangunan_utama_filter": {
+      "field": "Lokasi",
+      "filter_type": "Equal",
+      "value": ""
+    },
+    "target_bangunan_utama_schedules": [
+      "B.1.8 - Kolom Angkur",
+      "B.2.1 - Kolom Baja WF 350 Mezzanine",
+      "C.2.3 - Beam Mezzanine WF 350",
+      "C.2.5 - Beam Mezzanine WF 250",
+      "C.2.8 - Mezzanine Pelat WF 350 Endplate",
+      "C.2.9 - Mezzanine Pelat WF 400 Endplate",
+      "C.2.10 - Mezzanine Pelat WF 350 Endplate",
+      "C.2.11 - Mezzanine Pelat WF 350 Gusset Plate",
+      "C.2.12 - Mezzanine Pelat WF 300 Endplate",
+      "C.2.13 - Mezzanine Pelat WF 300 Gusset Plate",
+      "C.2.14 - Mezzanine Pelat WF 200 Endplate",
+      "C.2.15 - Mezzanine Pelat WF 200 Gusset Plate",
+      "C.2.16 - Mezzanine Baut WF 588 Endplate",
+      "C.2.17 - Mezzanine Baut WF 400 Endplate",
+      "C.2.18 - Mezzanine Baut WF 350 Endplate",
+      "C.2.19 - Mezzanine Baut WF 350 Gusset Plate",
+      "C.2.20 - Mezzanine Baut WF 300 Endplate",
+      "C.2.21 - Mezzanine Baut WF 300 Gusset Plate",
+      "C.2.22 - Mezzanine Baut WF 200 Endplate",
+      "C.2.23 - Mezzanine Baut WF 200 Gusset Plate"
+    ]
+  }
+}

@@ -1,0 +1,272 @@
+﻿=== PHASE 1 & 4: DEEP PARAMETER & ADVANCE STEEL INSPECTION ===
+Original Base plate Type: 1667010
+Duplicated WF400_BASE_STD_01 Type: 1669961
+
+[All Parameters on WF400_BASE_STD_01 Type]
+  - Name: "Modify Parameters" | ReadOnly: False | Storage: None | Value: 0
+  - Name: "Type Image" | ReadOnly: False | Storage: ElementId | Value: 0
+  - Name: "Keynote" | ReadOnly: False | Storage: String | Value: 0
+  - Name: "Category" | ReadOnly: True | Storage: ElementId | Value: Structural Connections
+  - Name: "Category" | ReadOnly: True | Storage: ElementId | Value: Structural Connections
+  - Name: "Modify Ranges of applicability" | ReadOnly: False | Storage: None | Value: 0
+  - Name: "Type IFC Predefined Type" | ReadOnly: False | Storage: String | Value: 0
+  - Name: "Export Type to IFC As" | ReadOnly: False | Storage: String | Value: 0
+  - Name: "Export Type to IFC" | ReadOnly: False | Storage: Integer | Value: Default
+  - Name: "Type IfcGUID" | ReadOnly: False | Storage: String | Value: 3b5WSJFUL8PfbZUD18MBDY
+  - Name: "Design Option" | ReadOnly: True | Storage: ElementId | Value: -1
+  - Name: "Model" | ReadOnly: False | Storage: String | Value: 0
+  - Name: "Manufacturer" | ReadOnly: False | Storage: String | Value: 0
+  - Name: "Type Comments" | ReadOnly: False | Storage: String | Value: 0
+  - Name: "URL" | ReadOnly: False | Storage: String | Value: 0
+  - Name: "Description" | ReadOnly: False | Storage: String | Value: 0
+  - Name: "Assembly Description" | ReadOnly: True | Storage: String | Value: 
+  - Name: "Assembly Code" | ReadOnly: False | Storage: String | Value: 
+  - Name: "Family Name" | ReadOnly: True | Storage: String | Value: Base plate
+  - Name: "Type Name" | ReadOnly: True | Storage: String | Value: WF400_BASE_STD_01
+  - Name: "Type Mark" | ReadOnly: False | Storage: String | Value: 0
+  - Name: "Cost" | ReadOnly: False | Storage: Double | Value: 0
+
+[Ready Handler ID: 1668214 (Type: Base plate)]
+Subelements Count: 5
+Instance Parameters:
+  - Name: "Override by Instance" | ReadOnly: False | Storage: Integer | Value: No
+  - Name: "Input Elements" | ReadOnly: True | Storage: String | Value: WF400, 350x500mm
+  - Name: "Code Checking Status" | ReadOnly: True | Storage: Integer | Value: Not Calculated
+  - Name: "Approval Status" | ReadOnly: False | Storage: ElementId | Value: None
+  - Name: "Detailed Parameters" | ReadOnly: True | Storage: None | Value: 0
+  - Name: "Image" | ReadOnly: False | Storage: ElementId | Value: 0
+  - Name: "Category" | ReadOnly: True | Storage: ElementId | Value: Structural Connections
+  - Name: "Category" | ReadOnly: True | Storage: ElementId | Value: Structural Connections
+  - Name: "IFC Predefined Type" | ReadOnly: False | Storage: String | Value: 0
+  - Name: "Export to IFC As" | ReadOnly: False | Storage: String | Value: 0
+  - Name: "Export to IFC" | ReadOnly: False | Storage: Integer | Value: By Type
+  - Name: "IfcGUID" | ReadOnly: False | Storage: String | Value: 3b5WSJFUL8PfbZUD18MBnT
+  - Name: "Design Option" | ReadOnly: True | Storage: ElementId | Value: -1
+  - Name: "Volume" | ReadOnly: True | Storage: Double | Value: 0
+  - Name: "Phase Demolished" | ReadOnly: False | Storage: ElementId | Value: None
+  - Name: "Phase Created" | ReadOnly: False | Storage: ElementId | Value: New Construction
+  - Name: "Comments" | ReadOnly: False | Storage: String | Value: baseplate
+  - Name: "Family and Type" | ReadOnly: False | Storage: ElementId | Value: Base plate: Base plate
+  - Name: "Family" | ReadOnly: False | Storage: ElementId | Value: Base plate
+  - Name: "Type" | ReadOnly: False | Storage: ElementId | Value: Base plate
+  - Name: "Family Name" | ReadOnly: True | Storage: String | Value: 0
+  - Name: "Type Name" | ReadOnly: True | Storage: String | Value: 0
+  - Name: "Type Id" | ReadOnly: True | Storage: ElementId | Value: 1667010
+  - Name: "Mark" | ReadOnly: False | Storage: String | Value: 0
+
+Subelements Breakdown:
+  - Sub category: OST_StructConnectionPlates
+    Geometry: GeometryObject
+  - Sub category: OST_StructConnectionHoles
+    Geometry: GeometryObject
+  - Sub category: OST_StructConnectionWelds
+    Geometry: GeometryObject
+  - Sub category: OST_StructConnectionModifiers
+    Geometry: GeometryObject
+  - Sub category: OST_StructConnectionAnchors
+    Geometry: GeometryObject
+
+[Loaded Assemblies in Revit related to Steel]
+  - Assembly: Autodesk.SteelConnectionsDB
+      Class: Autodesk.SteelConnectionsDB.SteelConnectionHandler
+      Class: Autodesk.SteelConnectionsDB.SteelConnectionPagesScope
+  - Assembly: RevitAPISteel
+      Class: Autodesk.Revit.DB.Structure.IModifyConnectionParametersServer
+      Class: Autodesk.Revit.DB.Structure.ModifyConnectionParametersServiceData
+      Class: Autodesk.Revit.DB.Steel.SteelConnectionUtil
+  - Assembly: Autodesk.SteelConnectionsDB.resources
+  - Assembly: Autodesk.SteelConnectionsUI
+      Class: Autodesk.SteelConnectionsUI.SteelConnection
+      Class: Autodesk.SteelConnectionsUI.SteelConnectionPagesHandlerModal
+      Class: Autodesk.SteelConnectionsUI.SteelConnectionPagesHandlerModeless
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: Autodesk.SteelConnections.ASRvtFamilyMapping
+  - Assembly: Autodesk.SteelConnections.ASRvtModeler
+  - Assembly: Autodesk.SteelConnections.ASRvtGeomConversions
+  - Assembly: AdvanceSteelConnAutoNodes
+  - Assembly: AdvanceSteelNodes
+  - Assembly: AdvanceSteelConnAutoNodes.customization
+  - Assembly: AdvanceSteelConnAutoNodesUI.customization
+  - Assembly: AdvanceSteelConnAutoNodesUI
+  - Assembly: AdvanceSteelServices
+  - Assembly: DynamoSteelRevit
+  - Assembly: ASAutoConnectionMgd
+  - Assembly: AdvanceSteelConnAutoNodes.customization
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: ASConnectionsResources
+  - Assembly: ASConnectionsPreviews
+  - Assembly: Autodesk.SteelConnections.ASDynamicProfiles
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AdvanceSteelConnAutoNodes.resources
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: Autodesk.SteelConnectionsUI.resources
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.ConnectionGenerator
+  - Assembly: AIGRAV.Skills.ConnectionLibraryManager
+  - Assembly: AIGRAV.Skills.ConnectionNativeTest
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelConnectionAuthoring
+      Class: AIGRAV.Skills.SteelConnectionAuthoring.SteelConnectionAuthoringSkill
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+  - Assembly: AIGRAV.Skills.SteelTypeGenerator
+

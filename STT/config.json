@@ -1,0 +1,9 @@
+{
+  "engine": "whisper.cpp",
+  "binary_path": "C:\\AIGRAV\\STT\\bin\\whisper-cli.exe",
+  "model_path": "C:\\AIGRAV\\STT\\models\\ggml-base.bin",
+  "language": "id",
+  "threads": 4,
+  "timeout_ms": 30000,
+  "prompt": "Halo AIGRAV. Tes, tes tes satu dua tiga. Cek status model Revit. Jelaskan view yang sedang aktif. Buat schedule balok WF. Tampilkan elemen struktur. Kolom, balok WF, lantai, pondasi, volume beton, oke eksekusi."
+}

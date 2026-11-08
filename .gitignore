@@ -1,0 +1,51 @@
+# AIGRAV .gitignore
+
+# Build outputs (.NET / C#)
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Node / Desktop HUD
+node_modules/
+DesktopHUD/node_modules/
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+*/venv/
+*/.venv/
+env/
+.env
+
+# Large Binary Models & Databases
+STT/models/*.bin
+*.mdf
+*.ldf
+*.sqlite3
+
+# Audio & Temporary runtime cache
+audio_cache/
+Temp/
+temp/
+scratch/
+*.wav
+*.mp3
+*.bak*
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Large Revit project models (keep templates/families in ConnectionLibrary)
+*.rvt
+*.rws
+*.log
+

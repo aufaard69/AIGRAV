@@ -1,0 +1,1175 @@
+﻿{
+    "schemaVersion":  "1.0",
+    "databaseName":  "AIGRAV Steel Connection Standard Knowledge Base",
+    "projectReference":  "PT. Niagatama Kencana - All DC",
+    "sourceDrawings":  {
+                           "steelConnections":  "STD-BJ-01 s/d STD-BJ-07",
+                           "substructurePedestal":  "STD-PDS-01 s/d STD-PDS-15"
+                       },
+    "verifiedCategories":  [
+                               "1. Steel Profile",
+                               "2. Beam Connection",
+                               "3. Column Connection",
+                               "4. End Plate",
+                               "5. Gusset Plate",
+                               "6. Base Plate",
+                               "7. Stiffener",
+                               "8. Bolt",
+                               "9. Weld",
+                               "10. Bracing",
+                               "11. Other Steel Details"
+                           ],
+    "categorizedStandards":  {
+                                 "1_steelProfile":  [
+                                                        {
+                                                            "detailName":  "Standard Wide Flange Profiles",
+                                                            "associatedProfile":  "WF Series (150 - 450)",
+                                                            "visibleDimensions":  "WF 150x75, WF 198x99, WF 200x100, WF 248x124, WF 250x125, WF 298x149, WF 300x150, WF 346x174, WF 350x175, WF 396x199, WF 400x200, WF 446x199, WF 450x200",
+                                                            "boltDetails":  "N/A",
+                                                            "plateThickness":  "N/A",
+                                                            "connectionType":  "Hot Rolled Structural Framing",
+                                                            "importantParameters":  "SNI 07-7178 / JIS G3101 SS400, Bj-37 to Bj-41",
+                                                            "sourceDocument":  "STD-BJ-01 s/d STD-BJ-07",
+                                                            "unknownParameters":  "None"
+                                                        },
+                                                        {
+                                                            "detailName":  "Standard H-Beam Profiles",
+                                                            "associatedProfile":  "H-Beam Series (200 - 400)",
+                                                            "visibleDimensions":  "H 200x200, H 250x250, H 300x300, H 350x350, H 400x400",
+                                                            "boltDetails":  "N/A",
+                                                            "plateThickness":  "N/A",
+                                                            "connectionType":  "Hot Rolled Structural Column",
+                                                            "importantParameters":  "Square H section for main columns",
+                                                            "sourceDocument":  "STD-BJ-02, STD-BJ-06",
+                                                            "unknownParameters":  "None"
+                                                        },
+                                                        {
+                                                            "detailName":  "Castellated Wide Flange Profiles",
+                                                            "associatedProfile":  "Cast. WF Series (300 - 450)",
+                                                            "visibleDimensions":  "Cast. WF-300 (H_exp=450mm), Cast. WF-350 (H_exp=525mm), Cast. WF-400 (H_exp=600mm), Cast. WF-450 (H_exp=675mm)",
+                                                            "boltDetails":  "N/A",
+                                                            "plateThickness":  "N/A",
+                                                            "connectionType":  "Expanded Castellated Beam",
+                                                            "importantParameters":  "Expansion ratio approximately 1.5x original WF height, hexagonal openings",
+                                                            "sourceDocument":  "STD-BJ-03, STD-BJ-04, STD-BJ-07",
+                                                            "unknownParameters":  "Opening exact corner radius UNKNOWN"
+                                                        },
+                                                        {
+                                                            "detailName":  "Cold Formed \u0026 Built-up Channels",
+                                                            "associatedProfile":  "CNP \u0026 2CNP",
+                                                            "visibleDimensions":  "CNP 100x50x20x2.3, CNP 125x50x20x2.3, CNP 150x50x20x2.3, 2CNP 150x50x20x2.3 (Boxed/Back-to-back)",
+                                                            "boltDetails":  "N/A",
+                                                            "plateThickness":  "2.3mm s/d 3.2mm",
+                                                            "connectionType":  "Purlins \u0026 Secondary Framing",
+                                                            "importantParameters":  "Cold-formed lip channel",
+                                                            "sourceDocument":  "STD-BJ-01, STD-BJ-05",
+                                                            "unknownParameters":  "Exact steel grade UNKNOWN (typical G450 or SS400)"
+                                                        }
+                                                    ],
+                                 "2_beamConnection":  [
+                                                          {
+                                                              "detailName":  "Secondary Beam to Primary Girder Shear Tab (WF 150 ke WF 200)",
+                                                              "associatedProfile":  "WF 150 (Secondary) -\u003e WF 200 (Primary)",
+                                                              "visibleDimensions":  "Pelat 6x60x120 mm",
+                                                              "boltDetails":  "2 - HTB dia 16 mm",
+                                                              "plateThickness":  "6 mm",
+                                                              "connectionType":  "Single Shear Plate (Clip Angle / Web Tab)",
+                                                              "importantParameters":  "Welded to girder web, bolted to secondary beam web",
+                                                              "sourceDocument":  "STD-BJ-01 Detail Balok Anak",
+                                                              "unknownParameters":  "Bolt pitch and edge distance UNKNOWN (typical standard 40mm/60mm)"
+                                                          },
+                                                          {
+                                                              "detailName":  "Secondary Beam to Primary Girder Shear Tab (WF 198 ke WF 250)",
+                                                              "associatedProfile":  "WF 198/200 -\u003e WF 250",
+                                                              "visibleDimensions":  "Pelat 6x80x140 mm",
+                                                              "boltDetails":  "2 - HTB dia 16 mm",
+                                                              "plateThickness":  "6 mm",
+                                                              "connectionType":  "Single Shear Plate",
+                                                              "importantParameters":  "Welded to girder web, bolted to secondary beam web",
+                                                              "sourceDocument":  "STD-BJ-01 Detail Balok Anak",
+                                                              "unknownParameters":  "None"
+                                                          },
+                                                          {
+                                                              "detailName":  "Secondary Beam to Primary Girder Shear Tab (WF 250 ke WF 300 / CWF 300)",
+                                                              "associatedProfile":  "WF 250 -\u003e WF 300 / Cast. WF-300 / Cast. WF-350",
+                                                              "visibleDimensions":  "Pelat 10x85x210 mm",
+                                                              "boltDetails":  "3 - HTB dia 16 mm",
+                                                              "plateThickness":  "10 mm",
+                                                              "connectionType":  "Single Shear Plate",
+                                                              "importantParameters":  "Welded to girder web, bolted to secondary beam web",
+                                                              "sourceDocument":  "STD-BJ-01 Detail Balok Anak",
+                                                              "unknownParameters":  "None"
+                                                          },
+                                                          {
+                                                              "detailName":  "Secondary Beam to Primary Girder Shear Tab (WF 300 ke WF 350)",
+                                                              "associatedProfile":  "WF 300 -\u003e WF 350",
+                                                              "visibleDimensions":  "Pelat 16x90x260 mm",
+                                                              "boltDetails":  "3 - HTB dia 16 mm",
+                                                              "plateThickness":  "16 mm",
+                                                              "connectionType":  "Single Shear Plate",
+                                                              "importantParameters":  "Welded to girder web, bolted to secondary beam web",
+                                                              "sourceDocument":  "STD-BJ-01 Detail Balok Anak",
+                                                              "unknownParameters":  "None"
+                                                          },
+                                                          {
+                                                              "detailName":  "Secondary Beam to Primary Girder Shear Tab (WF 350 ke WF 400)",
+                                                              "associatedProfile":  "WF 350 -\u003e WF 400",
+                                                              "visibleDimensions":  "Pelat 16x105x280 mm",
+                                                              "boltDetails":  "4 - HTB dia 19 mm",
+                                                              "plateThickness":  "16 mm",
+                                                              "connectionType":  "Single Shear Plate",
+                                                              "importantParameters":  "Welded to girder web, bolted to secondary beam web",
+                                                              "sourceDocument":  "STD-BJ-02 Detail Balok Anak",
+                                                              "unknownParameters":  "None"
+                                                          },
+                                                          {
+                                                              "detailName":  "Secondary Beam to Primary Girder Shear Tab (WF 400 ke WF 450)",
+                                                              "associatedProfile":  "WF 400 -\u003e WF 450",
+                                                              "visibleDimensions":  "Pelat 19x105x320 mm",
+                                                              "boltDetails":  "5 - HTB dia 22 mm",
+                                                              "plateThickness":  "19 mm",
+                                                              "connectionType":  "Single Shear Plate",
+                                                              "importantParameters":  "Welded to girder web, bolted to secondary beam web",
+                                                              "sourceDocument":  "STD-BJ-02 Detail Balok Anak",
+                                                              "unknownParameters":  "None"
+                                                          },
+                                                          {
+                                                              "detailName":  "Secondary Beam to Primary Girder Shear Tab (WF 450 ke WF 500)",
+                                                              "associatedProfile":  "WF 450 -\u003e WF 500",
+                                                              "visibleDimensions":  "Pelat 19x105x360 mm",
+                                                              "boltDetails":  "6 - HTB dia 22 mm",
+                                                              "plateThickness":  "19 mm",
+                                                              "connectionType":  "Single Shear Plate",
+                                                              "importantParameters":  "Welded to girder web, bolted to secondary beam web",
+                                                              "sourceDocument":  "STD-BJ-02 Detail Balok Anak",
+                                                              "unknownParameters":  "None"
+                                                          },
+                                                          {
+                                                              "detailName":  "Rafter Field Splice Joint WF 198/200",
+                                                              "associatedProfile":  "WF 198/200",
+                                                              "visibleDimensions":  "Top flange plate 2x(8x120x165), Bottom flange plate 8x100x360, Web plate 8x100x360",
+                                                              "boltDetails":  "Flange: 4 + 8 HTB dia 16 mm; Web: Welded",
+                                                              "plateThickness":  "8 mm",
+                                                              "connectionType":  "Bolted Flange Splice + Welded Web Splice",
+                                                              "importantParameters":  "Field moment connection for pitched rafter",
+                                                              "sourceDocument":  "STD-BJ-01 Sambungan Rafter Dilapangan",
+                                                              "unknownParameters":  "None"
+                                                          },
+                                                          {
+                                                              "detailName":  "Rafter Field Splice Joint WF 248/250",
+                                                              "associatedProfile":  "WF 248/250",
+                                                              "visibleDimensions":  "Top flange plate 2x(8x180x360), Bottom flange plate 8x125x360, Web plate 8x125x360",
+                                                              "boltDetails":  "Flange: 8 + 8 HTB dia 16 mm; Web: Welded",
+                                                              "plateThickness":  "8 mm",
+                                                              "connectionType":  "Bolted Flange Splice + Welded Web Splice",
+                                                              "importantParameters":  "Field moment connection for pitched rafter",
+                                                              "sourceDocument":  "STD-BJ-01 Sambungan Rafter Dilapangan",
+                                                              "unknownParameters":  "None"
+                                                          },
+                                                          {
+                                                              "detailName":  "Rafter Field Splice Joint WF 298/300",
+                                                              "associatedProfile":  "WF 298/300",
+                                                              "visibleDimensions":  "Top flange plate 2x(8x250x400), Bottom flange plate 10x150x400, Web plate 10x150x400",
+                                                              "boltDetails":  "Top flange: 12 HTB dia 25 mm; Bottom flange: 8 HTB dia 19 mm; Web: Welded",
+                                                              "plateThickness":  "8 mm \u0026 10 mm",
+                                                              "connectionType":  "Bolted Flange Splice + Welded Web Splice",
+                                                              "importantParameters":  "High capacity field moment connection",
+                                                              "sourceDocument":  "STD-BJ-01 Sambungan Rafter Dilapangan",
+                                                              "unknownParameters":  "None"
+                                                          },
+                                                          {
+                                                              "detailName":  "Rafter Field Splice Joint WF 346/350 s/d WF 446/450",
+                                                              "associatedProfile":  "WF 350, WF 400, WF 450",
+                                                              "visibleDimensions":  "Top flange plate 2x(8x300x600), Bottom flange plate 10x175x600, Web plate 10x175x600",
+                                                              "boltDetails":  "Top flange: 18 - 24 HTB dia 25 mm; Bottom flange: 12 HTB dia 19 mm; Web: Welded",
+                                                              "plateThickness":  "8 mm \u0026 10 mm",
+                                                              "connectionType":  "Bolted Flange Splice + Welded Web Splice",
+                                                              "importantParameters":  "High capacity field moment connection",
+                                                              "sourceDocument":  "STD-BJ-02 Sambungan Rafter Dilapangan",
+                                                              "unknownParameters":  "None"
+                                                          },
+                                                          {
+                                                              "detailName":  "Rafter Cast. WF-300 Resting Over Tie Beam Cast. WF-300",
+                                                              "associatedProfile":  "Rafter Cast. WF-300 \u0026 Tie Beam Cast. WF-300",
+                                                              "visibleDimensions":  "Double Base Plate 12x300x250 mm, Rib Stiffeners t=8 mm",
+                                                              "boltDetails":  "4 - Baut dia 19 mm Lubang Oval (Slotted)",
+                                                              "plateThickness":  "12 mm",
+                                                              "connectionType":  "Bearing / Expansion Seated Connection",
+                                                              "importantParameters":  "Lubang dibuat oval untuk mengakomodasi ekspansi/rotasi termal",
+                                                              "sourceDocument":  "STD-BJ-07",
+                                                              "unknownParameters":  "Slot length UNKNOWN (typical 2.5d = 50mm)"
+                                                          }
+                                                      ],
+                                 "3_columnConnection":  [
+                                                            {
+                                                                "detailName":  "Column Splice Joint H 200x200",
+                                                                "associatedProfile":  "H 200x200 (Lower \u0026 Upper)",
+                                                                "visibleDimensions":  "Flange plate 2x(10x140x500 mm), Web plate 2x(12x150x500 mm)",
+                                                                "boltDetails":  "12 - HTB M20",
+                                                                "plateThickness":  "10 mm (Flange) \u0026 12 mm (Web)",
+                                                                "connectionType":  "Bolted Column Splice",
+                                                                "importantParameters":  "Splice placed above finished floor elevation (+1.00m)",
+                                                                "sourceDocument":  "STD-BJ-06 Sambungan Kolom",
+                                                                "unknownParameters":  "None"
+                                                            },
+                                                            {
+                                                                "detailName":  "Column Splice Joint H 250x250",
+                                                                "associatedProfile":  "H 250x250 (Lower \u0026 Upper)",
+                                                                "visibleDimensions":  "Flange plate 2x(10x160x500 mm), Web plate 2x(12x230x500 mm)",
+                                                                "boltDetails":  "12 - HTB M20",
+                                                                "plateThickness":  "10 mm (Flange) \u0026 12 mm (Web)",
+                                                                "connectionType":  "Bolted Column Splice",
+                                                                "importantParameters":  "Splice placed above finished floor elevation (+1.00m)",
+                                                                "sourceDocument":  "STD-BJ-06 Sambungan Kolom",
+                                                                "unknownParameters":  "None"
+                                                            },
+                                                            {
+                                                                "detailName":  "Column Splice Joint H 300x300",
+                                                                "associatedProfile":  "H 300x300 (Lower \u0026 Upper)",
+                                                                "visibleDimensions":  "Flange plate 2x(10x200x500 mm), Web plate 2x(12x290x500 mm)",
+                                                                "boltDetails":  "24 - HTB M20",
+                                                                "plateThickness":  "10 mm (Flange) \u0026 12 mm (Web)",
+                                                                "connectionType":  "Bolted Column Splice",
+                                                                "importantParameters":  "Splice placed above finished floor elevation (+1.00m)",
+                                                                "sourceDocument":  "STD-BJ-06 Sambungan Kolom",
+                                                                "unknownParameters":  "None"
+                                                            },
+                                                            {
+                                                                "detailName":  "Column Reducer Transition Lower H 350 to Upper WF 300 (El. +24.60)",
+                                                                "associatedProfile":  "Lower: H 350x350, Upper: WF 300x150",
+                                                                "visibleDimensions":  "Top Plate 20x350x350 mm, Base Plate WF 16x150x320 mm, Rib Stiffener 10x70x200 mm",
+                                                                "boltDetails":  "Bolted connection to base plate / Welded cap",
+                                                                "plateThickness":  "Cap: 20 mm, Base: 16 mm, Rib: 10 mm",
+                                                                "connectionType":  "Capped Column Reducer with Welded Stiffeners",
+                                                                "importantParameters":  "Dilas keliling antara pelat penutup dan kolom bawah serta pelat dasar kolom atas",
+                                                                "sourceDocument":  "STD-BJ-06 Sambungan Kolom Elev +24.60",
+                                                                "unknownParameters":  "Number of upper column bolts UNKNOWN"
+                                                            },
+                                                            {
+                                                                "detailName":  "Column Reducer Transition Lower H 300 to Upper WF 300 (El. +24.60)",
+                                                                "associatedProfile":  "Lower: H 300x300, Upper: WF 300x150",
+                                                                "visibleDimensions":  "Top Plate 20x300x300 mm, Base Plate WF 16x150x320 mm, Rib Stiffener 10x70x200 mm",
+                                                                "boltDetails":  "Bolted / Welded transition",
+                                                                "plateThickness":  "Cap: 20 mm, Base: 16 mm, Rib: 10 mm",
+                                                                "connectionType":  "Capped Column Reducer with Welded Stiffeners",
+                                                                "importantParameters":  "Dilas keliling",
+                                                                "sourceDocument":  "STD-BJ-06 Sambungan Kolom Elev +24.60",
+                                                                "unknownParameters":  "Number of upper column bolts UNKNOWN"
+                                                            },
+                                                            {
+                                                                "detailName":  "Column Reducer Transition Lower WF 450 to Upper WF 300 (El. +24.60)",
+                                                                "associatedProfile":  "Lower: WF 450x200, Upper: WF 300x150",
+                                                                "visibleDimensions":  "Top Plate 20x200x450 mm, Base Plate WF 16x150x320 mm, Rib Stiffener 10x70x200 mm",
+                                                                "boltDetails":  "Bolted / Welded transition",
+                                                                "plateThickness":  "Cap: 20 mm, Base: 16 mm, Rib: 10 mm",
+                                                                "connectionType":  "Capped Column Reducer with Welded Stiffeners",
+                                                                "importantParameters":  "Dilas keliling",
+                                                                "sourceDocument":  "STD-BJ-06 Sambungan Kolom Elev +24.60",
+                                                                "unknownParameters":  "Number of upper column bolts UNKNOWN"
+                                                            }
+                                                        ],
+                                 "4_endPlate":  [
+                                                    {
+                                                        "detailName":  "Moment End Plate WF 150",
+                                                        "associatedProfile":  "WF 150",
+                                                        "visibleDimensions":  "Pelat 12x120x280 mm",
+                                                        "boltDetails":  "6 - HTB dia 16 mm",
+                                                        "plateThickness":  "12 mm",
+                                                        "connectionType":  "Flush / Extended Moment End Plate",
+                                                        "importantParameters":  "Welded to beam end, bolted to column flange",
+                                                        "sourceDocument":  "STD-BJ-01",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Moment End Plate WF 198/200",
+                                                        "associatedProfile":  "WF 198/200",
+                                                        "visibleDimensions":  "Pelat 12x120x340 mm",
+                                                        "boltDetails":  "8 - HTB dia 16 mm",
+                                                        "plateThickness":  "12 mm",
+                                                        "connectionType":  "Extended Moment End Plate",
+                                                        "importantParameters":  "Welded to beam end, bolted to column flange",
+                                                        "sourceDocument":  "STD-BJ-01",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Moment End Plate WF 248/250",
+                                                        "associatedProfile":  "WF 248/250",
+                                                        "visibleDimensions":  "Pelat 12x125x470 mm",
+                                                        "boltDetails":  "10 - HTB dia 16 mm",
+                                                        "plateThickness":  "12 mm",
+                                                        "connectionType":  "Extended Moment End Plate",
+                                                        "importantParameters":  "Welded to beam end, bolted to column flange",
+                                                        "sourceDocument":  "STD-BJ-01",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Moment End Plate WF 298/300",
+                                                        "associatedProfile":  "WF 298/300",
+                                                        "visibleDimensions":  "Pelat 16x150x550 mm",
+                                                        "boltDetails":  "12 - HTB dia 19 mm",
+                                                        "plateThickness":  "16 mm",
+                                                        "connectionType":  "Extended Moment End Plate",
+                                                        "importantParameters":  "Welded to beam end, bolted to column flange",
+                                                        "sourceDocument":  "STD-BJ-01",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Moment End Plate WF 346/350",
+                                                        "associatedProfile":  "WF 346/350",
+                                                        "visibleDimensions":  "Pelat 19x180x630 mm",
+                                                        "boltDetails":  "14 - HTB dia 19 mm",
+                                                        "plateThickness":  "19 mm",
+                                                        "connectionType":  "Extended Moment End Plate",
+                                                        "importantParameters":  "Welded to beam end, bolted to column flange",
+                                                        "sourceDocument":  "STD-BJ-02",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Moment End Plate WF 396/400",
+                                                        "associatedProfile":  "WF 396/400",
+                                                        "visibleDimensions":  "Pelat 19x200x700 mm",
+                                                        "boltDetails":  "14 - HTB dia 22 mm",
+                                                        "plateThickness":  "19 mm",
+                                                        "connectionType":  "Extended Moment End Plate",
+                                                        "importantParameters":  "Welded to beam end, bolted to column flange",
+                                                        "sourceDocument":  "STD-BJ-02",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Moment End Plate WF 446/450",
+                                                        "associatedProfile":  "WF 446/450",
+                                                        "visibleDimensions":  "Pelat 19x225x810 mm",
+                                                        "boltDetails":  "14 - HTB dia 25 mm",
+                                                        "plateThickness":  "19 mm",
+                                                        "connectionType":  "Extended Moment End Plate",
+                                                        "importantParameters":  "Welded to beam end, bolted to column flange",
+                                                        "sourceDocument":  "STD-BJ-02",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Moment End Plate Cast. WF-300",
+                                                        "associatedProfile":  "Cast. WF-300",
+                                                        "visibleDimensions":  "Pelat 16x150x777 mm",
+                                                        "boltDetails":  "14 - HTB dia 19 mm",
+                                                        "plateThickness":  "16 mm",
+                                                        "connectionType":  "Extended Moment End Plate on Castellated Section",
+                                                        "importantParameters":  "Welded to castellated beam end",
+                                                        "sourceDocument":  "STD-BJ-03",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Moment End Plate Cast. WF-350",
+                                                        "associatedProfile":  "Cast. WF-350",
+                                                        "visibleDimensions":  "Pelat 16x175x912 mm",
+                                                        "boltDetails":  "18 - HTB dia 19 mm",
+                                                        "plateThickness":  "16 mm",
+                                                        "connectionType":  "Extended Moment End Plate on Castellated Section",
+                                                        "importantParameters":  "Welded to castellated beam end",
+                                                        "sourceDocument":  "STD-BJ-03",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Moment End Plate Cast. WF-400",
+                                                        "associatedProfile":  "Cast. WF-400",
+                                                        "visibleDimensions":  "Pelat 19x200x1050 mm",
+                                                        "boltDetails":  "20 - HTB dia 19 mm",
+                                                        "plateThickness":  "19 mm",
+                                                        "connectionType":  "Extended Moment End Plate on Castellated Section",
+                                                        "importantParameters":  "Welded to castellated beam end",
+                                                        "sourceDocument":  "STD-BJ-03",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Moment End Plate Cast. WF-450",
+                                                        "associatedProfile":  "Cast. WF-450",
+                                                        "visibleDimensions":  "Pelat 19x200x1140 mm",
+                                                        "boltDetails":  "22 - HTB dia 19 mm",
+                                                        "plateThickness":  "19 mm",
+                                                        "connectionType":  "Extended Moment End Plate on Castellated Section",
+                                                        "importantParameters":  "Welded to castellated beam end",
+                                                        "sourceDocument":  "STD-BJ-04",
+                                                        "unknownParameters":  "None"
+                                                    }
+                                                ],
+                                 "5_gussetPlate":  [
+                                                       {
+                                                           "detailName":  "Roof Wind Bracing Gusset Plate",
+                                                           "associatedProfile":  "Tie Rod dia 12mm / 16mm / 19mm to Rafter/Girder",
+                                                           "visibleDimensions":  "Pelat segitiga / trapesium t=6 mm",
+                                                           "boltDetails":  "1 baut pin / turnbuckle clevis per rod",
+                                                           "plateThickness":  "6 mm",
+                                                           "connectionType":  "Welded Gusset Plate with Pin Hole",
+                                                           "importantParameters":  "Dilas ke sayap bawah / badan rafter",
+                                                           "sourceDocument":  "STD-BJ-01 / STD-BJ-05",
+                                                           "unknownParameters":  "Exact geometry coordinates vary by roof slope"
+                                                       },
+                                                       {
+                                                           "detailName":  "Vertical Column Bracing Gusset Plate",
+                                                           "associatedProfile":  "Double Angle (2L 50x50x5 / 2L 65x65x6) to Column",
+                                                           "visibleDimensions":  "Pelat buhul t=9 mm s/d 10 mm",
+                                                           "boltDetails":  "2 s/d 4 - HTB M16 / M19",
+                                                           "plateThickness":  "9 mm s/d 10 mm",
+                                                           "connectionType":  "Welded Gusset Plate to Column, Bolted to Bracing",
+                                                           "importantParameters":  "Dilas keliling ke badan atau sayap kolom",
+                                                           "sourceDocument":  "STD-BJ-01 / STD-BJ-05",
+                                                           "unknownParameters":  "None"
+                                                       },
+                                                       {
+                                                           "detailName":  "Purlin Cleat Gusset Plate",
+                                                           "associatedProfile":  "CNP 100/125/150 to Rafter Top Flange",
+                                                           "visibleDimensions":  "Pelat L 60x60x6 atau pelat tekuk t=6 mm",
+                                                           "boltDetails":  "2 - Baut dia 12 mm",
+                                                           "plateThickness":  "6 mm",
+                                                           "connectionType":  "Welded Cleat to Rafter Flange",
+                                                           "importantParameters":  "Dilas ke flange atas balok rafter",
+                                                           "sourceDocument":  "STD-BJ-05",
+                                                           "unknownParameters":  "None"
+                                                       }
+                                                   ],
+                                 "6_basePlate":  [
+                                                     {
+                                                         "detailName":  "Base Plate WF 150",
+                                                         "associatedProfile":  "WF 150",
+                                                         "visibleDimensions":  "Pelat 12x120x160 mm, Pedestal 200x300 mm",
+                                                         "boltDetails":  "4 Angkur dia 16 mm, L=700 mm, Hook=100 mm",
+                                                         "plateThickness":  "12 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=12 mm, Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-01 / STD-PDS-12",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate WF 198/200",
+                                                         "associatedProfile":  "WF 198/200",
+                                                         "visibleDimensions":  "Pelat 12x160x260 mm, Pedestal 200x300 mm",
+                                                         "boltDetails":  "2 atau 4 Angkur dia 16 mm, L=700 mm, Hook=100 mm",
+                                                         "plateThickness":  "12 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=12 mm, Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-01 / STD-PDS-12,13",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate WF 248/250",
+                                                         "associatedProfile":  "WF 248/250",
+                                                         "visibleDimensions":  "Pelat 16x200x300 mm, Pedestal 250x350 mm",
+                                                         "boltDetails":  "2 atau 4 Angkur dia 19 mm, L=700 mm, Hook=100 mm",
+                                                         "plateThickness":  "16 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=12 mm, Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-01 / STD-PDS-10,11",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate WF 298/300",
+                                                         "associatedProfile":  "WF 298/300",
+                                                         "visibleDimensions":  "Pelat 16x250x350 mm, Pedestal 300x400 mm",
+                                                         "boltDetails":  "2 atau 4 Angkur dia 19 mm, L=700 mm, Hook=100 mm",
+                                                         "plateThickness":  "16 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=12 mm, Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-01 / STD-PDS-06,07,08,09",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate WF 346/350",
+                                                         "associatedProfile":  "WF 346/350",
+                                                         "visibleDimensions":  "Pelat 19x250x430 mm, Pedestal 300x450 mm",
+                                                         "boltDetails":  "2 atau 4 Angkur dia 19 mm, L=700 mm, Hook=100 mm",
+                                                         "plateThickness":  "19 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=12 mm, Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-02 / STD-PDS-05,06",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate WF 396/400",
+                                                         "associatedProfile":  "WF 396/400",
+                                                         "visibleDimensions":  "Pelat 19x300x440 mm, Pedestal 350x500 mm",
+                                                         "boltDetails":  "4 Angkur dia 22 mm, L=700 mm, Hook=100 mm",
+                                                         "plateThickness":  "19 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=19 mm (145x200 mm), Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-02 / STD-PDS-01",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate WF 446/450",
+                                                         "associatedProfile":  "WF 446/450",
+                                                         "visibleDimensions":  "Pelat 20x300x440 mm, Pedestal 350x500 mm",
+                                                         "boltDetails":  "4 Angkur dia 22 mm, L=700 mm, Hook=100 mm",
+                                                         "plateThickness":  "20 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=19 mm (145x200 mm), Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-02 / STD-PDS-01",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate H 200",
+                                                         "associatedProfile":  "H 200",
+                                                         "visibleDimensions":  "Pelat 16x260x260 mm, Pedestal 260x260 mm",
+                                                         "boltDetails":  "4 Angkur dia 19 mm, L=700 mm, Hook=100 mm",
+                                                         "plateThickness":  "16 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=16 mm, Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-02",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate H 250",
+                                                         "associatedProfile":  "H 250",
+                                                         "visibleDimensions":  "Pelat 16x310x310 mm, Pedestal 310x310 mm",
+                                                         "boltDetails":  "4 Angkur dia 19 mm, L=700 mm, Hook=100 mm",
+                                                         "plateThickness":  "16 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=12 mm, Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-02 / STD-PDS-15",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate H 300",
+                                                         "associatedProfile":  "H 300",
+                                                         "visibleDimensions":  "Pelat 20x350x350 mm, Pedestal 350x350 mm",
+                                                         "boltDetails":  "4 Angkur dia 22 mm, L=700 mm, Hook=100 mm",
+                                                         "plateThickness":  "20 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=20 mm, Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-02",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate H 350",
+                                                         "associatedProfile":  "H 350",
+                                                         "visibleDimensions":  "Pelat 20x400x400 mm, Pedestal 400x400 mm",
+                                                         "boltDetails":  "4 Angkur dia 22 mm, L=1000 mm, Hook=100 mm",
+                                                         "plateThickness":  "20 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=20 mm, Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-02",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate H 400",
+                                                         "associatedProfile":  "H 400",
+                                                         "visibleDimensions":  "Pelat 20x450x450 mm, Pedestal 450x450 mm",
+                                                         "boltDetails":  "4 Angkur dia 22 mm, L=1000 mm, Hook=100 mm",
+                                                         "plateThickness":  "20 mm",
+                                                         "connectionType":  "Exposed Column Base Plate with Anchor Rods",
+                                                         "importantParameters":  "Rib t=20 mm (200x400 mm), Grout non-shrink t=25-30 mm",
+                                                         "sourceDocument":  "STD-BJ-02",
+                                                         "unknownParameters":  "None"
+                                                     }
+                                                 ],
+                                 "7_stiffener":  [
+                                                     {
+                                                         "detailName":  "Base Plate Rib Stiffeners (WF Series)",
+                                                         "associatedProfile":  "WF 150 s/d WF 450",
+                                                         "visibleDimensions":  "WF 150-350: t=12 mm; WF 400-450: t=19 mm (145x200 mm)",
+                                                         "boltDetails":  "N/A",
+                                                         "plateThickness":  "12 mm \u0026 19 mm",
+                                                         "connectionType":  "Welded Triangular Rib",
+                                                         "importantParameters":  "Dilas keliling ke sayap kolom dan pelat dasar",
+                                                         "sourceDocument":  "STD-BJ-01, STD-BJ-02",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Base Plate Rib Stiffeners (H-Beam Series)",
+                                                         "associatedProfile":  "H 200 s/d H 400",
+                                                         "visibleDimensions":  "H 200: t=16 mm; H 250: t=19 mm; H 300-350: t=20 mm; H 400: t=20 mm (200x400 mm)",
+                                                         "boltDetails":  "N/A",
+                                                         "plateThickness":  "16 mm, 19 mm, 20 mm",
+                                                         "connectionType":  "Welded Triangular Rib",
+                                                         "importantParameters":  "Dilas keliling",
+                                                         "sourceDocument":  "STD-BJ-02",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Column Transition Stiffeners (El. +24.60)",
+                                                         "associatedProfile":  "H 300, H 350, WF 450 to WF 300",
+                                                         "visibleDimensions":  "Pelat pengaku 10x70x200 mm",
+                                                         "boltDetails":  "N/A",
+                                                         "plateThickness":  "10 mm",
+                                                         "connectionType":  "Welded Vertical Rib",
+                                                         "importantParameters":  "Dilas keliling pada sayap dan badan reduksi kolom",
+                                                         "sourceDocument":  "STD-BJ-06",
+                                                         "unknownParameters":  "None"
+                                                     },
+                                                     {
+                                                         "detailName":  "Castellated Web Post Stiffener",
+                                                         "associatedProfile":  "Cast. WF-300 s/d Cast. WF-450",
+                                                         "visibleDimensions":  "Pelat pengaku vertikal t=6 mm s/d 8 mm",
+                                                         "boltDetails":  "N/A",
+                                                         "plateThickness":  "6 mm s/d 8 mm",
+                                                         "connectionType":  "Welded Web Stiffener at Point Load / Support",
+                                                         "importantParameters":  "Mencegah web buckling pada celah heksagonal di tumpuan",
+                                                         "sourceDocument":  "STD-BJ-03, STD-BJ-04, STD-BJ-07",
+                                                         "unknownParameters":  "Stiffener width UNKNOWN (matched to beam flange width)"
+                                                     }
+                                                 ],
+                                 "8_bolt":  [
+                                                {
+                                                    "detailName":  "Purlin \u0026 Cleat Bolts",
+                                                    "associatedProfile":  "CNP \u0026 Angle Cleats",
+                                                    "visibleDimensions":  "Baut dia 12 mm (M12)",
+                                                    "boltDetails":  "M12 Regular Hex Bolt",
+                                                    "plateThickness":  "N/A",
+                                                    "connectionType":  "Secondary Structural Fastener",
+                                                    "importantParameters":  "ASTM A307 / Grade 4.6 or 8.8",
+                                                    "sourceDocument":  "STD-BJ-05",
+                                                    "unknownParameters":  "Exact grade UNKNOWN"
+                                                },
+                                                {
+                                                    "detailName":  "High Strength Bolts dia 16 mm (M16)",
+                                                    "associatedProfile":  "WF 150 - 250 End Plate, Secondary Shear Tab, Splice",
+                                                    "visibleDimensions":  "HTB dia 16 mm",
+                                                    "boltDetails":  "High Tensile Bolt Grade A325 / F10T / Gr 8.8",
+                                                    "plateThickness":  "N/A",
+                                                    "connectionType":  "Friction / Bearing Type High Strength Joint",
+                                                    "importantParameters":  "Tightening torque to specification",
+                                                    "sourceDocument":  "STD-BJ-01",
+                                                    "unknownParameters":  "None"
+                                                },
+                                                {
+                                                    "detailName":  "High Strength Bolts dia 19 mm (M19)",
+                                                    "associatedProfile":  "WF 300 - 350 End Plate, Cast. WF End Plate, Shear Tab, Rafter Splice",
+                                                    "visibleDimensions":  "HTB dia 19 mm",
+                                                    "boltDetails":  "High Tensile Bolt Grade A325 / F10T / Gr 8.8",
+                                                    "plateThickness":  "N/A",
+                                                    "connectionType":  "Friction / Bearing Type High Strength Joint",
+                                                    "importantParameters":  "Standard connection bolt for primary warehouse rafters",
+                                                    "sourceDocument":  "STD-BJ-01, STD-BJ-02, STD-BJ-03, STD-BJ-04, STD-BJ-07",
+                                                    "unknownParameters":  "None"
+                                                },
+                                                {
+                                                    "detailName":  "High Strength Bolts dia 20 mm (M20)",
+                                                    "associatedProfile":  "H 200 - 300 Column Splices",
+                                                    "visibleDimensions":  "HTB dia 20 mm",
+                                                    "boltDetails":  "High Tensile Bolt Grade A325 / F10T / Gr 8.8",
+                                                    "plateThickness":  "N/A",
+                                                    "connectionType":  "Column Splice Fastener",
+                                                    "importantParameters":  "Standard metric M20",
+                                                    "sourceDocument":  "STD-BJ-06",
+                                                    "unknownParameters":  "None"
+                                                },
+                                                {
+                                                    "detailName":  "High Strength Bolts dia 22 mm (M22)",
+                                                    "associatedProfile":  "WF 400 End Plate, WF 400-450 Shear Tab",
+                                                    "visibleDimensions":  "HTB dia 22 mm",
+                                                    "boltDetails":  "High Tensile Bolt Grade A325 / F10T / Gr 8.8",
+                                                    "plateThickness":  "N/A",
+                                                    "connectionType":  "Heavy Structural Fastener",
+                                                    "importantParameters":  "High tension load capacity",
+                                                    "sourceDocument":  "STD-BJ-02",
+                                                    "unknownParameters":  "None"
+                                                },
+                                                {
+                                                    "detailName":  "High Strength Bolts dia 25 mm (M25)",
+                                                    "associatedProfile":  "WF 450 End Plate, WF 300-450 Rafter Splice Top Flange",
+                                                    "visibleDimensions":  "HTB dia 25 mm (1 inch / M24/M25 equivalent)",
+                                                    "boltDetails":  "High Tensile Bolt Grade A325 / F10T",
+                                                    "plateThickness":  "N/A",
+                                                    "connectionType":  "Heavy Moment Tension Splice",
+                                                    "importantParameters":  "For high moment resistance at rafter top flange",
+                                                    "sourceDocument":  "STD-BJ-01, STD-BJ-02",
+                                                    "unknownParameters":  "None"
+                                                },
+                                                {
+                                                    "detailName":  "Anchor Bolts (Angkur Pondasi)",
+                                                    "associatedProfile":  "All Columns (WF 150 - 450, H 200 - 400)",
+                                                    "visibleDimensions":  "dia 16 mm (L=700), dia 19 mm (L=700), dia 22 mm (L=700 \u0026 L=1000), Hook=100 mm",
+                                                    "boltDetails":  "Besi beton ulir / plain round bar anchor bolt, double nut + spring washer",
+                                                    "plateThickness":  "N/A",
+                                                    "connectionType":  "Substructure to Superstructure Anchorage",
+                                                    "importantParameters":  "Embedment length in pedestal concrete minimum 600mm",
+                                                    "sourceDocument":  "STD-BJ-01, STD-BJ-02, STD-PDS-01 s/d STD-PDS-15",
+                                                    "unknownParameters":  "Anchor steel grade UNKNOWN (typical BJTD-40 / A36)"
+                                                }
+                                            ],
+                                 "9_weld":  [
+                                                {
+                                                    "detailName":  "Fillet Weld All-Around (Las Sudut Dilas Keliling)",
+                                                    "associatedProfile":  "Base Plates, Stiffeners, Cap Plates, Shear Tabs",
+                                                    "visibleDimensions":  "Ukuran kaki las (leg size) a = 4 mm s/d 10 mm",
+                                                    "boltDetails":  "N/A",
+                                                    "plateThickness":  "Matched to thinner joining plate",
+                                                    "connectionType":  "Fillet Weld (Las Sudut)",
+                                                    "importantParameters":  "Notasi: DILAS KELILING. Electrode E70XX (AWS D1.1)",
+                                                    "sourceDocument":  "STD-BJ-01, STD-BJ-02, STD-BJ-06",
+                                                    "unknownParameters":  "Electrode code explicitly marked UNKNOWN"
+                                                },
+                                                {
+                                                    "detailName":  "Web Butt Weld Splice (Las Tumpul / CJP Sambungan Lapangan)",
+                                                    "associatedProfile":  "WF 198/200 s/d WF 446/450 Rafter Web",
+                                                    "visibleDimensions":  "Full penetration butt weld on web plate",
+                                                    "boltDetails":  "N/A",
+                                                    "plateThickness":  "8 mm s/d 10 mm",
+                                                    "connectionType":  "Butt Weld (Joint Dilas)",
+                                                    "importantParameters":  "Notasi: JOINT DILAS pada pelat badan penyambung rafter",
+                                                    "sourceDocument":  "STD-BJ-01, STD-BJ-02",
+                                                    "unknownParameters":  "Bevel groove angle UNKNOWN"
+                                                }
+                                            ],
+                                 "10_bracing":  [
+                                                    {
+                                                        "detailName":  "Roof Wind Bracing (Ikatan Angin Atap)",
+                                                        "associatedProfile":  "Round Bar / Tie Rod dia 12 mm, dia 16 mm, dia 19 mm",
+                                                        "visibleDimensions":  "Round Bar dengan Jarumpas (Turnbuckle)",
+                                                        "boltDetails":  "Turnbuckle clevis pin dia 14/18/21 mm",
+                                                        "plateThickness":  "Gusset t=6 mm",
+                                                        "connectionType":  "Tension-only X-Bracing",
+                                                        "importantParameters":  "Ditarik kencang dengan turnbuckle di bentang tengah",
+                                                        "sourceDocument":  "STD-BJ-01, STD-BJ-05",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Column Vertical Bracing (Ikatan Kolom)",
+                                                        "associatedProfile":  "Double Angle 2L 50x50x5 / 2L 65x65x6 atau Rod",
+                                                        "visibleDimensions":  "2L 50x50x5 / 2L 65x65x6",
+                                                        "boltDetails":  "2 - 4 HTB dia 16 mm",
+                                                        "plateThickness":  "Gusset t=9 mm s/d 10 mm",
+                                                        "connectionType":  "Tension/Compression Bracing",
+                                                        "importantParameters":  "Menahan gaya lateral gempa dan angin longitudinal",
+                                                        "sourceDocument":  "STD-BJ-01, STD-BJ-05",
+                                                        "unknownParameters":  "None"
+                                                    },
+                                                    {
+                                                        "detailName":  "Purlin Sagrod (Trackstang)",
+                                                        "associatedProfile":  "Round Bar dia 10 mm / 12 mm",
+                                                        "visibleDimensions":  "Besi beton dia 10 mm / 12 mm dengan ulir ujung",
+                                                        "boltDetails":  "Double nut + washer",
+                                                        "plateThickness":  "CNP web hole dia 12/14 mm",
+                                                        "connectionType":  "Sag Rod Lateral Restraint",
+                                                        "importantParameters":  "Mencegah sag dan distorsi gording CNP",
+                                                        "sourceDocument":  "STD-BJ-05",
+                                                        "unknownParameters":  "None"
+                                                    }
+                                                ],
+                                 "11_otherSteelDetails":  [
+                                                              {
+                                                                  "detailName":  "Stud Shear Connector for Bondek Composite Slab",
+                                                                  "associatedProfile":  "Top Flange WF \u0026 2CNP Beams",
+                                                                  "visibleDimensions":  "dia 19 mm, Panjang L = 100 mm, Jarak (spacing) 150 mm s/d 200 mm",
+                                                                  "boltDetails":  "N/A",
+                                                                  "plateThickness":  "N/A",
+                                                                  "connectionType":  "Welded Headed Stud Shear Connector",
+                                                                  "importantParameters":  "Thru-deck welded on top flange for composite action with concrete slab",
+                                                                  "sourceDocument":  "STD-BJ-05 Detail Bondek \u0026 Shear Connector",
+                                                                  "unknownParameters":  "None"
+                                                              },
+                                                              {
+                                                                  "detailName":  "Slotted Hole Bearing Detail (Rafter over Tie Beam)",
+                                                                  "associatedProfile":  "Cast. WF-300 Rafter on Cast. WF-300 Tie Beam",
+                                                                  "visibleDimensions":  "Plate 12x300x250 mm with 4 oval/slotted holes",
+                                                                  "boltDetails":  "4 Baut dia 19 mm dengan lubang oval",
+                                                                  "plateThickness":  "12 mm",
+                                                                  "connectionType":  "Slotted Thermal Expansion Bearing",
+                                                                  "importantParameters":  "Menyerap defleksi dan pergerakan temperatur tanpa transfer momen liar",
+                                                                  "sourceDocument":  "STD-BJ-07",
+                                                                  "unknownParameters":  "None"
+                                                              },
+                                                              {
+                                                                  "detailName":  "Non-Shrink Grout Bed",
+                                                                  "associatedProfile":  "Under all Base Plates on Pedestals",
+                                                                  "visibleDimensions":  "Tebal mortar non-shrink 25 mm s/d 30 mm",
+                                                                  "boltDetails":  "N/A",
+                                                                  "plateThickness":  "Grout layer 25-30 mm",
+                                                                  "connectionType":  "Bearing Leveling Bed",
+                                                                  "importantParameters":  "Kuat tekan grout \u003e= 50 MPa (SikaGrout 215 / setara)",
+                                                                  "sourceDocument":  "STD-PDS-01 s/d STD-PDS-15",
+                                                                  "unknownParameters":  "Exact brand UNKNOWN"
+                                                              }
+                                                          ]
+                             },
+    "lookupTables":  {
+                         "basePlateStandards":  [
+                                                    {
+                                                        "columnProfile":  "WF 150",
+                                                        "widthMm":  120,
+                                                        "lengthMm":  160,
+                                                        "thicknessMm":  12,
+                                                        "anchorQty":  4,
+                                                        "anchorDiaMm":  16,
+                                                        "anchorLengthMm":  700,
+                                                        "ribThicknessMm":  12,
+                                                        "pedestalWidthMm":  200,
+                                                        "pedestalLengthMm":  300,
+                                                        "source":  "STD-BJ-01 / STD-PDS-12"
+                                                    },
+                                                    {
+                                                        "columnProfile":  "WF 198/200",
+                                                        "widthMm":  160,
+                                                        "lengthMm":  260,
+                                                        "thicknessMm":  12,
+                                                        "anchorQty":  2,
+                                                        "optionalAnchorQty":  4,
+                                                        "anchorDiaMm":  16,
+                                                        "anchorLengthMm":  700,
+                                                        "ribThicknessMm":  12,
+                                                        "pedestalWidthMm":  200,
+                                                        "pedestalLengthMm":  300,
+                                                        "source":  "STD-BJ-01 / STD-PDS-12,13"
+                                                    },
+                                                    {
+                                                        "columnProfile":  "WF 248/250",
+                                                        "widthMm":  200,
+                                                        "lengthMm":  300,
+                                                        "thicknessMm":  16,
+                                                        "anchorQty":  2,
+                                                        "optionalAnchorQty":  4,
+                                                        "anchorDiaMm":  19,
+                                                        "anchorLengthMm":  700,
+                                                        "ribThicknessMm":  12,
+                                                        "pedestalWidthMm":  250,
+                                                        "pedestalLengthMm":  350,
+                                                        "source":  "STD-BJ-01 / STD-PDS-10,11"
+                                                    },
+                                                    {
+                                                        "columnProfile":  "WF 298/300",
+                                                        "widthMm":  250,
+                                                        "lengthMm":  350,
+                                                        "thicknessMm":  16,
+                                                        "anchorQty":  2,
+                                                        "optionalAnchorQty":  4,
+                                                        "anchorDiaMm":  19,
+                                                        "anchorLengthMm":  700,
+                                                        "ribThicknessMm":  12,
+                                                        "pedestalWidthMm":  300,
+                                                        "pedestalLengthMm":  400,
+                                                        "source":  "STD-BJ-01 / STD-PDS-06..09"
+                                                    },
+                                                    {
+                                                        "columnProfile":  "WF 346/350",
+                                                        "widthMm":  250,
+                                                        "lengthMm":  430,
+                                                        "thicknessMm":  19,
+                                                        "anchorQty":  2,
+                                                        "optionalAnchorQty":  4,
+                                                        "anchorDiaMm":  19,
+                                                        "anchorLengthMm":  700,
+                                                        "ribThicknessMm":  12,
+                                                        "pedestalWidthMm":  300,
+                                                        "pedestalLengthMm":  450,
+                                                        "source":  "STD-BJ-02 / STD-PDS-05,06"
+                                                    },
+                                                    {
+                                                        "columnProfile":  "WF 396/400",
+                                                        "widthMm":  300,
+                                                        "lengthMm":  440,
+                                                        "thicknessMm":  19,
+                                                        "anchorQty":  4,
+                                                        "anchorDiaMm":  22,
+                                                        "anchorLengthMm":  700,
+                                                        "ribThicknessMm":  19,
+                                                        "ribDimensionMm":  "145x200",
+                                                        "pedestalWidthMm":  350,
+                                                        "pedestalLengthMm":  500,
+                                                        "source":  "STD-BJ-02 / STD-PDS-01"
+                                                    },
+                                                    {
+                                                        "columnProfile":  "WF 446/450",
+                                                        "widthMm":  300,
+                                                        "lengthMm":  440,
+                                                        "thicknessMm":  20,
+                                                        "anchorQty":  4,
+                                                        "anchorDiaMm":  22,
+                                                        "anchorLengthMm":  700,
+                                                        "ribThicknessMm":  19,
+                                                        "ribDimensionMm":  "145x200",
+                                                        "pedestalWidthMm":  350,
+                                                        "pedestalLengthMm":  500,
+                                                        "source":  "STD-BJ-02 / STD-PDS-01"
+                                                    },
+                                                    {
+                                                        "columnProfile":  "H 200",
+                                                        "widthMm":  260,
+                                                        "lengthMm":  260,
+                                                        "thicknessMm":  16,
+                                                        "anchorQty":  4,
+                                                        "anchorDiaMm":  19,
+                                                        "anchorLengthMm":  700,
+                                                        "ribThicknessMm":  16,
+                                                        "pedestalWidthMm":  260,
+                                                        "pedestalLengthMm":  260,
+                                                        "source":  "STD-BJ-02"
+                                                    },
+                                                    {
+                                                        "columnProfile":  "H 250",
+                                                        "widthMm":  310,
+                                                        "lengthMm":  310,
+                                                        "thicknessMm":  16,
+                                                        "anchorQty":  4,
+                                                        "anchorDiaMm":  19,
+                                                        "anchorLengthMm":  700,
+                                                        "ribThicknessMm":  12,
+                                                        "pedestalWidthMm":  310,
+                                                        "pedestalLengthMm":  310,
+                                                        "source":  "STD-BJ-02 / STD-PDS-15"
+                                                    },
+                                                    {
+                                                        "columnProfile":  "H 300",
+                                                        "widthMm":  350,
+                                                        "lengthMm":  350,
+                                                        "thicknessMm":  20,
+                                                        "anchorQty":  4,
+                                                        "anchorDiaMm":  22,
+                                                        "anchorLengthMm":  700,
+                                                        "ribThicknessMm":  20,
+                                                        "pedestalWidthMm":  350,
+                                                        "pedestalLengthMm":  350,
+                                                        "source":  "STD-BJ-02"
+                                                    },
+                                                    {
+                                                        "columnProfile":  "H 350",
+                                                        "widthMm":  400,
+                                                        "lengthMm":  400,
+                                                        "thicknessMm":  20,
+                                                        "anchorQty":  4,
+                                                        "anchorDiaMm":  22,
+                                                        "anchorLengthMm":  1000,
+                                                        "ribThicknessMm":  20,
+                                                        "pedestalWidthMm":  400,
+                                                        "pedestalLengthMm":  400,
+                                                        "source":  "STD-BJ-02"
+                                                    },
+                                                    {
+                                                        "columnProfile":  "H 400",
+                                                        "widthMm":  450,
+                                                        "lengthMm":  450,
+                                                        "thicknessMm":  20,
+                                                        "anchorQty":  4,
+                                                        "anchorDiaMm":  22,
+                                                        "anchorLengthMm":  1000,
+                                                        "ribThicknessMm":  20,
+                                                        "ribDimensionMm":  "200x400",
+                                                        "pedestalWidthMm":  450,
+                                                        "pedestalLengthMm":  450,
+                                                        "source":  "STD-BJ-02"
+                                                    }
+                                                ],
+                         "beamShearConnections":  [
+                                                      {
+                                                          "beam":  "WF 150",
+                                                          "girder":  "WF 200",
+                                                          "plateWidth":  60,
+                                                          "plateHeight":  120,
+                                                          "plateThk":  6,
+                                                          "boltQty":  2,
+                                                          "boltType":  "HTB",
+                                                          "boltDiaMm":  16,
+                                                          "source":  "STD-BJ-01"
+                                                      },
+                                                      {
+                                                          "beam":  "WF 198",
+                                                          "girder":  "WF 250",
+                                                          "plateWidth":  80,
+                                                          "plateHeight":  140,
+                                                          "plateThk":  6,
+                                                          "boltQty":  2,
+                                                          "boltType":  "HTB",
+                                                          "boltDiaMm":  16,
+                                                          "source":  "STD-BJ-01"
+                                                      },
+                                                      {
+                                                          "beam":  "WF 250",
+                                                          "girder":  "WF 300",
+                                                          "plateWidth":  85,
+                                                          "plateHeight":  210,
+                                                          "plateThk":  10,
+                                                          "boltQty":  3,
+                                                          "boltType":  "HTB",
+                                                          "boltDiaMm":  16,
+                                                          "source":  "STD-BJ-01"
+                                                      },
+                                                      {
+                                                          "beam":  "WF 250",
+                                                          "girder":  "Cast. WF-300 / WF-350",
+                                                          "plateWidth":  85,
+                                                          "plateHeight":  210,
+                                                          "plateThk":  10,
+                                                          "boltQty":  3,
+                                                          "boltType":  "HTB",
+                                                          "boltDiaMm":  16,
+                                                          "source":  "STD-BJ-01"
+                                                      },
+                                                      {
+                                                          "beam":  "WF 300",
+                                                          "girder":  "WF 350",
+                                                          "plateWidth":  90,
+                                                          "plateHeight":  260,
+                                                          "plateThk":  16,
+                                                          "boltQty":  3,
+                                                          "boltType":  "HTB",
+                                                          "boltDiaMm":  16,
+                                                          "source":  "STD-BJ-01"
+                                                      },
+                                                      {
+                                                          "beam":  "WF 350",
+                                                          "girder":  "WF 400",
+                                                          "plateWidth":  105,
+                                                          "plateHeight":  280,
+                                                          "plateThk":  16,
+                                                          "boltQty":  4,
+                                                          "boltType":  "HTB",
+                                                          "boltDiaMm":  19,
+                                                          "source":  "STD-BJ-02"
+                                                      },
+                                                      {
+                                                          "beam":  "WF 400",
+                                                          "girder":  "WF 450",
+                                                          "plateWidth":  105,
+                                                          "plateHeight":  320,
+                                                          "plateThk":  19,
+                                                          "boltQty":  5,
+                                                          "boltType":  "HTB",
+                                                          "boltDiaMm":  22,
+                                                          "source":  "STD-BJ-02"
+                                                      },
+                                                      {
+                                                          "beam":  "WF 450",
+                                                          "girder":  "WF 500",
+                                                          "plateWidth":  105,
+                                                          "plateHeight":  360,
+                                                          "plateThk":  19,
+                                                          "boltQty":  6,
+                                                          "boltType":  "HTB",
+                                                          "boltDiaMm":  22,
+                                                          "source":  "STD-BJ-02"
+                                                      }
+                                                  ],
+                         "endPlateConnections":  [
+                                                     {
+                                                         "profile":  "WF 150",
+                                                         "plateWidth":  120,
+                                                         "plateHeight":  280,
+                                                         "plateThk":  12,
+                                                         "boltQty":  6,
+                                                         "boltType":  "HTB",
+                                                         "boltDiaMm":  16,
+                                                         "source":  "STD-BJ-01"
+                                                     },
+                                                     {
+                                                         "profile":  "WF 198/200",
+                                                         "plateWidth":  120,
+                                                         "plateHeight":  340,
+                                                         "plateThk":  12,
+                                                         "boltQty":  8,
+                                                         "boltType":  "HTB",
+                                                         "boltDiaMm":  16,
+                                                         "source":  "STD-BJ-01"
+                                                     },
+                                                     {
+                                                         "profile":  "WF 248/250",
+                                                         "plateWidth":  125,
+                                                         "plateHeight":  470,
+                                                         "plateThk":  12,
+                                                         "boltQty":  10,
+                                                         "boltType":  "HTB",
+                                                         "boltDiaMm":  16,
+                                                         "source":  "STD-BJ-01"
+                                                     },
+                                                     {
+                                                         "profile":  "WF 298/300",
+                                                         "plateWidth":  150,
+                                                         "plateHeight":  550,
+                                                         "plateThk":  16,
+                                                         "boltQty":  12,
+                                                         "boltType":  "HTB",
+                                                         "boltDiaMm":  19,
+                                                         "source":  "STD-BJ-01"
+                                                     },
+                                                     {
+                                                         "profile":  "WF 346/350",
+                                                         "plateWidth":  180,
+                                                         "plateHeight":  630,
+                                                         "plateThk":  19,
+                                                         "boltQty":  14,
+                                                         "boltType":  "HTB",
+                                                         "boltDiaMm":  19,
+                                                         "source":  "STD-BJ-02"
+                                                     },
+                                                     {
+                                                         "profile":  "WF 396/400",
+                                                         "plateWidth":  200,
+                                                         "plateHeight":  700,
+                                                         "plateThk":  19,
+                                                         "boltQty":  14,
+                                                         "boltType":  "HTB",
+                                                         "boltDiaMm":  22,
+                                                         "source":  "STD-BJ-02"
+                                                     },
+                                                     {
+                                                         "profile":  "WF 446/450",
+                                                         "plateWidth":  225,
+                                                         "plateHeight":  810,
+                                                         "plateThk":  19,
+                                                         "boltQty":  14,
+                                                         "boltType":  "HTB",
+                                                         "boltDiaMm":  25,
+                                                         "source":  "STD-BJ-02"
+                                                     },
+                                                     {
+                                                         "profile":  "Cast. WF-300",
+                                                         "plateWidth":  150,
+                                                         "plateHeight":  777,
+                                                         "plateThk":  16,
+                                                         "boltQty":  14,
+                                                         "boltType":  "HTB",
+                                                         "boltDiaMm":  19,
+                                                         "source":  "STD-BJ-03"
+                                                     },
+                                                     {
+                                                         "profile":  "Cast. WF-350",
+                                                         "plateWidth":  175,
+                                                         "plateHeight":  912,
+                                                         "plateThk":  16,
+                                                         "boltQty":  18,
+                                                         "boltType":  "HTB",
+                                                         "boltDiaMm":  19,
+                                                         "source":  "STD-BJ-03"
+                                                     },
+                                                     {
+                                                         "profile":  "Cast. WF-400",
+                                                         "plateWidth":  200,
+                                                         "plateHeight":  1050,
+                                                         "plateThk":  19,
+                                                         "boltQty":  20,
+                                                         "boltType":  "HTB",
+                                                         "boltDiaMm":  19,
+                                                         "source":  "STD-BJ-03"
+                                                     },
+                                                     {
+                                                         "profile":  "Cast. WF-450",
+                                                         "plateWidth":  200,
+                                                         "plateHeight":  1140,
+                                                         "plateThk":  19,
+                                                         "boltQty":  22,
+                                                         "boltType":  "HTB",
+                                                         "boltDiaMm":  19,
+                                                         "source":  "STD-BJ-04"
+                                                     }
+                                                 ],
+                         "columnSplices":  [
+                                               {
+                                                   "profile":  "HB 200x200",
+                                                   "flangePlates":  "2x(140x500x10)",
+                                                   "webPlates":  "2x(150x500x12)",
+                                                   "bolts":  "12 - HTB M20",
+                                                   "source":  "STD-BJ-06"
+                                               },
+                                               {
+                                                   "profile":  "HB 250x250",
+                                                   "flangePlates":  "2x(160x500x10)",
+                                                   "webPlates":  "2x(230x500x12)",
+                                                   "bolts":  "12 - HTB M20",
+                                                   "source":  "STD-BJ-06"
+                                               },
+                                               {
+                                                   "profile":  "HB 300x300",
+                                                   "flangePlates":  "2x(200x500x10)",
+                                                   "webPlates":  "2x(290x500x12)",
+                                                   "bolts":  "24 - HTB M20",
+                                                   "source":  "STD-BJ-06"
+                                               }
+                                           ]
+                     }
+}

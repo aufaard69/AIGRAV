@@ -1,0 +1,21 @@
+{
+  "name": "aigrav-desktop-hud",
+  "version": "1.0.0",
+  "description": "Frameless Floating Desktop HUD for AIGRAV Autonomous Voice BIM Intelligence",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "aigrav",
+    "bim",
+    "revit",
+    "voice-hud",
+    "electron"
+  ],
+  "author": "AIGRAV Team",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^44.7.0"
+  }
+}

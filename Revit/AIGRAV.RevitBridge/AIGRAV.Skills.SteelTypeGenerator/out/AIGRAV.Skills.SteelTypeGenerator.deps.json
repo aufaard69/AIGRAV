@@ -1,0 +1,83 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "AIGRAV.Skills.SteelTypeGenerator/1.0.0": {
+        "dependencies": {
+          "AIGRAV.Contracts": "1.0.0"
+        },
+        "runtime": {
+          "AIGRAV.Skills.SteelTypeGenerator.dll": {}
+        }
+      },
+      "AIGRAV.Contracts/1.0.0": {
+        "runtime": {
+          "AIGRAV.Contracts.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        },
+        "resources": {
+          "cs-CZ/AdWindows.resources.dll": {
+            "locale": "cs-CZ"
+          },
+          "de-DE/AdWindows.resources.dll": {
+            "locale": "de-DE"
+          },
+          "en-GB/AdWindows.resources.dll": {
+            "locale": "en-GB"
+          },
+          "en-US/AdWindows.resources.dll": {
+            "locale": "en-US"
+          },
+          "es-ES/AdWindows.resources.dll": {
+            "locale": "es-ES"
+          },
+          "fr-FR/AdWindows.resources.dll": {
+            "locale": "fr-FR"
+          },
+          "it-IT/AdWindows.resources.dll": {
+            "locale": "it-IT"
+          },
+          "ja-JP/AdWindows.resources.dll": {
+            "locale": "ja-JP"
+          },
+          "ko-KR/AdWindows.resources.dll": {
+            "locale": "ko-KR"
+          },
+          "pl-PL/AdWindows.resources.dll": {
+            "locale": "pl-PL"
+          },
+          "pt-BR/AdWindows.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "ru-RU/AdWindows.resources.dll": {
+            "locale": "ru-RU"
+          },
+          "zh-CN/AdWindows.resources.dll": {
+            "locale": "zh-CN"
+          },
+          "zh-TW/AdWindows.resources.dll": {
+            "locale": "zh-TW"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "AIGRAV.Skills.SteelTypeGenerator/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "AIGRAV.Contracts/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

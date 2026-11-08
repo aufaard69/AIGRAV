@@ -1,0 +1,50 @@
+{
+  "active_mode": "fast",
+  "active_conversation_id": "0bd0312e-df86-4245-a224-ed89b8bd2672",
+  "fast_conversation_id": "0bd0312e-df86-4245-a224-ed89b8bd2672",
+  "analysis_conversation_id": "16ed9184-422f-4e90-a611-0e2ffd9ee0c5",
+  "created_at": 1791816311.7647896,
+  "last_used_at": 1792210058.705404,
+  "history_count": 32,
+  "status": "ACTIVE",
+  "revit_connected": true,
+  "session_lifecycle": "PERSISTENT_WORK_CYCLE",
+  "replacement_log": [
+    {
+      "timestamp": "2026-10-11 11:02:21",
+      "old_conversation_id": "1c7758a1-184c-4d2d-89ef-1b195d7e2572",
+      "new_conversation_id": "9686470f-6351-4291-ba55-0e7b980d4d6c",
+      "reason": "Permintaan reset eksplisit via API"
+    },
+    {
+      "timestamp": "2026-10-11 11:12:44",
+      "old_conversation_id": "9686470f-6351-4291-ba55-0e7b980d4d6c",
+      "new_conversation_id": "e0c4cba8-3aeb-43b4-8a85-aaa0790f643f",
+      "reason": "Permintaan reset eksplisit via API"
+    },
+    {
+      "timestamp": "2026-10-11 11:16:00",
+      "old_conversation_id": "e0c4cba8-3aeb-43b4-8a85-aaa0790f643f",
+      "new_conversation_id": "9f575e08-06c8-4ade-9cd6-450e28b4c079",
+      "reason": "Permintaan reset eksplisit via API"
+    },
+    {
+      "timestamp": "2026-10-11 15:19:28",
+      "old_conversation_id": "9f575e08-06c8-4ade-9cd6-450e28b4c079",
+      "new_conversation_id": "1121ceff-2b54-4f33-bb94-1041b20bd92c",
+      "reason": "Auto-recovery dormant worker (9f575e08)"
+    },
+    {
+      "timestamp": "2026-10-12 08:58:57",
+      "old_conversation_id": "1121ceff-2b54-4f33-bb94-1041b20bd92c",
+      "new_conversation_id": "16ed9184-422f-4e90-a611-0e2ffd9ee0c5",
+      "reason": "Auto-recovery dormant worker (1121ceff)"
+    },
+    {
+      "timestamp": "2026-10-12 21:45:11",
+      "old_conversation_id": "16ed9184-422f-4e90-a611-0e2ffd9ee0c5",
+      "new_conversation_id": "0bd0312e-df86-4245-a224-ed89b8bd2672",
+      "reason": "Inisialisasi pertama Mode Cepat (Flash Lite)"
+    }
+  ]
+}

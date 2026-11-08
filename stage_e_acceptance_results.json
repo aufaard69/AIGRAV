@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-10-12 12:01:13",
+  "total": 14,
+  "passed": 14,
+  "results": {
+    "Test 1: Short response cold cache": "PASS",
+    "Test 2: Identical short response warm cache": "PASS",
+    "Test 3: Long technical response": "PASS",
+    "Test 4: Read-only MCP Revit query": "PASS",
+    "Test 5: Tool call + final answer": "PASS",
+    "Test 6: Runtime error and recovery": "PASS",
+    "Test 7: Consecutive requests in same conversation": "PASS",
+    "Test 8: User cancellation during playback": "PASS",
+    "Test 9: New request during playback interruption": "PASS",
+    "Test 10: In-HUD Refresh connection": "PASS",
+    "Test 11: Microphone inactive during TTS + 500ms acoustic buffer": "PASS",
+    "Test 12: Zero overlap, duplicates, or dropped chunks": "PASS",
+    "Test 13: Single instance backend": "PASS",
+    "Test 14: Revit Bridge alive on port 8765": "PASS"
+  }
+}
