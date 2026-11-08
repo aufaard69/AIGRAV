@@ -1,0 +1,16 @@
+{
+  "version": "2.5.0",
+  "release_name": "5-Pillar Spatial Intelligence & Agentic Sandbox",
+  "release_date": "2026-11-08",
+  "highlights": [
+    "Auto-Spatial Telemetry: Deteksi otomatis elemen melayang (floating check) & clash check berakurasi mm",
+    "Dynamic Python Safe Execution: Sandbox eksekusi geometri kompleks dengan TransactionGroup & rollback otomatis",
+    "Visual Self-Correction Loop: Inspeksi visual model multi-angle (Plan, 3D Isometric, Elevation) via ExportImage",
+    "2D Paper Space & DED Sheet Awareness: Penempatan gambar otomatis pada Kop Surat tanpa tumpang tindih",
+    "Relative & Parametric Helpers: Fungsi place_on_top_of, connect_elements, dan create_grid_matrix"
+  ],
+  "fixes": [
+    "Perbaikan perhitungan volume sloof vs pelat lantai pada elevasi 0 (switch join order)",
+    "Penanganan stream chunking untuk mencegah error unexpected EOF pada eksekusi file besar"
+  ]
+}
