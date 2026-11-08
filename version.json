@@ -1,16 +1,16 @@
 {
-  "version": "2.5.0",
-  "release_name": "5-Pillar Spatial Intelligence & Agentic Sandbox",
+  "version": "2.5.1",
+  "release_name": "Deterministic Validation & Honest Executor Overhaul",
   "release_date": "2026-11-08",
   "highlights": [
-    "Auto-Spatial Telemetry: Deteksi otomatis elemen melayang (floating check) & clash check berakurasi mm",
-    "Dynamic Python Safe Execution: Sandbox eksekusi geometri kompleks dengan TransactionGroup & rollback otomatis",
-    "Visual Self-Correction Loop: Inspeksi visual model multi-angle (Plan, 3D Isometric, Elevation) via ExportImage",
-    "2D Paper Space & DED Sheet Awareness: Penempatan gambar otomatis pada Kop Surat tanpa tumpang tindih",
-    "Relative & Parametric Helpers: Fungsi place_on_top_of, connect_elements, dan create_grid_matrix"
+    "Penghapusan klaim palsu ZERO ERROR dan silent catch block pada executor",
+    "Pelaporan status eksekusi jujur berbasis JSON terstruktur (total created, failed, warnings)",
+    "Penambahan Tool Validasi Lapis 1: aigrav_audit_material_transparency, aigrav_detect_spatial_clashes, aigrav_audit_unresolved_warnings",
+    "Pembaruan Material Kaca (Transparency 85%) dan Fasia Atap Scandinavian Charcoal resmi",
+    "Protokol SOP AGENTS.md Baru: 1 Single-Threaded Write Executor & Hak Veto untuk Validator"
   ],
   "fixes": [
-    "Perbaikan perhitungan volume sloof vs pelat lantai pada elevasi 0 (switch join order)",
-    "Penanganan stream chunking untuk mencegah error unexpected EOF pada eksekusi file besar"
+    "Perbaikan atap/fasia hijau dengan duplikasi CompoundStructure RoofType resmi",
+    "Perbaikan ketergantungan model multi-thread yang rentan bentrok transaksi di Revit"
   ]
 }
