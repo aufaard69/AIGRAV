@@ -681,14 +681,15 @@ def aigrav_spatial_modeling_sop() -> str:
         "# AIGRAV 4-PHASE SPATIAL MODELING & DED SHEET SOP\n"
         "1. **Fase 1 (Context & Datum)**: Wajib panggil `aigrav_get_project_context()` sebelum membuat geometri apa pun "
         "untuk memeriksa Level, Grid, dan Family yang tersedia. Jika belum ada Grid/Level, gunakan `aigrav_create_grid_matrix()`.\n"
-        "2. **Fase 2 (Spatial Blueprinting)**: Sebelum mengeksekusi tool pembuatan elemen, tuliskan tabel/JSON rencana koordinat "
-        "(dalam milimeter `mm`) dan titik jangkar (`anchor points`) di ruang chat.\n"
-        "3. **Fase 3 (Iterative Build, Relative Helpers & Telemetry Check)**: Bangun struktur bertahap dari bawah ke atas. "
-        "Gunakan fungsi relatif (`aigrav_place_on_top_of`, `aigrav_connect_elements`) daripada menembak koordinat absolut. "
-        "Baca `spatial_bounds_mm`, `spatial_check`, dan `ascii_minimap` dari setiap return payload.\n"
-        "4. **Fase 4 (Visual Self-Correction & DED Sheet Placement)**: Setelah satu fase selesai, panggil `aigrav_inspect_model_visually()` "
-        "atau `aigrav_capture_revit_viewport()` dan periksa apakah ada elemen melayang (`is_floating`) atau benturan (`unjoined_bbox_clashes`). "
-        "Untuk penataan gambar kerja di Sheet, wajib panggil `aigrav_get_sheet_paper_space()` lalu `aigrav_place_view_on_sheet()`."
+        "2. **Fase 2 (Spatial Blueprinting)**: Tuliskan tabel/JSON rencana koordinat (dalam milimeter `mm`) dan titik jangkar (`anchor points`) di ruang chat. "
+        "Perhatikan: Revit API adalah single-threaded untuk penulisan, gunakan tepat SATU (1) Executor untuk menulis transaksi.\n"
+        "3. **Fase 3 (Iterative Build & Telemetry Check)**: Bangun struktur bertahap dari bawah ke atas. "
+        "Gunakan fungsi relatif (`aigrav_place_on_top_of`, `aigrav_connect_elements`). Dilarang menelan error dengan catch kosong; wajib laporkan JSON terstruktur.\n"
+        "4. **Fase 4 (Dual-Layer Independent Validation & Hak Veto)**:\n"
+        "   - **Layer 1 (Validasi Kode Deterministik)**: Panggil `aigrav_detect_spatial_clashes()` (pastikan zero clash furnitur vs dinding), "
+        "`aigrav_audit_material_transparency()` (kaca wajib transparan >= 50%), dan `aigrav_audit_unresolved_warnings()`.\n"
+        "   - **Layer 2 (Validasi Visual)**: Panggil `aigrav_inspect_model_visually()` untuk cek warna fasad, kaca tembus pandang, dan halangan pohon.\n"
+        "   - **Hak Veto Validator**: Jika Layer 1 atau Layer 2 gagal, Validator WAJIB menolak (REJECT) dan mengembalikan revisi ke Executor (maks 2x)."
     )
 
 
@@ -867,6 +868,34 @@ def aigrav_place_next_to_viewport_on_sheet(
         "gap_mm": gap_mm,
     }
     return call_aigrav("place_next_to_viewport_on_sheet", json.dumps(payload))
+
+
+# ============================================================
+# DETERMINISTIC VALIDATOR TOOLS (LAYER 1 CODE-BASED AUDIT)
+# ============================================================
+
+@mcp.tool(
+    name="aigrav_audit_material_transparency",
+    description="[Validator Lapis 1] Audit independen material kaca dan atap. Memeriksa apakah jendela/curtain wall memiliki nilai transparansi >= 50% (mendeteksi kaca abu-abu solid/opaque) dan atap memiliki material resmi.",
+)
+def aigrav_audit_material_transparency() -> str:
+    return call_aigrav("audit_material_transparency", "{}")
+
+
+@mcp.tool(
+    name="aigrav_detect_spatial_clashes",
+    description="[Validator Lapis 1] Deteksi benturan fisik (clash) antara furnitur (OST_Furniture) dengan dinding (OST_Walls) menggunakan BoundingBox & solid filter untuk mencegah furnitur menembus/keluar dari dinding.",
+)
+def aigrav_detect_spatial_clashes() -> str:
+    return call_aigrav("detect_spatial_clashes", "{}")
+
+
+@mcp.tool(
+    name="aigrav_audit_unresolved_warnings",
+    description="[Validator Lapis 1] Audit seluruh peringatan aktif di dokumen Revit (Document.GetWarnings). Mengembalikan daftar warning, tingkat keparahan, dan ID elemen yang bermasalah.",
+)
+def aigrav_audit_unresolved_warnings() -> str:
+    return call_aigrav("audit_unresolved_warnings", "{}")
 
 
 # ============================================================

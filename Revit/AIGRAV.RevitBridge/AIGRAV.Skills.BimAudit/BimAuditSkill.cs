@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 
 
@@ -478,7 +478,9 @@ public sealed partial class BimAuditSkill : IAIGRAVSkill
 
 
 
-            || toolName.Equals("aigrav_execute_hide_portal_links", StringComparison.OrdinalIgnoreCase);
+            || toolName.Equals("aigrav_execute_hide_portal_links", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_build_house_type36", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_export_house_type36_views", StringComparison.OrdinalIgnoreCase);
 
 
 
@@ -510,6 +512,14 @@ public sealed partial class BimAuditSkill : IAIGRAVSkill
 
 
 
+            if (toolName.Equals("aigrav_build_house_type36", StringComparison.OrdinalIgnoreCase))
+            {
+                return BuildHouseType36(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_export_house_type36_views", StringComparison.OrdinalIgnoreCase))
+            {
+                return ExportHouseType36Views(app!, doc, argument);
+            }
             if (toolName.Equals("aigrav_execute_hide_portal_links", StringComparison.OrdinalIgnoreCase))
 
 

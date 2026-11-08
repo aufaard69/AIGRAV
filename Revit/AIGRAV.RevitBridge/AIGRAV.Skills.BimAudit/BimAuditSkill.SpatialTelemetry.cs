@@ -40,7 +40,10 @@ public sealed partial class SpatialAgenticSandboxSkill : IAIGRAVSkill
         "create_wall", "aigrav_create_wall",
         "create_column", "aigrav_create_column",
         "create_beam", "aigrav_create_beam",
-        "create_floor", "aigrav_create_floor"
+        "create_floor", "aigrav_create_floor",
+        "audit_material_transparency", "aigrav_audit_material_transparency",
+        "detect_spatial_clashes", "aigrav_detect_spatial_clashes",
+        "audit_unresolved_warnings", "aigrav_audit_unresolved_warnings"
     };
 
     public bool CanHandle(string toolName) => SupportedTools.Contains(toolName);
@@ -71,6 +74,9 @@ public sealed partial class SpatialAgenticSandboxSkill : IAIGRAVSkill
                 "create_column" => CreateColumnWithTelemetry(doc, argument),
                 "create_beam" => CreateBeamWithTelemetry(doc, argument),
                 "create_floor" => CreateFloorWithTelemetry(doc, argument),
+                "audit_material_transparency" => AuditMaterialTransparencyJson(doc, argument),
+                "detect_spatial_clashes" => DetectSpatialClashesJson(doc, argument),
+                "audit_unresolved_warnings" => AuditUnresolvedWarningsJson(doc),
                 _ => JsonSerializer.Serialize(new { error = $"Unhandled tool: {toolName}" })
             };
         }
