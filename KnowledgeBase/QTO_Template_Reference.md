@@ -13,7 +13,7 @@ Tujuan utama standarisasi:
 1. **Hirarki Terstruktur**: Penamaan mencerminkan hirarki logis `Lokasi > Kategori Elemen > Spesifikasi Profil / Tipe Sambungan`.
 2. **Penanda Lokasi Jelas (Kolom A)**: Kolom `Lokasi` selalu ditempatkan pada kolom pertama (Kolom A / Kolom 0) dan tampil aktif (*unhidden*).
 3. **Format Presisi Per Kategori**:
-   - Pelat Sambungan menampilkan berat (4 kolom).
+   - Pelat Sambungan menampilkan ketebalan & berat (5 kolom: Lokasi, Tipe Sambungan, Thickness (mm), Qty, Berat (Kg) dengan sortir per Thickness aktif subtotal footer).
    - Baut Sambungan hanya menampilkan kuantitas baut (3 kolom).
    - Baseplate menampilkan dimensi lengkap & keterangan (7 kolom).
 4. **Isolasi Anti Double-Counting**: Schedule umum/Bangunan Utama difilter secara ketat `Lokasi = ""` sehingga tidak terjadi perhitungan ganda atas elemen-elemen yang sudah diklasifikasikan ke sub-lokasi.
@@ -50,15 +50,18 @@ Digunakan untuk merekap seluruh pelat sambungan Advance Steel (*Endplate*, *Guss
 |:---:|:---|:---|:---:|:---|
 | **0** | `Lokasi` | `Lokasi` | **Visible** | Kolom A sebagai penanda lokasi proyek |
 | **1** | `Type of Connection` | `Tipe Sambungan` | **Visible** | Nama tipe sambungan (e.g. WF350-Endplate) |
-| **2** | `Count` | `Qty` | **Visible** | Kuantitas lembar pelat |
-| **3** | `Weight` | `Berat (Kg)` | **Visible** | Total berat pelat terhitung (Kg) |
-| - | `Thickness` | - | *Hidden* | Digunakan untuk filter/pengelompokan internal |
+| **2** | `Thickness` | `Thickness (mm)` | **Visible** | Ketebalan pelat dalam mm |
+| **3** | `Count` | `Qty` | **Visible** | Kuantitas lembar pelat |
+| **4** | `Weight` | `Berat (Kg)` | **Visible** | Total berat pelat terhitung (Kg) |
 | - | `Width` | - | *Hidden* | - |
 | - | `Length` | - | *Hidden* | - |
 | - | `Comments` | - | *Hidden* | - |
 | - | `Tipe Detail Sambungan` | - | *Hidden* | Tidak ditampilkan atas instruksi pengguna |
 
-- **Pengaturan Sorting**: `Type of Connection` (Ascending), Itemize every instance = False, Grand totals = True.
+- **Pengaturan Sorting**:
+  1. `Type of Connection` (Ascending, ShowHeader=False, ShowFooter=False)
+  2. `Thickness` (Ascending, ShowHeader=False, **ShowFooter=True** - menampilkan subtotal Qty dan Berat per ketebalan pelat)
+- **Pengaturan Grouping & Totals**: Itemize every instance = False, Grand totals = True (Title: "Total", Count=True, Totals=True).
 - **Filter Baku**:
   1. `Lokasi` **Equal** `[Nama Lokasi]`
   2. `Type of Connection` **Contains** `[Nama Sambungan]`
