@@ -19,7 +19,7 @@ public class VersionInfo
 
 public static class AIGRAVVersionChecker
 {
-    private const string VersionFilePath = @"C:\AIGRAV\version.json";
+    private static readonly string[] VersionFilePaths = new[] { @"D:\AIGRAV\version.json", @"C:\AIGRAV\version.json" };
     private const string RemoteVersionUrl = "https://raw.githubusercontent.com/aufaard69/AIGRAV/main/version.json";
     private static readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(5) };
 
@@ -27,14 +27,17 @@ public static class AIGRAVVersionChecker
     {
         try
         {
-            if (File.Exists(VersionFilePath))
+            foreach (var p in VersionFilePaths)
             {
-                string json = File.ReadAllText(VersionFilePath);
-                return JsonSerializer.Deserialize<VersionInfo>(json) ?? new VersionInfo();
+                if (File.Exists(p))
+                {
+                    string json = File.ReadAllText(p);
+                    return JsonSerializer.Deserialize<VersionInfo>(json) ?? new VersionInfo();
+                }
             }
         }
         catch { }
-        return new VersionInfo { version = "2.5.0", release_name = "AIGRAV Core" };
+        return new VersionInfo { version = "2.6.0", release_name = "AIGRAV Core" };
     }
 
     public static async Task<(bool hasUpdate, VersionInfo? remoteInfo)> CheckForUpdatesAsync()
