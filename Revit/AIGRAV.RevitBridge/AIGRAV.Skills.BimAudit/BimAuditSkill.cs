@@ -26017,6 +26017,7 @@ partial class BimAuditSkill
 
 
                 var fType = GetOrAddField(def, doc, "Type of Connection") ?? GetOrAddField(def, doc, "Tipe Sambungan");
+                var fThk = GetOrAddField(def, doc, "Thickness") ?? GetOrAddField(def, doc, "Thickness (mm)");
 
 
 
@@ -26088,6 +26089,7 @@ partial class BimAuditSkill
 
 
 
+                if (fThk != null) { fThk.ColumnHeading = "Thickness (mm)"; fThk.IsHidden = false; }
                 if (fWeight != null)
 
 
@@ -26141,6 +26143,7 @@ partial class BimAuditSkill
 
 
                     if (fWeight != null && f.FieldId == fWeight.FieldId) continue;
+                    if (fThk != null && f.FieldId == fThk.FieldId) continue;
 
 
 
@@ -26152,7 +26155,7 @@ partial class BimAuditSkill
 
 
 
-                ReorderVisibleFields(def, new List<ScheduleField?> { fLok, fType, fCount, fWeight });
+                ReorderVisibleFields(def, new List<ScheduleField?> { fLok, fType, fThk, fCount, fWeight });
 
 
 
@@ -26176,6 +26179,7 @@ partial class BimAuditSkill
 
 
 
+                if (fThk != null) { def.AddSortGroupField(new ScheduleSortGroupField(fThk.FieldId, ScheduleSortOrder.Ascending) { ShowHeader = false, ShowFooter = true }); }
                 def.ShowGrandTotal = true;
 
 
@@ -29341,6 +29345,7 @@ partial class BimAuditSkill
 
 
                     var fType = GetOrAddField(def, doc, "Type of Connection") ?? GetOrAddField(def, doc, "Tipe Sambungan");
+                    var fThk = GetOrAddField(def, doc, "Thickness") ?? GetOrAddField(def, doc, "Thickness (mm)");
 
 
 
@@ -29361,6 +29366,7 @@ partial class BimAuditSkill
 
 
                     if (fType != null) { fType.IsHidden = false; fType.ColumnHeading = "Tipe Sambungan"; }
+                    if (fThk != null) { fThk.IsHidden = false; fThk.ColumnHeading = "Thickness (mm)"; }
 
 
 
@@ -29380,7 +29386,11 @@ partial class BimAuditSkill
 
 
 
-                    ReorderVisibleFields(def, new List<ScheduleField?> { fLok, fType, fQty, fWeight });
+                    ReorderVisibleFields(def, new List<ScheduleField?> { fLok, fType, fThk, fQty, fWeight });
+                    while (def.GetSortGroupFieldCount() > 0) def.RemoveSortGroupField(0);
+                    if (fType != null) def.AddSortGroupField(new ScheduleSortGroupField(fType.FieldId, ScheduleSortOrder.Ascending) { ShowHeader = false, ShowFooter = false });
+                    if (fThk != null) def.AddSortGroupField(new ScheduleSortGroupField(fThk.FieldId, ScheduleSortOrder.Ascending) { ShowHeader = false, ShowFooter = true });
+                    def.IsItemized = false; def.ShowGrandTotal = true; def.ShowGrandTotalTitle = true; def.ShowGrandTotalCount = true; def.GrandTotalTitle = "Total";
 
 
 
