@@ -6,16 +6,18 @@
     "PelatSambungan": {
       "category": "OST_StructConnectionPlates",
       "categoryId": -2009038,
-      "total_columns": 4,
+      "total_columns": 5,
       "columns": [
         { "index": 0, "name": "Lokasi", "heading": "Lokasi", "hidden": false },
         { "index": 1, "name": "Type of Connection", "heading": "Tipe Sambungan", "hidden": false },
-        { "index": 2, "name": "Count", "heading": "Qty", "hidden": false },
-        { "index": 3, "name": "Weight", "heading": "Berat (Kg)", "hidden": false }
+        { "index": 2, "name": "Thickness", "heading": "Thickness (mm)", "hidden": false },
+        { "index": 3, "name": "Count", "heading": "Qty", "hidden": false },
+        { "index": 4, "name": "Weight", "heading": "Berat (Kg)", "hidden": false }
       ],
-      "hidden_fields": ["Thickness", "Width", "Length", "Comments", "Tipe Detail Sambungan"],
+      "hidden_fields": ["Width", "Length", "Comments", "Tipe Detail Sambungan"],
       "sort_group": [
-        { "field": "Type of Connection", "order": "Ascending", "show_header": false, "show_footer": false }
+        { "field": "Type of Connection", "order": "Ascending", "show_header": false, "show_footer": false },
+        { "field": "Thickness", "order": "Ascending", "show_header": false, "show_footer": true }
       ],
       "filters": [
         { "field": "Lokasi", "type": "Equal", "value_source": "LocationName" },
