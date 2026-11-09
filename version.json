@@ -1,16 +1,17 @@
 {
-  "version": "2.5.1",
-  "release_name": "Deterministic Validation & Honest Executor Overhaul",
-  "release_date": "2026-11-08",
+  "version": "2.6.0",
+  "release_name": "Standard QTO Plate 5-Column & Thickness Sorting Engine",
+  "release_date": "2026-11-09",
   "highlights": [
-    "Penghapusan klaim palsu ZERO ERROR dan silent catch block pada executor",
-    "Pelaporan status eksekusi jujur berbasis JSON terstruktur (total created, failed, warnings)",
-    "Penambahan Tool Validasi Lapis 1: aigrav_audit_material_transparency, aigrav_detect_spatial_clashes, aigrav_audit_unresolved_warnings",
-    "Pembaruan Material Kaca (Transparency 85%) dan Fasia Atap Scandinavian Charcoal resmi",
-    "Protokol SOP AGENTS.md Baru: 1 Single-Threaded Write Executor & Hak Veto untuk Validator"
+    "Standarisasi Baku QTO Pelat Sambungan (OST_StructConnectionPlates) menjadi 5 Kolom: Lokasi, Tipe Sambungan, Thickness (mm), Qty, Berat (Kg)",
+    "Penambahan Sortir Tingkat 2 per Thickness dengan Footer Subtotal aktif (merekap subtotal Qty lembar & Berat Kg per ketebalan pelat)",
+    "Skill Baru Revit Bridge: Plate QTO Standardizer (AIGRAV.Skills.PlateStandardizer) v2.0.0 dengan hot-reload otomatis",
+    "Pembaruan template baku pada qto_templates.json, QTO_Template_Reference.md, dan revit-qto-schedule-audit SKILL.md",
+    "Pembaruan logika BimAuditSkill.cs untuk CreateStructuredSchedule dan ExecuteFixBatch2",
+    "Eksekusi penataan dan validasi sukses 100% pada 46 schedule pelat sambungan model Revit aktif"
   ],
   "fixes": [
-    "Perbaikan atap/fasia hijau dengan duplikasi CompoundStructure RoofType resmi",
-    "Perbaikan ketergantungan model multi-thread yang rentan bentrok transaksi di Revit"
+    "Perbaikan kolom Thickness yang sebelumnya tersembunyi menjadi kolom aktif di Kolom C",
+    "Pencegahan kerancuan rekapitulasi pelat fabrikasi dengan pemisahan subtotal per varian tebal pelat"
   ]
 }
