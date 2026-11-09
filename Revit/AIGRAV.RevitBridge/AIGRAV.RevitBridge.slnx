@@ -18,4 +18,7 @@
   <Project Path="AIGRAV.Skills.SteelTypeGenerator/AIGRAV.Skills.SteelTypeGenerator.csproj">
     <Platform Project="x64" />
   </Project>
+  <Project Path="AIGRAV.Skills.PlateStandardizer/AIGRAV.Skills.PlateStandardizer.csproj">
+    <Platform Project="x64" />
+  </Project>
 </Solution>
