@@ -42,11 +42,15 @@ Lokasi (Location)
 > **Column A (Column 0 / Index 0)** MUST ALWAYS BE the `Lokasi` column, unhidden and positioned as the very first column across ALL schedules as the primary location marker.
 
 ### A. Pelat Sambungan (`OST_StructConnectionPlates`)
-- **Format**: Exactly **4 Columns**
-  `Lokasi | Tipe Sambungan | Qty | Berat (Kg)`
+- **Format**: Exactly **5 Columns**
+  `Lokasi | Tipe Sambungan | Thickness (mm) | Qty | Berat (Kg)`
 - **Category**: `BuiltInCategory.OST_StructConnectionPlates`
-- **Hidden Fields**: `Thickness`, `Width`, `Length`, `Comments`, `Tipe Detail Sambungan`
-- **Sorting/Grouping**: By `Type of Connection` (Ascending), Itemize every instance = False, Grand totals = True.
+- **Hidden Fields**: `Width`, `Length`, `Comments`, `Tipe Detail Sambungan`
+- **Sorting/Grouping**:
+  1. `Type of Connection` (Ascending, ShowHeader=False, ShowFooter=False)
+  2. `Thickness` (Ascending, ShowHeader=False, **ShowFooter=True** - Subtotal Qty & Berat per ketebalan pelat)
+  - Itemize every instance = False
+  - Grand totals = True (Title: "Total", Count=True, Totals=True)
 - **Filters**:
   1. `Lokasi` = `<LocationName>`
   2. `Type of Connection` Contains `<ConnectionTypeName>` (e.g. `WF350-Endplate`)
