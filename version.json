@@ -1,17 +1,17 @@
 {
-  "version": "2.6.0",
-  "release_name": "Standard QTO Plate 5-Column & Thickness Sorting Engine",
-  "release_date": "2026-11-09",
+  "version": "2.7.0",
+  "release_name": "Multi-Document Context Manager, Cross-Project Sheet & View Transfer, In-Memory Family Authoring",
+  "release_date": "2026-11-10",
   "highlights": [
-    "Standarisasi Baku QTO Pelat Sambungan (OST_StructConnectionPlates) menjadi 5 Kolom: Lokasi, Tipe Sambungan, Thickness (mm), Qty, Berat (Kg)",
-    "Penambahan Sortir Tingkat 2 per Thickness dengan Footer Subtotal aktif (merekap subtotal Qty lembar & Berat Kg per ketebalan pelat)",
-    "Skill Baru Revit Bridge: Plate QTO Standardizer (AIGRAV.Skills.PlateStandardizer) v2.0.0 dengan hot-reload otomatis",
-    "Pembaruan template baku pada qto_templates.json, QTO_Template_Reference.md, dan revit-qto-schedule-audit SKILL.md",
-    "Pembaruan logika BimAuditSkill.cs untuk CreateStructuredSchedule dan ExecuteFixBatch2",
-    "Eksekusi penataan dan validasi sukses 100% pada 46 schedule pelat sambungan model Revit aktif"
+    "Multi-Document Context Manager: Headless background opening, closing, and listing of RVT & RFA in RAM without UI blocking",
+    "Cross-Project Sheet & View Transfer Engine: Transfer ViewSheet with Titleblock, Viewport placements, 2D annotations, and detail items",
+    "Cross-Project Detail & System Type Transfer: Copy drafting views with all 2D elements and system types (WallType, FloorType) between projects",
+    "In-Memory Family Authoring: Inspect, add, and modify family parameters/formulas in RAM and reload with automatic override",
+    "Live-verified 100% on Autodesk Revit 2026 transferring Sheet A502 (Partition Types) with 5 viewports from Snowdon Towers"
   ],
   "fixes": [
-    "Perbaikan kolom Thickness yang sebelumnya tersembunyi menjadi kolom aktif di Kolom C",
-    "Pencegahan kerancuan rekapitulasi pelat fabrikasi dengan pemisahan subtotal per varian tebal pelat"
+    "Added IFailuresPreprocessor (ClashWarningSwallower) to all write transactions to eliminate duplicate types/materials modal dialogs",
+    "Added watchdog auto-dismissal for modal reminder dialogs ('Project Not Saved Recently', 'Warning') in wake_revit.py",
+    "Optimized ViewSheet viewport queries using native GetAllViewports() to prevent slow scoped collector freezes on 100MB+ linked models"
   ]
 }
