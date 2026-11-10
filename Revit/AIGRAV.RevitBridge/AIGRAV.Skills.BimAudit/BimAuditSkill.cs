@@ -482,7 +482,16 @@ public sealed partial class BimAuditSkill : IAIGRAVSkill
             || toolName.Equals("aigrav_build_house_type36", StringComparison.OrdinalIgnoreCase)
             || toolName.Equals("aigrav_export_house_type36_views", StringComparison.OrdinalIgnoreCase)
             || toolName.Equals("aigrav_create_perspective_previews", StringComparison.OrdinalIgnoreCase)
-            || toolName.Equals("aigrav_create_interior_views", StringComparison.OrdinalIgnoreCase);
+            || toolName.Equals("aigrav_create_interior_views", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_list_open_documents", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_open_background_document", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_close_background_document", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_inspect_external_document", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_copy_from_external_project", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_inspect_family_internals", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_modify_family_parameter", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_reload_family_with_override", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_copy_sheets_and_views", StringComparison.OrdinalIgnoreCase);
 
 
 
@@ -529,6 +538,42 @@ public sealed partial class BimAuditSkill : IAIGRAVSkill
             if (toolName.Equals("aigrav_create_interior_views", StringComparison.OrdinalIgnoreCase))
             {
                 return CreateInteriorViews(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_list_open_documents", StringComparison.OrdinalIgnoreCase))
+            {
+                return ListOpenDocuments(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_open_background_document", StringComparison.OrdinalIgnoreCase))
+            {
+                return OpenBackgroundDocument(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_close_background_document", StringComparison.OrdinalIgnoreCase))
+            {
+                return CloseBackgroundDocument(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_inspect_external_document", StringComparison.OrdinalIgnoreCase))
+            {
+                return InspectExternalDocument(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_copy_from_external_project", StringComparison.OrdinalIgnoreCase))
+            {
+                return CopyFromExternalProject(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_inspect_family_internals", StringComparison.OrdinalIgnoreCase))
+            {
+                return InspectFamilyInternals(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_modify_family_parameter", StringComparison.OrdinalIgnoreCase))
+            {
+                return ModifyFamilyParameter(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_reload_family_with_override", StringComparison.OrdinalIgnoreCase))
+            {
+                return ReloadFamilyWithOverride(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_copy_sheets_and_views", StringComparison.OrdinalIgnoreCase))
+            {
+                return CopySheetsAndViewsFromProject(app!, doc, argument);
             }
             if (toolName.Equals("aigrav_execute_hide_portal_links", StringComparison.OrdinalIgnoreCase))
 
