@@ -88,6 +88,20 @@ Lokasi (Location)
 - **Filters**:
   1. `Lokasi` = `<LocationName>`
 
+### F. Voute & Profil Sambungan (`OST_StructConnectionProfiles`)
+- **Format**: Exactly **7 Columns**
+  `Lokasi | Tipe Sambungan | Type | Length (mm) | Volume | Qty | Berat (Kg)`
+- **Category**: `BuiltInCategory.OST_StructConnectionProfiles`
+- **Weight Calibration**: Strictly calculated from solid volume ($\text{Exact Weight} = \text{Volume} \times 7.850\text{ kg/m}^3$) for tapered / half-cut haunches.
+- **Sorting/Grouping**:
+  1. `Profile Type` (Ascending)
+  2. `Cut Length` (Ascending, ShowFooter=True for subtotal per length)
+  - Itemize every instance = False
+  - Grand totals = True (Title: "Total", Count=True, Totals=True)
+- **Filters**:
+  1. `Lokasi` = `<LocationName>`
+  2. `Type of Connection` Contains `<ConnectionTypeName>` (e.g. `WF350-Endplate`)
+
 ---
 
 ## 3. Anti Double-Counting Protocol
