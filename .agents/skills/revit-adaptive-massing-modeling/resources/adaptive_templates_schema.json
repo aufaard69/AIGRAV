@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AIGRAVAdaptiveComponentPayload",
+  "type": "object",
+  "required": ["familyName", "instances"],
+  "properties": {
+    "familyName": {
+      "type": "string",
+      "description": "Name of the adaptive family loaded in Revit"
+    },
+    "typeName": {
+      "type": "string",
+      "description": "Optional specific type name within the family"
+    },
+    "instances": {
+      "type": "array",
+      "description": "List of instances to generate",
+      "items": {
+        "type": "object",
+        "required": ["points_mm"],
+        "properties": {
+          "points_mm": {
+            "type": "array",
+            "description": "Ordered 3D control points (X, Y, Z in millimeters)",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "minItems": 2
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Key-value pair of instance parameter overrides",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
