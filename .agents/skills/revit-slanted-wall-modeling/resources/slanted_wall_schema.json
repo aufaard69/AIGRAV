@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SlantedWallAndDonutFloorPayload",
+  "type": "object",
+  "properties": {
+    "slanted_walls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "wall_type_name": { "type": "string" },
+          "base_level_name": { "type": "string" },
+          "height_meters": { "type": "number" },
+          "base_offset_meters": { "type": "number", "default": 0.0 },
+          "slant_angle_radians": { "type": "number" },
+          "start_point_meters": {
+            "type": "object",
+            "properties": { "x": { "type": "number" }, "y": { "type": "number" }, "z": { "type": "number" } },
+            "required": ["x", "y", "z"]
+          },
+          "end_point_meters": {
+            "type": "object",
+            "properties": { "x": { "type": "number" }, "y": { "type": "number" }, "z": { "type": "number" } },
+            "required": ["x", "y", "z"]
+          }
+        },
+        "required": ["wall_type_name", "base_level_name", "height_meters", "slant_angle_radians", "start_point_meters", "end_point_meters"]
+      }
+    },
+    "donut_floors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "floor_type_name": { "type": "string" },
+          "level_name": { "type": "string" },
+          "thickness_meters": { "type": "number" },
+          "elevation_meters": { "type": "number" },
+          "outer_boundary_ccw": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": { "x": { "type": "number" }, "y": { "type": "number" }, "z": { "type": "number" } },
+              "required": ["x", "y", "z"]
+            }
+          },
+          "inner_void_loops_cw": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": { "x": { "type": "number" }, "y": { "type": "number" }, "z": { "type": "number" } },
+                "required": ["x", "y", "z"]
+              }
+            }
+          }
+        },
+        "required": ["floor_type_name", "level_name", "outer_boundary_ccw"]
+      }
+    }
+  }
+}
