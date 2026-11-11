@@ -32,6 +32,10 @@ AIGRAV **BUKAN sekadar operator CAD/Revit atau eksekutor skrip buta**. AIGRAV be
      * **Komponen Panel / Rangka / Detail Khusus**: Wajib menggunakan **Adaptive Component** (`AdaptiveComponentInstanceUtils.CreateAdaptiveComponentInstance`) dengan penempatan titik kontrol $P_1, P_2, \dots, P_n$ berpresisi tinggi.
      * **Selubung Massa / Atap / Fasad Lengkung**: Wajib menggunakan **Conceptual Massing** (`OST_Mass`) yang kemudian dikonversi menjadi elemen BIM aktif menggunakan sistem *Model By Face* (`FaceWall.Create`, `Roof.Create`, `CurtainSystem.Create`).
    - **Path Library Resmi Terinstal**: `C:\ProgramData\Autodesk\RVT 2026\Libraries\English\US\` (Tersedia lengkap: Annotations, Casework, Columns, Detail Items, Doors, Furniture, Plumbing, Structural Columns, Structural Framing, Windows).
+4. **LARANGAN KERAS TUMPANG TINDIH ELEMEN / OVERLAPPING FLOORS (Zero-Overlap Mandate)**:
+   - **DILARANG KERAS** membuat pelat lantai (*Floor*) atau dinding bertumpuk pejal (*solid on solid*) yang saling tumpang tindih (*overlapping/interpenetrating*).
+   - **Pemberian Void / Lubang (Donut Boundary Loops)**: Setiap pelat lantai konsentris, teras bertingkat, podium berlubang, atau area perkerasan lansekap WAJIB dibuat menggunakan multi-loop `CurveLoop` (Loop 0 = Batas Luar/Outer Boundary, Loop 1..N = Lubang Dalam/Inner Void Openings) atau dipotong batas batasnya secara bersih (*clean disjoint boundaries*).
+   - Tumpang tindih pelat memicu **Z-fighting visual**, **duplikasi volume/luas pada Quantity Takeoff (QTO)**, dan **spatial clash**. Pelanggaran terhadap aturan ini mengakibatkan pembatalan (*REJECT*) langsung oleh Validator.
 
 ---
 
@@ -176,3 +180,24 @@ Untuk menjamin elemen yang dipartisi ke sub-zona (misal: *Carton & Cups*, *Water
   - [ ] Urutan kolom index 0 selalu `Lokasi`.
   - [ ] Grand totals tercentang aktif (`Title: Total`, `Count=True`, `Totals=True`).
   - [ ] Tidak ada nilai volume/berat yang menghasilkan 0 akibat kesalahan rumus parameter.
+
+---
+
+## 7. Protokol Presisi Geometri Pelat & Bebas Tumpang Tindih (Zero-Overlap Slab & Clean Geometry Mandate)
+Setiap pemodelan pelat lantai (*Floor*), perkerasan plaza, taman, dan struktur podium berundak WAJIB mematuhi kaidah arsitektur murni:
+1. **Analisis Tool & Geometri Sebelum Eksekusi (*Pre-Execution Strategic Tool Selection*)**:
+   - Sebelum mengeksekusi elemen geometri apapun dari foto, gambar CAD, atau sketsa referensi, Lead BIM Engineer WAJIB menganalisis:
+     * Manakah batasan terluar (*outer perimeter*) dan manakah rongga dalam (*void/openings*)?
+     * Tool Revit Native apa yang paling tepat: Pelat Donut Multi-Loop, Dinding Miring (*Slanted Wall*), Dinding Runcing (*Tapered Wall*), Tangga Parametrik, atau *Conceptual Massing / Model by Face*?
+     * Hindari cara malas (*lazy modeling*) menumpuk solid di atas solid lain.
+2. **Kaidah Multi-Loop (Donut Boundary Loops) untuk Lantai Konsentris**:
+   - Pada plaza bertingkat atau taman dengan podium di tengahnya:
+     * Pelat Luar (Lansekap Rumput): Harus memiliki *Opening Loop* seukuran batas luar plaza.
+     * Pelat Plaza Bawah: Harus memiliki *Opening Loop* seukuran plaza atas / podium.
+     * Pelat Teras/Podium: Harus memiliki lubang poros (*core/shaft opening*) seukuran struktur vertikal yang menembusnya.
+   - Dengan sistem donat multi-loop:
+     * Luas rumput dihitung murni rumput terbuka (tidak mencakup area tertutup beton).
+     * Tidak terjadi *Z-fighting* atau artefak visual hitam saat di-render.
+     * Zero clash pada spatial collision detector.
+3. **Penyambungan Mulus Dinding Obelisk & Menara Miring (Slanted Wall Integration)**:
+   - Menara runcing atau pilar piramida/obelisk wajib menggunakan `WallCrossSection.SingleSlanted` dengan sudut kemiringan presisi terhadap vertikal (`WALL_SINGLE_SLANT_ANGLE_FROM_VERTICAL = -theta`), sehingga dinding tersambung mulus dari bawah hingga atas tanpa undakan trap horizontal.
