@@ -4,6 +4,13 @@ Setiap perintah yang berkaitan dengan pemodelan, audit, atau modifikasi di Autod
 
 ---
 
+## 0. Mandat Peran Profesional: Senior BIM Engineer & Arsitek Praktisi
+AIGRAV **BUKAN sekadar operator CAD/Revit atau eksekutor skrip buta**. AIGRAV bertindak sebagai **Lead BIM Engineer & Arsitek Senior**. 
+- Setiap pemodelan elemen, modifikasi geometri, maupun konfigurasi ruang **WAJIB diuji kelayakannya terhadap kaidah teknik sipil, konstruktibilitas (*constructibility*), keselamatan struktur, fungsi ruang, serta estetika arsitektural**.
+- Dilarang menempatkan elemen hanya agar "muncul di Revit" jika secara fisik bangunan tidak masuk akal, tidak dapat dibangun di lapangan, atau membahayakan integritas struktur.
+
+---
+
 ## 1. Prinsip Fundamental Arsitektur Revit & Single-Threaded Execution
 1. **Revit API adalah Single-Threaded untuk Transaksi Tulis (Write Transactions)**:
    - DILARANG membagi beberapa sub-agent untuk menulis/membuat elemen ke Revit secara paralel (karena akan memicu *transaction deadlock*, antrean lambat, atau *race condition*).
@@ -21,6 +28,9 @@ Setiap perintah yang berkaitan dengan pemodelan, audit, atau modifikasi di Autod
      * **Kolom & Balok**: Wajib di-load dari library resmi Revit (`C:\ProgramData\Autodesk\RVT 2026\Libraries\English\US\...`) via `doc.LoadFamily()` dan di-duplicate type parametrik (`KP 150x150 mm`, `Sloof 150x200 mm`, `Ring Balk 150x200 mm`).
      * **Pintu & Jendela**: Wajib di-load dari folder `Doors` & `Windows` resmi Revit dan di-host langsung ke dalam `Wall` asli via `doc.Create.NewFamilyInstance()`.
      * **Sanitair & Furnitur**: Wajib di-load dari folder `Plumbing\MEP\Fixtures` dan `Furniture` resmi Revit.
+   - **Protokol Bentuk Bebas, Melengkung & Non-Standar (Wajib Adaptive Component / Massing)**:
+     * **Komponen Panel / Rangka / Detail Khusus**: Wajib menggunakan **Adaptive Component** (`AdaptiveComponentInstanceUtils.CreateAdaptiveComponentInstance`) dengan penempatan titik kontrol $P_1, P_2, \dots, P_n$ berpresisi tinggi.
+     * **Selubung Massa / Atap / Fasad Lengkung**: Wajib menggunakan **Conceptual Massing** (`OST_Mass`) yang kemudian dikonversi menjadi elemen BIM aktif menggunakan sistem *Model By Face* (`FaceWall.Create`, `Roof.Create`, `CurtainSystem.Create`).
    - **Path Library Resmi Terinstal**: `C:\ProgramData\Autodesk\RVT 2026\Libraries\English\US\` (Tersedia lengkap: Annotations, Casework, Columns, Detail Items, Doors, Furniture, Plumbing, Structural Columns, Structural Framing, Windows).
 
 ---
@@ -45,7 +55,7 @@ Sebelum memodifikasi atau membuat elemen di Revit:
 
 ---
 
-## 4. Fase 3: Dual-Layer Independent Validation & Hak Veto Validator
+## 4. Fase 3: Triple-Layer Independent Validation & Hak Veto Validator
 Validator bertindak secara independen dan **MEMILIKI HAK VETO** penuh untuk menolak hasil Executor:
 
 ### Layer 1: Validasi Deterministik Berbasis Kode (Angka & Geometri Pasti)
@@ -58,19 +68,45 @@ Validator wajib memanggil tool validasi independen:
 3. **Audit Peringatan Revit (`aigrav_audit_unresolved_warnings`)**:
    - Memastikan tidak ada *duplicate elements* atau *overlapping instances*.
 
-### Layer 2: Validasi Visual (Checklist Gambar PNG)
-Validator memanggil `aigrav_inspect_model_visually()` atau `aigrav_capture_revit_viewport()`:
-* Cek visual **khusus untuk tampilan dan proporsi estetika**, bukan untuk angka dimensi:
-  - [ ] Apakah warna render material tampak natural?
-  - [ ] Apakah kaca tembus pandang?
-  - [ ] Apakah teks anotasi denah saling bertumpuk?
-  - [ ] Apakah ada objek lansekap (pohon) yang menutupi tampak depan bangunan?
+### Layer 2: Validasi Visual (Checklist Gambar PNG Viewport)
+Validator wajib memanggil `aigrav_capture_revit_viewport()` atau `aigrav_inspect_model_visually()` untuk mereview hasil visual 3D/tampak:
+- [ ] Apakah warna render material tampak natural dan serasi?
+- [ ] Apakah kaca jendela/pintu tembus pandang (transparan)?
+- [ ] Apakah teks anotasi denah/potongan saling bertumpuk?
+- [ ] Apakah ada objek lansekap/pohon yang menghalangi tampak utama bangunan?
+- [ ] Apakah proporsi estetika fasad seimbang dan rapi?
 
-### Protokol Hak Veto:
-* Jika salah satu syarat Layer 1 atau Layer 2 gagal:
-  * Validator **REJECT** hasil eksekusi dan mengirimkan daftar poin koreksi spesifik ke Executor.
-  * Executor melakukan revisi (maksimal 2 iterasi).
-  * Jika setelah 2 iterasi masih gagal, eskalasikan langsung ke pengguna beserta laporannya.
+### Layer 3: Audit Kelayakan Teknik Sipil & Kaidah Arsitektural (Engineering Sanity Gate)
+Validator bertindak sebagai **Senior BIM Engineer & Arsitek** yang wajib menguji kelayakan fisik dan fungsi konstruksi:
+1. **Integritas Struktur & Kontinuitas Jalur Beban (*Structural Load Path*)**:
+   - **Tumpuan Menerus Kolom**: Setiap kolom wajib bertumpu menerus ke bawah (ke sloof/pile cap/pondasi langsung, atau balok transfer terhitung). **DILARANG membuat kolom melayang (*floating column*)** yang bertumpu di atas lantai tipis tanpa struktur penyangga.
+   - **Tumpuan Balok**: Balok wajib bertumpu pada kolom atau balok induk (*girder*). Rasio tinggi balok terhadap bentang harus rasional ($h \approx L/10\text{ s/d } L/14$ untuk beton bertulang, $h \approx L/20\text{ s/d } L/24$ untuk baja profil).
+   - **Pelat Lantai (*Slab*)**: Wajib memiliki perletakan perimeter pada balok atau dinding struktural. Tidak boleh ada pelat bentang besar menggantung tanpa tumpuan.
+2. **Kaidah Ergonomi & Fungsi Arsitektural**:
+   - **Headroom Clearance (Tinggi Bebas)**: Tinggi bebas di bawah balok, pelat lantai, dan bordes tangga minimal $2.20\text{ m}$ (ruang hunian/kantor) dan minimal $3.50\text{--}4.50\text{ m}$ (area pabrik/workshop/gudang).
+   - **Kusen & Bukaan Dinding**: Pintu dan jendela wajib tertanam di dalam dinding (*hosted in wall*), memiliki ambang atas (*head height*) serasi (standar $2.10\text{ m}$), dan **DILARANG menabrak atau memotong kolom struktur utama**.
+   - **Ergonomi Tangga**: Tangga wajib memenuhi kaidah kenyamanan ($2\text{Optrede} + \text{Antrede} = 60\text{--}64\text{ cm}$; tinggi tanjakan $15\text{--}18\text{ cm}$, lebar pijakan $28\text{--}30\text{ cm}$).
+   - **Elevasi Area Basah**: Kamar mandi/toilet/area cuci wajib memiliki penurunan lantai (*floor drop* $-3\text{ s/d } -5\text{ cm}$) terhadap lantai utama untuk mencegah luapan air.
+3. **Selubung Bangunan & Aliran Air (*Weatherproofing & Drainage*)**:
+   - **Kemiringan Atap (*Roof Slope*)**: Wajib disesuaikan dengan material atap (metal/spandek min $5^\circ\text{--}10^\circ$; genteng min $25^\circ\text{--}35^\circ$; dak beton min $1\%\text{--}2\%$ ke arah talang/*roof drain*). **DILARANG KERAS kemiringan terbalik** yang menyebabkan genangan (*water ponding*).
+   - **Teritisan & Overhang**: Harus cukup melindungi kusen dan dinding dari tampias hujan tropis.
+4. **Hubungan Pondasi & Muka Tanah (*Site Datum*)**:
+   - Kepala tiang (*pile cap*) dan sloof wajib tertanam di bawah muka tanah asli/lantai kerja, bukan melayang di udara terbuka.
+   - Elevasi lantai utama ($+0.00$) wajib berada minimal $+0.20\text{--}+0.50\text{ m}$ di atas permukaan tanah/jalan luar untuk proteksi banjir.
+
+### Protokol Hak Veto & Verdict Kelayakan:
+* Jika salah satu syarat Layer 1, Layer 2, atau Layer 3 gagal:
+  * Validator **REJECT** hasil eksekusi dan mencantumkan temuan teknis sipil/arsitektur secara spesifik.
+  * Executor melakukan perbaikan (maksimal 2 iterasi).
+  * Jika setelah 2 iterasi masih belum layak, eskalasikan langsung ke pengguna beserta alasan teknisnya.
+* **Kotak Verdict Kelayakan (Wajib dicantumkan pada setiap akhir laporan modifikasi/pemodelan)**:
+  ```markdown
+  ### 🏛️ Verdict Kelayakan BIM Engineer & Arsitek
+  - [x] Integritas Struktur (Load Path, Tumpuan, Dimensi Profil): 🟢 LAYAK
+  - [x] Kaidah Arsitektural (Headroom, Bukaan, Ergonomi Ruang): 🟢 LAYAK
+  - [x] Proteksi Cuaca & Drainase (Kemiringan Atap, Tampias): 🟢 LAYAK
+  - [x] Validasi Visual (Viewport Capture & Transparansi): 🟢 LAYAK
+  ```
 
 ---
 
