@@ -99,6 +99,10 @@ Setiap pembuatan, modifikasi, dan audit jadwal kuantitas (Schedule / QTO) baja s
      `Lokasi | Family and Type | Length (mm) | Comments | Qty | Berat (Kg)`
   5. **Angkur Baja** (`OST_StructuralFraming` / Anchor Hardware): Tepat **5 Kolom**  
      `Lokasi | Comments | Diameter | Qty | Length`
+  6. **Voute Sambungan Baja** (`OST_StructConnectionProfiles`): Tepat **7 Kolom**  
+     `Lokasi | Tipe Sambungan | Type | Length (mm) | Volume | Qty | Berat (Kg)`  
+     *Sorting*: By `Profile Type` (Asc), lalu `Cut Length` (Asc, **ShowFooter=True** untuk subtotal Qty & Berat).  
+     *Kalibrasi Berat*: Dihitung wajib dari **volume solid eksak** ($\text{Exact Weight} = \text{Volume} \times 7850\text{ kg/m}^3$) karena voute adalah potongan profil setengah/tapered. Dilarang mengalikan panjang utuh balok.
 
 ### 2. Kewajiban Validasi Terhadap Database Profil Baja (`AIGRAV.SteelDatabase.csv`)
 - **DILARANG KERAS** menginput berat nominal hasil karangan manual (*hardcoded guesswork*).
