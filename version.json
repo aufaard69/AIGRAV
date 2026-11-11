@@ -1,19 +1,21 @@
 {
-  "version": "2.8.0",
-  "release_name": "Senior BIM Engineer & Architect Sanity Gate, Adaptive Component Modeling & Freeform Massing Engine",
+  "version": "2.9.0",
+  "release_name": "Native Slanted Wall Architecture & Zero-Overlap Multi-Loop Slab Engine",
   "release_date": "2026-11-11",
   "highlights": [
+    "Native Slanted Wall Integration (WallCrossSection.SingleSlanted): Eliminates stepped traps and horizontal seams on tapering towers, obelisks, and spires with continuous monolithic walls and exact inclination angles (-1.286 deg for 98m obelisk, +60.255 deg for splayed chalices)",
+    "Zero-Overlap Multi-Loop Slab Mandate (CurveLoop Donut Loops): Strict prohibition of overlapping solid floors. Slabs must utilize inner void loops (Loop 0 = Outer Boundary CCW, Loop 1..N = Inner Openings CW) ensuring zero Z-fighting, zero spatial clash, and mathematically pure Quantity Takeoff (QTO)",
+    "Strategic Architectural Tool Selection Protocol: Lead BIM Engineer must evaluate boundary loops, slanted walls, adaptive components, and massing before executing model geometry",
+    "Monas Monument & Merdeka Landscape Reference Implementation: 100% Native BIM, 0 DirectShape, 0 Overlapping Floors verified via in-memory Revit API telemetry",
     "Professional Role Mandate: AIGRAV officially elevated to Senior BIM Engineer & Architect (prohibits blind script execution and unconstructible geometry)",
     "Triple-Layer Independent Validation: Added Layer 3 (Engineering Sanity Gate) auditing structural load paths, continuous column bearings, headroom clearance (min 2.20m), stair ergonomics, weatherproofing/roof slope, and site datum (+0.00 elevation)",
     "Adaptive Component Modeling Engine: Standardized LOD 350-400 parametric component placement via AdaptiveComponentInstanceUtils as the official professional alternative to DirectShape",
-    "Conceptual Massing & Model By Face: Standardized freeform building skin modeling using OST_Mass converted directly to native BIM FaceWall, Roof, and CurtainSystem",
-    "Automated Sheet & Drawing Order Standardization: Zero-error contiguous numbering (01 to 72) with suffix removal (PD-001A to PD-002) and duplicate NO conflict resolution on live Revit models",
-    "Milestone-Based Modeling Orchestration Engine: Standardized 4-phase macro-execution (Datum & Structure -> Envelope -> Partitions & Openings -> Rooms & QTO) combining atomic TransactionGroups with visual checkpoint review",
-    "Multi-Zone PDA Test PDF Ingestion: Digital bookmarking and automated merging of WFG, Produksi, WRM, and detail drawings into unified sets"
+    "Milestone-Based Modeling Orchestration Engine: Standardized 4-phase macro-execution (Datum & Structure -> Envelope -> Partitions & Openings -> Rooms & QTO) combining atomic TransactionGroups with visual checkpoint review"
   ],
   "fixes": [
-    "Strictly banned DirectShape.CreateElement for architectural and structural building elements across all AIGRAV operating procedures",
-    "Eliminated duplicate NO=25 parameter conflict between PD-001 and PD-001A in Revit document",
-    "Standardized mandatory 'Verdict Kelayakan BIM Engineer & Arsitek' in all execution summary reports"
+    "Strictly banned overlapping floor slabs and solid-on-solid geometry in AGENTS.md (Section 1.4 & Section 7)",
+    "Resolved stepped traps on Monas obelisk by replacing 5 vertical wall segments with 4 full-height 98m Slanted Walls",
+    "Corrected Gross-vs-Net lawn and plaza areas in QTO schedules via multi-loop donut boundary subtractions",
+    "Eliminated duplicate NO=25 parameter conflict in Revit sheet documentation"
   ]
 }
