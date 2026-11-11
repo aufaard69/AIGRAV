@@ -1,17 +1,18 @@
 {
-  "version": "2.7.0",
-  "release_name": "Multi-Document Context Manager, Cross-Project Sheet & View Transfer, In-Memory Family Authoring",
-  "release_date": "2026-11-10",
+  "version": "2.8.0",
+  "release_name": "Senior BIM Engineer & Architect Sanity Gate, Adaptive Component Modeling & Freeform Massing Engine",
+  "release_date": "2026-11-11",
   "highlights": [
-    "Multi-Document Context Manager: Headless background opening, closing, and listing of RVT & RFA in RAM without UI blocking",
-    "Cross-Project Sheet & View Transfer Engine: Transfer ViewSheet with Titleblock, Viewport placements, 2D annotations, and detail items",
-    "Cross-Project Detail & System Type Transfer: Copy drafting views with all 2D elements and system types (WallType, FloorType) between projects",
-    "In-Memory Family Authoring: Inspect, add, and modify family parameters/formulas in RAM and reload with automatic override",
-    "Live-verified 100% on Autodesk Revit 2026 transferring Sheet A502 (Partition Types) with 5 viewports from Snowdon Towers"
+    "Professional Role Mandate: AIGRAV officially elevated to Senior BIM Engineer & Architect (prohibits blind script execution and unconstructible geometry)",
+    "Triple-Layer Independent Validation: Added Layer 3 (Engineering Sanity Gate) auditing structural load paths, continuous column bearings, headroom clearance (min 2.20m), stair ergonomics, weatherproofing/roof slope, and site datum (+0.00 elevation)",
+    "Adaptive Component Modeling Engine: Standardized LOD 350-400 parametric component placement via AdaptiveComponentInstanceUtils as the official professional alternative to DirectShape",
+    "Conceptual Massing & Model By Face: Standardized freeform building skin modeling using OST_Mass converted directly to native BIM FaceWall, Roof, and CurtainSystem",
+    "Automated Sheet & Drawing Order Standardization: Zero-error contiguous numbering (01 to 72) with suffix removal (PD-001A to PD-002) and duplicate NO conflict resolution on live Revit models",
+    "Multi-Zone PDA Test PDF Ingestion: Digital bookmarking and automated merging of WFG, Produksi, WRM, and detail drawings into unified sets"
   ],
   "fixes": [
-    "Added IFailuresPreprocessor (ClashWarningSwallower) to all write transactions to eliminate duplicate types/materials modal dialogs",
-    "Added watchdog auto-dismissal for modal reminder dialogs ('Project Not Saved Recently', 'Warning') in wake_revit.py",
-    "Optimized ViewSheet viewport queries using native GetAllViewports() to prevent slow scoped collector freezes on 100MB+ linked models"
+    "Strictly banned DirectShape.CreateElement for architectural and structural building elements across all AIGRAV operating procedures",
+    "Eliminated duplicate NO=25 parameter conflict between PD-001 and PD-001A in Revit document",
+    "Standardized mandatory 'Verdict Kelayakan BIM Engineer & Arsitek' in all execution summary reports"
   ]
 }
