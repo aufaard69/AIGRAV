@@ -47,11 +47,22 @@ Sebelum memodifikasi atau membuat elemen di Revit:
 
 ---
 
-## 3. Fase 2: Eksekusi Berbasis Relative Helper (1 Executor)
+## 3. Fase 2: Eksekusi Berbasis Milestone & Relative Helper (1 Executor)
 1. **Gunakan Relative Helpers**:
    - Utamakan pemanggilan fungsi relatif (`place_on_top_of`, `connect_elements`, `create_grid_matrix`) daripada menembak koordinat absolut di ruang hampa.
 2. **Safe Transaction Sandbox**:
    - Setiap batch operasi dijalankan di dalam `TransactionGroup` dengan pengembalian *Auto-Spatial Telemetry* (`spatial_bounds_mm`, `is_floating`, dan `unjoined_bbox_clashes`).
+3. **Pola Eksekusi Bertahap (Milestone-Based Modeling Protocol)**:
+   Untuk pemodelan menyeluruh (*full building generation* / multi-element), eksekusi **WAJIB dipecah menjadi 4 Makro-Milestone terstruktur**:
+   - **Milestone 1 (Datum & Struktur Utama)**: Level, Grid Matrix, Pondasi (Strauss/Footplate/Sloof), Kolom Struktur, Balok Induk/Anak.  
+     *(Verifikasi M1: Viewport Capture 3D + Audit Tumpuan Menerus Kolom & Bentang Balok)*
+   - **Milestone 2 (Selubung Bangunan & Pelat)**: Pelat Lantai (Ground & Mezzanine), Dinding Eksterior Perimeter, Kuda-kuda & Penutup Atap.  
+     *(Verifikasi M2: Viewport Capture Eksterior + Audit Kemiringan Atap, Overhang & Drainase)*
+   - **Milestone 3 (Partisi Arsitektural & Bukaan)**: Dinding Partisi Interior, Pintu, Jendela, Tangga, Bordes, Void Bukaan.  
+     *(Verifikasi M3: Viewport Capture Denah/Interior + Audit Headroom Clearance min 2.20m & Bukaan vs Kolom)*
+   - **Milestone 4 (Ruang, Finishing, Clash & QTO)**: Penamaan Ruang (*Rooms*), Material Finishing, Deteksi Benturan Solid (`aigrav_detect_spatial_clashes`), Schedule Kuantitas Resmi.  
+     *(Verifikasi M4: Audit Model Health, Zero Clash, dan Laporan Rekapitulasi QTO)*
+   - **Aturan Transisi Antar-Milestone**: Setiap milestone terisolasi dalam 1 `TransactionGroup` (single Ctrl+Z). AI dilarang melompat ke Milestone $N+1$ sebelum Milestone $N$ divalidasi visual dan disajikan checklist kelayakannya kepada pengguna.
 
 ---
 
