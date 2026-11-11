@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AIGRAVMilestoneBlueprintSchema",
+  "type": "object",
+  "required": ["projectName", "milestones"],
+  "properties": {
+    "projectName": {
+      "type": "string"
+    },
+    "milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["milestoneId", "title", "elements"],
+        "properties": {
+          "milestoneId": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4
+          },
+          "title": {
+            "type": "string"
+          },
+          "elements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["category", "type"],
+              "properties": {
+                "category": { "type": "string" },
+                "type": { "type": "string" },
+                "coordinates": { "type": "array" },
+                "parameters": { "type": "object" }
+              }
+            }
+          },
+          "sanityCriteria": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}
