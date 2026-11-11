@@ -491,7 +491,11 @@ public sealed partial class BimAuditSkill : IAIGRAVSkill
             || toolName.Equals("aigrav_inspect_family_internals", StringComparison.OrdinalIgnoreCase)
             || toolName.Equals("aigrav_modify_family_parameter", StringComparison.OrdinalIgnoreCase)
             || toolName.Equals("aigrav_reload_family_with_override", StringComparison.OrdinalIgnoreCase)
-            || toolName.Equals("aigrav_copy_sheets_and_views", StringComparison.OrdinalIgnoreCase);
+            || toolName.Equals("aigrav_copy_sheets_and_views", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_create_sheets", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_create_drafting_views_and_place", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("create_drafting_views_and_place", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_export_comparison_sheets", StringComparison.OrdinalIgnoreCase);
 
 
 
@@ -574,6 +578,14 @@ public sealed partial class BimAuditSkill : IAIGRAVSkill
             if (toolName.Equals("aigrav_copy_sheets_and_views", StringComparison.OrdinalIgnoreCase))
             {
                 return CopySheetsAndViewsFromProject(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_create_drafting_views_and_place", StringComparison.OrdinalIgnoreCase) || toolName.Equals("create_drafting_views_and_place", StringComparison.OrdinalIgnoreCase))
+            {
+                return CreateDraftingViewsAndPlace(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_export_comparison_sheets", StringComparison.OrdinalIgnoreCase))
+            {
+                return ExportComparisonSheets(doc);
             }
             if (toolName.Equals("aigrav_execute_hide_portal_links", StringComparison.OrdinalIgnoreCase))
 

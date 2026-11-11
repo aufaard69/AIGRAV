@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CadViewportsPayload",
+  "type": "object",
+  "properties": {
+    "views": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sheet_number", "view_name", "scale", "dwg_path", "paper_x_mm", "paper_y_mm"],
+        "properties": {
+          "sheet_number": { "type": "string", "description": "Target Sheet Number in Revit (e.g. JL-048)" },
+          "view_name": { "type": "string", "description": "Unique Revit ViewDrafting Name" },
+          "title_on_sheet": { "type": "string", "description": "Title description displayed on sheet" },
+          "scale": { "type": "integer", "description": "View scale denominator (e.g. 20 for 1:20)" },
+          "dwg_path": { "type": "string", "description": "Absolute path to exported DWG" },
+          "paper_x_mm": { "type": "number", "description": "X position from sheet origin in millimeters" },
+          "paper_y_mm": { "type": "number", "description": "Y position from sheet origin in millimeters" },
+          "width_mm": { "type": "number", "description": "Viewport width in millimeters" },
+          "height_mm": { "type": "number", "description": "Viewport height in millimeters" }
+        }
+      }
+    }
+  }
+}
