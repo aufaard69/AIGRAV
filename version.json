@@ -8,6 +8,7 @@
     "Adaptive Component Modeling Engine: Standardized LOD 350-400 parametric component placement via AdaptiveComponentInstanceUtils as the official professional alternative to DirectShape",
     "Conceptual Massing & Model By Face: Standardized freeform building skin modeling using OST_Mass converted directly to native BIM FaceWall, Roof, and CurtainSystem",
     "Automated Sheet & Drawing Order Standardization: Zero-error contiguous numbering (01 to 72) with suffix removal (PD-001A to PD-002) and duplicate NO conflict resolution on live Revit models",
+    "Milestone-Based Modeling Orchestration Engine: Standardized 4-phase macro-execution (Datum & Structure -> Envelope -> Partitions & Openings -> Rooms & QTO) combining atomic TransactionGroups with visual checkpoint review",
     "Multi-Zone PDA Test PDF Ingestion: Digital bookmarking and automated merging of WFG, Produksi, WRM, and detail drawings into unified sets"
   ],
   "fixes": [
