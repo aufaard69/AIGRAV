@@ -34,6 +34,39 @@ public sealed partial class SpatialAgenticSandboxSkill
 
         try
         {
+            uiDoc.Selection.SetElementIds(new List<ElementId>());
+
+            if (doc.ActiveView is View3D v3d && !v3d.IsTemplate)
+            {
+                using Transaction txBox = new(doc, "AIGRAV - Focus Tipe 36");
+                txBox.Start();
+
+                if (v3d.IsInTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate))
+                {
+                    v3d.DisableTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate);
+                }
+
+                var localElements = new FilteredElementCollector(doc)
+                    .WhereElementIsNotElementType()
+                    .Where(e =>
+                    {
+                        var bb = e.get_BoundingBox(null);
+                        if (bb == null) return false;
+                        return bb.Min.X > MmToFt(-4000) && bb.Max.X < MmToFt(10000) &&
+                               bb.Min.Y > MmToFt(-4000) && bb.Max.Y < MmToFt(10000);
+                    })
+                    .Select(e => e.Id)
+                    .ToList();
+
+                if (localElements.Count > 0)
+                {
+                    v3d.IsolateElementsTemporary(localElements);
+                }
+
+                v3d.IsSectionBoxActive = false;
+                txBox.Commit();
+            }
+
             UIView? activeUiView = uiDoc.GetOpenUIViews().FirstOrDefault(v => v.ViewId == doc.ActiveView.Id)
                                    ?? uiDoc.GetOpenUIViews().FirstOrDefault();
             activeUiView?.ZoomToFit();
@@ -101,6 +134,214 @@ public sealed partial class SpatialAgenticSandboxSkill
         }, new JsonSerializerOptions { WriteIndented = true });
     }
 
+    public static string ExportComprehensivePresentationViews(UIApplication app, Document doc)
+    {
+        var vft3d = new FilteredElementCollector(doc)
+            .OfClass(typeof(ViewFamilyType))
+            .Cast<ViewFamilyType>()
+            .FirstOrDefault(x => x.ViewFamily == ViewFamily.ThreeDimensional);
+
+        if (vft3d == null) return JsonSerializer.Serialize(new { error = "No ViewFamilyType for 3D." });
+
+        string exportDir = Path.Combine(Path.GetTempPath(), "AIGRAV_VisualEye");
+        Directory.CreateDirectory(exportDir);
+        string stamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+
+        XYZ target = new(MmToFt(3000), MmToFt(3000), MmToFt(2000));
+        double dist = MmToFt(30000);
+
+        var orientations = new (string name, XYZ fwd)[]
+        {
+            ("3D_FrontRight_SE", new XYZ(-1, 1, -0.7).Normalize()),
+            ("3D_FrontLeft_SW", new XYZ(1, 1, -0.7).Normalize()),
+            ("3D_RearRight_NE", new XYZ(-1, -1, -0.7).Normalize()),
+            ("3D_RearLeft_NW", new XYZ(1, -1, -0.7).Normalize())
+        };
+
+        List<ElementId> createdViews = new();
+        using (Transaction tx = new(doc, "AIGRAV - Setup Presentation 3D Views"))
+        {
+            tx.Start();
+            foreach (var (name, fwd) in orientations)
+            {
+                View3D? v = new FilteredElementCollector(doc).OfClass(typeof(View3D)).Cast<View3D>()
+                    .FirstOrDefault(x => x.Name == name);
+                if (v == null)
+                {
+                    v = View3D.CreateIsometric(doc, vft3d.Id);
+                    v.Name = name;
+                }
+
+                XYZ up = (new XYZ(0, 0, 1) - (fwd * fwd.Z)).Normalize();
+                XYZ eye = target - (fwd * dist);
+                v.SetOrientation(new ViewOrientation3D(eye, up, fwd));
+                v.DisplayStyle = DisplayStyle.FlatColors;
+                v.DetailLevel = ViewDetailLevel.Fine;
+                v.IsSectionBoxActive = false;
+                v.AreAnnotationCategoriesHidden = true;
+                createdViews.Add(v.Id);
+            }
+            tx.Commit();
+        }
+
+        var allViews = new FilteredElementCollector(doc).OfClass(typeof(View)).Cast<View>()
+            .Where(v => !v.IsTemplate && v.CanBePrinted).ToList();
+
+        var floorPlan = allViews.FirstOrDefault(v => v.ViewType == ViewType.FloorPlan && v.Name.Contains("L1"));
+        if (floorPlan != null) createdViews.Add(floorPlan.Id);
+
+        var elevs = allViews.Where(v => v.ViewType == ViewType.Elevation).Take(4);
+        foreach (var ev in elevs) createdViews.Add(ev.Id);
+
+        var allowedCategories = new HashSet<long>
+        {
+            (long)BuiltInCategory.OST_Walls,
+            (long)BuiltInCategory.OST_StructuralColumns,
+            (long)BuiltInCategory.OST_StructuralFraming,
+            (long)BuiltInCategory.OST_Floors,
+            (long)BuiltInCategory.OST_Ceilings,
+            (long)BuiltInCategory.OST_Doors,
+            (long)BuiltInCategory.OST_Windows,
+            (long)BuiltInCategory.OST_Roofs
+        };
+
+        var localElementIds = new FilteredElementCollector(doc)
+            .WhereElementIsNotElementType()
+            .Where(e => e.Category != null && allowedCategories.Contains(e.Category.Id.Value))
+            .Where(e =>
+            {
+                var bb = e.get_BoundingBox(null);
+                if (bb == null) return false;
+                double xMid = FtToMm((bb.Min.X + bb.Max.X) * 0.5);
+                double yMid = FtToMm((bb.Min.Y + bb.Max.Y) * 0.5);
+                return xMid >= -1500 && xMid <= 7500 && yMid >= -1500 && yMid <= 7500;
+            })
+            .Select(e => e.Id)
+            .ToList();
+
+        List<View> isolatedViews = new();
+        if (localElementIds.Count > 0)
+        {
+            foreach (var vid in createdViews)
+            {
+                if (doc.GetElement(vid) is View v && v.ViewType == ViewType.ThreeD)
+                {
+                    try
+                    {
+                        v.IsolateElementsTemporary(localElementIds);
+                        isolatedViews.Add(v);
+                    }
+                    catch { }
+                }
+            }
+        }
+
+        ImageExportOptions opts = new()
+        {
+            ZoomType = ZoomFitType.FitToPage,
+            PixelSize = 1600,
+            FilePath = Path.Combine(exportDir, $"tipe36_pres_{stamp}"),
+            FitDirection = FitDirectionType.Horizontal,
+            HLRandWFViewsFileType = ImageFileType.PNG,
+            ShadowViewsFileType = ImageFileType.PNG,
+            ImageResolution = ImageResolution.DPI_150,
+            ExportRange = ExportRange.SetOfViews
+        };
+        opts.SetViewsAndSheets(createdViews);
+        doc.ExportImage(opts);
+
+        foreach (var v in isolatedViews)
+        {
+            try
+            {
+                v.DisableTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate);
+            }
+            catch { }
+        }
+
+        var files = Directory.GetFiles(exportDir, $"tipe36_pres_{stamp}*.png").ToList();
+        return JsonSerializer.Serialize(new
+        {
+            status = "Success",
+            filesCount = files.Count,
+            files
+        }, new JsonSerializerOptions { WriteIndented = true });
+    }
+
+    public static string CreateArchitecturalSchedules(Document doc)
+    {
+        using Transaction tx = new(doc, "AIGRAV - Create Architectural Schedules");
+        tx.Start();
+        List<ElementId> newScheds = new();
+
+        try
+        {
+            var existing = new FilteredElementCollector(doc).OfClass(typeof(ViewSchedule)).Cast<ViewSchedule>()
+                .FirstOrDefault(s => s.Name == "QTO - Kusen & Daun Pintu Tipe 36");
+            if (existing == null)
+            {
+                ViewSchedule vsDoors = ViewSchedule.CreateSchedule(doc, new ElementId(BuiltInCategory.OST_Doors));
+                vsDoors.Name = "QTO - Kusen & Daun Pintu Tipe 36";
+                AddScheduleFieldIfValid(vsDoors, BuiltInParameter.ALL_MODEL_TYPE_NAME);
+                AddScheduleFieldIfValid(vsDoors, BuiltInParameter.DOOR_WIDTH);
+                AddScheduleFieldIfValid(vsDoors, BuiltInParameter.DOOR_HEIGHT);
+                AddScheduleFieldIfValid(vsDoors, BuiltInParameter.ALL_MODEL_MARK);
+                newScheds.Add(vsDoors.Id);
+            }
+        }
+        catch { }
+
+        try
+        {
+            var existing = new FilteredElementCollector(doc).OfClass(typeof(ViewSchedule)).Cast<ViewSchedule>()
+                .FirstOrDefault(s => s.Name == "QTO - Kusen & Kaca Jendela Tipe 36");
+            if (existing == null)
+            {
+                ViewSchedule vsWin = ViewSchedule.CreateSchedule(doc, new ElementId(BuiltInCategory.OST_Windows));
+                vsWin.Name = "QTO - Kusen & Kaca Jendela Tipe 36";
+                AddScheduleFieldIfValid(vsWin, BuiltInParameter.ALL_MODEL_TYPE_NAME);
+                AddScheduleFieldIfValid(vsWin, BuiltInParameter.WINDOW_WIDTH);
+                AddScheduleFieldIfValid(vsWin, BuiltInParameter.WINDOW_HEIGHT);
+                AddScheduleFieldIfValid(vsWin, BuiltInParameter.ALL_MODEL_MARK);
+                newScheds.Add(vsWin.Id);
+            }
+        }
+        catch { }
+
+        try
+        {
+            var existing = new FilteredElementCollector(doc).OfClass(typeof(ViewSchedule)).Cast<ViewSchedule>()
+                .FirstOrDefault(s => s.Name == "QTO - Penutup Atap Pelana Tipe 36");
+            if (existing == null)
+            {
+                ViewSchedule vsRoof = ViewSchedule.CreateSchedule(doc, new ElementId(BuiltInCategory.OST_Roofs));
+                vsRoof.Name = "QTO - Penutup Atap Pelana Tipe 36";
+                AddScheduleFieldIfValid(vsRoof, BuiltInParameter.ALL_MODEL_TYPE_NAME);
+                AddScheduleFieldIfValid(vsRoof, BuiltInParameter.HOST_AREA_COMPUTED);
+                AddScheduleFieldIfValid(vsRoof, BuiltInParameter.HOST_VOLUME_COMPUTED);
+                newScheds.Add(vsRoof.Id);
+            }
+        }
+        catch { }
+
+        doc.Regenerate();
+        tx.Commit();
+        return JsonSerializer.Serialize(new { status = "Success", createdSchedules = newScheds.Count });
+    }
+
+    private static void AddScheduleFieldIfValid(ViewSchedule vs, BuiltInParameter bip)
+    {
+        ScheduleDefinition def = vs.Definition;
+        foreach (SchedulableField sf in def.GetSchedulableFields())
+        {
+            if (sf.ParameterId.Value == (long)bip)
+            {
+                def.AddField(sf);
+                break;
+            }
+        }
+    }
+
     public static string ExecuteRevitPythonSafe(UIApplication app, Document doc, string? argument)
     {
         if (string.IsNullOrWhiteSpace(argument))
@@ -143,6 +384,8 @@ public sealed partial class SpatialAgenticSandboxSkill
                         "create_column" => CreateColumnWithTelemetry(doc, rawOp),
                         "create_beam" => CreateBeamWithTelemetry(doc, rawOp),
                         "create_floor" => CreateFloorWithTelemetry(doc, rawOp),
+                        "create_roof" or "create_gable_roof" => CreateGableRoofWithTelemetry(doc, rawOp),
+                        "create_family_instance" or "create_door" or "create_window" => CreateWallHostedWithTelemetry(doc, rawOp),
                         "place_on_top_of" => PlaceOnTopOfJson(doc, rawOp),
                         "connect_elements" => ConnectElementsJson(doc, rawOp),
                         "create_grid_matrix" => CreateGridMatrixJson(doc, rawOp),

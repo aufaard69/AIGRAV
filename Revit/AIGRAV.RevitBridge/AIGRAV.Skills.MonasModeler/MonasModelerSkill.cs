@@ -58,7 +58,7 @@ namespace AIGRAV.Skills.MonasModeler
 
             if (toolName.Equals("aigrav_export_monas_image", StringComparison.OrdinalIgnoreCase))
             {
-                return ExportImage(doc, app.ActiveUIDocument);
+                return ExportImage(doc, app.ActiveUIDocument, argument);
             }
 
             if (toolName.Equals("aigrav_inspect_monas_types", StringComparison.OrdinalIgnoreCase))
@@ -226,11 +226,19 @@ namespace AIGRAV.Skills.MonasModeler
             return sb.ToString();
         }
 
-        private static string ExportImage(Document doc, UIDocument uidoc)
+        private static string ExportImage(Document doc, UIDocument uidoc, string argument = "")
         {
             try
             {
-                string outDir = @"C:\Users\SAPUSER1\.gemini\antigravity\brain\6a6c635b-6fb7-47fc-b24f-f9f88554879b";
+                string outDir = @"C:\Users\sapuser\.gemini\antigravity\brain\d6d604bd-c0d6-42bb-92dd-0ab6b71e37d0";
+                if (!string.IsNullOrWhiteSpace(argument) && System.IO.Directory.Exists(argument.Trim()))
+                {
+                    outDir = argument.Trim();
+                }
+                if (!System.IO.Directory.Exists(outDir))
+                {
+                    System.IO.Directory.CreateDirectory(outDir);
+                }
                 string outPath = System.IO.Path.Combine(outDir, "monas_aerial_render.png");
 
                 View3D view3d = doc.ActiveView as View3D;
@@ -510,6 +518,10 @@ namespace AIGRAV.Skills.MonasModeler
 
             using (Transaction t = new Transaction(doc, "Pemodelan Monas - Slanted & Zero Overlap"))
             {
+                FailureHandlingOptions fOpts = t.GetFailureHandlingOptions();
+                fOpts.SetFailuresPreprocessor(new MonasFailurePreprocessor());
+                fOpts.SetClearAfterRollback(true);
+                t.SetFailureHandlingOptions(fOpts);
                 t.Start();
 
                 // =========================================================================
@@ -767,7 +779,8 @@ namespace AIGRAV.Skills.MonasModeler
                     double zT = flameLevels[f + 1];
                     double rad = (flameRadii[f] + flameRadii[f + 1]) / 2.0;
 
-                    Floor.Create(doc, new List<CurveLoop> { CreateCirclePolygonLoop(rad, 16, zB) }, ftGold.Id, lvlFlameBase.Id);
+                    Floor flameFl = Floor.Create(doc, new List<CurveLoop> { CreateCirclePolygonLoop(rad, 16, zB) }, ftGold.Id, lvlFlameBase.Id);
+                    flameFl.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM)?.Set(ToFt(zB - 118.0));
                     createdFloors++;
 
                     // Dinding silindris kuncup api emas
@@ -788,7 +801,8 @@ namespace AIGRAV.Skills.MonasModeler
                 }
 
                 // Pucuk Api Tertinggi (+132.00m)
-                Floor.Create(doc, new List<CurveLoop> { CreateCirclePolygonLoop(0.35, 8, 132.0) }, ftGold.Id, lvlTop.Id);
+                Floor topFl = Floor.Create(doc, new List<CurveLoop> { CreateCirclePolygonLoop(0.35, 8, 132.0) }, ftGold.Id, lvlTop.Id);
+                topFl.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM)?.Set(0);
                 createdFloors++;
 
                 doc.Regenerate();
@@ -809,6 +823,36 @@ namespace AIGRAV.Skills.MonasModeler
             sb.AppendLine("========================================================================");
 
             return sb.ToString();
+        }
+    }
+
+    public class MonasFailurePreprocessor : IFailuresPreprocessor
+    {
+        public FailureProcessingResult PreprocessFailures(FailuresAccessor failuresAccessor)
+        {
+            IList<FailureMessageAccessor> failures = failuresAccessor.GetFailureMessages();
+            bool resolvedAny = false;
+            foreach (FailureMessageAccessor f in failures)
+            {
+                FailureSeverity sev = f.GetSeverity();
+                if (sev == FailureSeverity.Warning)
+                {
+                    failuresAccessor.DeleteWarning(f);
+                }
+                else if (sev == FailureSeverity.Error)
+                {
+                    try
+                    {
+                        failuresAccessor.ResolveFailure(f);
+                        resolvedAny = true;
+                    }
+                    catch
+                    {
+                        failuresAccessor.DeleteWarning(f);
+                    }
+                }
+            }
+            return resolvedAny ? FailureProcessingResult.ProceedWithCommit : FailureProcessingResult.Continue;
         }
     }
 }

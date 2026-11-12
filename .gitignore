@@ -34,6 +34,7 @@ audio_cache/
 Temp/
 temp/
 scratch/
+references/
 *.wav
 *.mp3
 *.bak*

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -258,5 +259,354 @@ public sealed partial class SpatialAgenticSandboxSkill
         tx.Commit();
 
         return BuildSpatialTelemetryJson(doc, "create_floor", new[] { fl.Id });
+    }
+
+    private static FamilySymbol? ResolveOrLoadWallHostedSymbol(Document doc, string typeName, JsonElement data)
+    {
+        var cats = new List<BuiltInCategory> { BuiltInCategory.OST_Doors, BuiltInCategory.OST_Windows, BuiltInCategory.OST_GenericModel };
+        var collector = new FilteredElementCollector(doc)
+            .WherePasses(new ElementMulticategoryFilter(cats))
+            .OfClass(typeof(FamilySymbol))
+            .Cast<FamilySymbol>();
+
+        var symbol = collector.FirstOrDefault(s => s.Name.Equals(typeName, StringComparison.OrdinalIgnoreCase)
+                                                || (s.Family?.Name != null && s.Family.Name.Equals(typeName, StringComparison.OrdinalIgnoreCase)))
+                  ?? collector.FirstOrDefault(s => s.Name.Contains(typeName, StringComparison.OrdinalIgnoreCase)
+                                                || (s.Family?.Name != null && s.Family.Name.Contains(typeName, StringComparison.OrdinalIgnoreCase)));
+
+        if (symbol == null)
+        {
+            string libBase = @"C:\ProgramData\Autodesk\RVT 2026\Libraries\English\US";
+            string? rfaPath = null;
+            if (typeName.Contains("Casement", StringComparison.OrdinalIgnoreCase) || typeName.StartsWith("J1", StringComparison.OrdinalIgnoreCase) || typeName.Contains("Double", StringComparison.OrdinalIgnoreCase))
+            {
+                rfaPath = Path.Combine(libBase, "Windows", "M_Window-Casement-Double.rfa");
+            }
+            else if (typeName.Contains("Fixed", StringComparison.OrdinalIgnoreCase) || typeName.StartsWith("J2", StringComparison.OrdinalIgnoreCase) || typeName.StartsWith("BV", StringComparison.OrdinalIgnoreCase))
+            {
+                rfaPath = Path.Combine(libBase, "Windows", "M_Window-Fixed.rfa");
+            }
+            else if (typeName.Contains("Door", StringComparison.OrdinalIgnoreCase) || typeName.StartsWith("P", StringComparison.OrdinalIgnoreCase))
+            {
+                rfaPath = Path.Combine(libBase, "Doors", "M_Door-Single-Panel.rfa");
+                if (!File.Exists(rfaPath))
+                    rfaPath = Path.Combine(libBase, "Doors", "M_Single-Flush.rfa");
+            }
+            else
+            {
+                string[] searchDirs = new[] { Path.Combine(libBase, "Windows"), Path.Combine(libBase, "Doors") };
+                foreach (var dir in searchDirs)
+                {
+                    if (Directory.Exists(dir))
+                    {
+                        var file = Directory.GetFiles(dir, "*.rfa")
+                            .FirstOrDefault(f => Path.GetFileNameWithoutExtension(f).Contains(typeName, StringComparison.OrdinalIgnoreCase));
+                        if (file != null) { rfaPath = file; break; }
+                    }
+                }
+            }
+
+            if (rfaPath != null && File.Exists(rfaPath))
+            {
+                if (doc.LoadFamily(rfaPath, out Family fam))
+                {
+                    foreach (ElementId symId in fam.GetFamilySymbolIds())
+                    {
+                        var s = doc.GetElement(symId) as FamilySymbol;
+                        if (s != null)
+                        {
+                            if (symbol == null) symbol = s;
+                            if (s.Name.Equals(typeName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                symbol = s;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    string famName = Path.GetFileNameWithoutExtension(rfaPath);
+                    var existingFam = new FilteredElementCollector(doc)
+                        .OfClass(typeof(Family))
+                        .Cast<Family>()
+                        .FirstOrDefault(f => f.Name.Equals(famName, StringComparison.OrdinalIgnoreCase));
+                    if (existingFam != null)
+                    {
+                        foreach (ElementId symId in existingFam.GetFamilySymbolIds())
+                        {
+                            var s = doc.GetElement(symId) as FamilySymbol;
+                            if (s != null)
+                            {
+                                if (symbol == null) symbol = s;
+                                if (s.Name.Equals(typeName, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    symbol = s;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (symbol == null) return null;
+
+        double wMm = data.TryGetProperty("width_mm", out JsonElement wEl) ? wEl.GetDouble() : 0;
+        double hMm = data.TryGetProperty("height_mm", out JsonElement hEl) ? hEl.GetDouble() : 0;
+
+        if (wMm == 0 && hMm == 0 && typeName.Contains("x"))
+        {
+            var parts = typeName.Replace("mm", "").Trim().Split('x');
+            if (parts.Length == 2 && double.TryParse(parts[0].Trim(), out double pw) && double.TryParse(parts[1].Trim(), out double ph))
+            {
+                wMm = pw;
+                hMm = ph;
+            }
+        }
+
+        if (wMm > 0 && hMm > 0)
+        {
+            string newTypeName = $"{symbol.Family?.Name ?? "Window"} - {(int)wMm}x{(int)hMm} mm";
+            var existingCustom = new FilteredElementCollector(doc)
+                .WherePasses(new ElementMulticategoryFilter(cats))
+                .OfClass(typeof(FamilySymbol))
+                .Cast<FamilySymbol>()
+                .FirstOrDefault(s => s.Name.Equals(newTypeName, StringComparison.OrdinalIgnoreCase));
+
+            if (existingCustom != null)
+            {
+                symbol = existingCustom;
+            }
+            else
+            {
+                try
+                {
+                    FamilySymbol dup = (FamilySymbol)symbol.Duplicate(newTypeName);
+                    dup.get_Parameter(BuiltInParameter.WINDOW_WIDTH)?.Set(MmToFt(wMm));
+                    dup.get_Parameter(BuiltInParameter.WINDOW_HEIGHT)?.Set(MmToFt(hMm));
+                    dup.get_Parameter(BuiltInParameter.GENERIC_WIDTH)?.Set(MmToFt(wMm));
+                    dup.get_Parameter(BuiltInParameter.GENERIC_HEIGHT)?.Set(MmToFt(hMm));
+                    dup.LookupParameter("Width")?.Set(MmToFt(wMm));
+                    dup.LookupParameter("Height")?.Set(MmToFt(hMm));
+                    symbol = dup;
+                }
+                catch { }
+            }
+        }
+
+        return symbol;
+    }
+
+    public static string CreateWallHostedWithTelemetry(Document doc, string? argument)
+    {
+        using JsonDocument jd = JsonDocument.Parse(argument ?? "{}");
+        JsonElement data = jd.RootElement;
+
+        string typeName = data.TryGetProperty("typeName", out JsonElement tn) ? tn.GetString() ?? "" : "";
+        Level? level = ResolveLevel(doc, data);
+        if (level == null) return JsonSerializer.Serialize(new { error = "No valid Level found." });
+
+        double xFt = ReadCoordFt(data, "x_mm", "xM");
+        double yFt = ReadCoordFt(data, "y_mm", "yM");
+        double zFt = ReadCoordFt(data, "z_mm", "zM", 0.0);
+        XYZ loc = new(xFt, yFt, level.Elevation + zFt);
+
+        Wall? hostWall = null;
+        if (data.TryGetProperty("wallId", out JsonElement widEl))
+        {
+            hostWall = doc.GetElement(new ElementId(widEl.GetInt64())) as Wall;
+        }
+
+        if (hostWall == null)
+        {
+            var walls = new FilteredElementCollector(doc)
+                .OfClass(typeof(Wall))
+                .Cast<Wall>()
+                .ToList();
+
+            double minDist = double.MaxValue;
+            foreach (var w in walls)
+            {
+                if (w.Location is LocationCurve lc)
+                {
+                    double dist = lc.Curve.Distance(loc);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        hostWall = w;
+                    }
+                }
+            }
+        }
+
+        if (hostWall == null)
+            return JsonSerializer.Serialize(new { error = "No suitable host wall found for door/window placement." });
+
+        using Transaction tx = new(doc, "AIGRAV - Place Wall Hosted Instance");
+        tx.Start();
+
+        FamilySymbol? symbol = ResolveOrLoadWallHostedSymbol(doc, typeName, data);
+        if (symbol == null)
+        {
+            tx.RollBack();
+            return JsonSerializer.Serialize(new { error = $"FamilySymbol '{typeName}' not found and could not be loaded." });
+        }
+
+        if (!symbol.IsActive) { symbol.Activate(); doc.Regenerate(); }
+        FamilyInstance inst = doc.Create.NewFamilyInstance(loc, symbol, hostWall, level, StructuralType.NonStructural);
+        if (zFt > 0.001)
+        {
+            Parameter? sillParam = inst.get_Parameter(BuiltInParameter.INSTANCE_SILL_HEIGHT_PARAM);
+            if (sillParam != null && !sillParam.IsReadOnly)
+            {
+                sillParam.Set(zFt);
+            }
+        }
+        doc.Regenerate();
+        tx.Commit();
+
+        return BuildSpatialTelemetryJson(doc, "create_wall_hosted", new[] { inst.Id });
+    }
+
+    public static string CreateGableRoofWithTelemetry(Document doc, string? argument)
+    {
+        using JsonDocument jd = JsonDocument.Parse(argument ?? "{}");
+        JsonElement data = jd.RootElement;
+
+        string typeName = data.TryGetProperty("typeName", out JsonElement tn) ? tn.GetString() ?? "" : "";
+        Level? level = ResolveLevel(doc, data);
+        if (level == null) return JsonSerializer.Serialize(new { error = "No valid Level found." });
+
+        RoofType? rt = new FilteredElementCollector(doc)
+            .OfClass(typeof(RoofType))
+            .Cast<RoofType>()
+            .FirstOrDefault(r => string.IsNullOrEmpty(typeName) || r.Name.Equals(typeName, StringComparison.OrdinalIgnoreCase))
+            ?? new FilteredElementCollector(doc).OfClass(typeof(RoofType)).Cast<RoofType>().FirstOrDefault();
+
+        if (rt == null) return JsonSerializer.Serialize(new { error = "No RoofType available in document." });
+
+        double xMin = data.TryGetProperty("xMin_mm", out JsonElement xm1) ? MmToFt(xm1.GetDouble()) : -0.6 / 0.3048;
+        double xMax = data.TryGetProperty("xMax_mm", out JsonElement xm2) ? MmToFt(xm2.GetDouble()) : 6.6 / 0.3048;
+        double yMin = data.TryGetProperty("yMin_mm", out JsonElement ym1) ? MmToFt(ym1.GetDouble()) : -0.6 / 0.3048;
+        double yMax = data.TryGetProperty("yMax_mm", out JsonElement ym2) ? MmToFt(ym2.GetDouble()) : 6.6 / 0.3048;
+        double slopeDeg = data.TryGetProperty("slopeDeg", out JsonElement sd) ? sd.GetDouble() : 30.0;
+        double slopeRad = slopeDeg * Math.PI / 180.0;
+
+        XYZ pA = new(xMin, yMin, level.Elevation);
+        XYZ pB = new(xMax, yMin, level.Elevation);
+        XYZ pC = new(xMax, yMax, level.Elevation);
+        XYZ pD = new(xMin, yMax, level.Elevation);
+
+        CurveArray footprint = new();
+        footprint.Append(Line.CreateBound(pA, pB));
+        footprint.Append(Line.CreateBound(pB, pC));
+        footprint.Append(Line.CreateBound(pC, pD));
+        footprint.Append(Line.CreateBound(pD, pA));
+
+        using Transaction tx = new(doc, "AIGRAV - Create Gable Roof (Telemetry)");
+        tx.Start();
+        ModelCurveArray mcArray = new();
+        FootPrintRoof roof = doc.Create.NewFootPrintRoof(footprint, level, rt, out mcArray);
+
+        foreach (ModelCurve mc in mcArray)
+        {
+            XYZ dir = (mc.GeometryCurve.GetEndPoint(1) - mc.GeometryCurve.GetEndPoint(0)).Normalize();
+            // Edges running along Y-axis slope up towards center ridge!
+            if (Math.Abs(dir.Y) > 0.8)
+            {
+                roof.set_DefinesSlope(mc, true);
+                roof.set_SlopeAngle(mc, slopeRad);
+            }
+            else
+            {
+                roof.set_DefinesSlope(mc, false);
+            }
+        }
+        doc.Regenerate();
+        tx.Commit();
+
+        return BuildSpatialTelemetryJson(doc, "create_gable_roof", new[] { roof.Id });
+    }
+
+    public static string InspectRoofCurvesJson(Document doc, string? argument)
+    {
+        ElementId rId = new(1670662);
+        if (!string.IsNullOrWhiteSpace(argument) && long.TryParse(argument.Trim(), out long idVal))
+            rId = new ElementId(idVal);
+
+        FootPrintRoof? roof = doc.GetElement(rId) as FootPrintRoof;
+        if (roof == null) return JsonSerializer.Serialize(new { error = $"Not a FootPrintRoof: {rId.Value}" });
+
+        var list = new List<object>();
+        ModelCurveArrArray mcaa = roof.GetProfiles();
+        foreach (ModelCurveArray mca in mcaa)
+        {
+            foreach (ModelCurve mc in mca)
+            {
+                XYZ p0 = mc.GeometryCurve.GetEndPoint(0);
+                XYZ p1 = mc.GeometryCurve.GetEndPoint(1);
+                XYZ dir = (p1 - p0).Normalize();
+                bool definesSlope = roof.get_DefinesSlope(mc);
+                double slope = definesSlope ? roof.get_SlopeAngle(mc) : 0;
+                list.Add(new
+                {
+                    curveId = mc.Id.Value,
+                    p0_mm = new { x = FtToMm(p0.X), y = FtToMm(p0.Y), z = FtToMm(p0.Z) },
+                    p1_mm = new { x = FtToMm(p1.X), y = FtToMm(p1.Y), z = FtToMm(p1.Z) },
+                    dir = new { x = Math.Round(dir.X, 2), y = Math.Round(dir.Y, 2) },
+                    definesSlope,
+                    slopeDeg = Math.Round(slope * 180.0 / Math.PI, 1)
+                });
+            }
+        }
+        return JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true });
+    }
+
+    public static string InspectRoofFacesJson(Document doc, string? argument)
+    {
+        var wallCreateMethods = typeof(Wall).GetMethods()
+            .Where(m => m.Name == "Create")
+            .Select(m => $"{m.ReturnType.Name} {m.Name}({string.Join(", ", m.GetParameters().Select(p => p.ParameterType.Name + " " + p.Name))})")
+            .ToList();
+        ElementId rId = new(1670662);
+        if (!string.IsNullOrWhiteSpace(argument) && long.TryParse(argument.Trim(), out long idVal))
+            rId = new ElementId(idVal);
+
+        Element? roof = doc.GetElement(rId);
+        if (roof == null) return JsonSerializer.Serialize(new { error = $"Roof element not found: {rId.Value}" });
+
+        Options opt = new() { DetailLevel = ViewDetailLevel.Fine };
+        GeometryElement geom = roof.get_Geometry(opt);
+        var faces = new List<object>();
+        double totalSolidVolume = 0;
+        foreach (GeometryObject obj in geom)
+        {
+            if (obj is Solid s && s.Volume > 0.0001)
+            {
+                totalSolidVolume += s.Volume;
+                foreach (Face f in s.Faces)
+                {
+                    if (f is PlanarFace pf)
+                    {
+                        faces.Add(new
+                        {
+                            normal = new { x = Math.Round(pf.FaceNormal.X, 2), y = Math.Round(pf.FaceNormal.Y, 2), z = Math.Round(pf.FaceNormal.Z, 2) },
+                            area_m2 = Math.Round(pf.Area * 0.092903, 2),
+                            origin_mm = new { x = FtToMm(pf.Origin.X), y = FtToMm(pf.Origin.Y), z = FtToMm(pf.Origin.Z) }
+                        });
+                    }
+                }
+            }
+        }
+        return JsonSerializer.Serialize(new
+        {
+            wallCreateMethods,
+            roofId = rId.Value,
+            totalVolume_m3 = Math.Round(totalSolidVolume * 0.0283168, 3),
+            facesCount = faces.Count,
+            faces
+        }, new JsonSerializerOptions { WriteIndented = true });
     }
 }

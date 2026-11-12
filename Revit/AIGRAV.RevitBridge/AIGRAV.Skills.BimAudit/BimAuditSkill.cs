@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 
 
 
@@ -495,7 +495,13 @@ public sealed partial class BimAuditSkill : IAIGRAVSkill
             || toolName.Equals("aigrav_create_sheets", StringComparison.OrdinalIgnoreCase)
             || toolName.Equals("aigrav_create_drafting_views_and_place", StringComparison.OrdinalIgnoreCase)
             || toolName.Equals("create_drafting_views_and_place", StringComparison.OrdinalIgnoreCase)
-            || toolName.Equals("aigrav_export_comparison_sheets", StringComparison.OrdinalIgnoreCase);
+            || toolName.Equals("aigrav_export_comparison_sheets", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_build_pagoda_milestone", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_inspect_pagoda", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_export_pagoda_views", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_build_villa_milestone", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_inspect_villa", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_export_villa_views", StringComparison.OrdinalIgnoreCase);
 
 
 
@@ -586,6 +592,30 @@ public sealed partial class BimAuditSkill : IAIGRAVSkill
             if (toolName.Equals("aigrav_export_comparison_sheets", StringComparison.OrdinalIgnoreCase))
             {
                 return ExportComparisonSheets(doc);
+            }
+            if (toolName.Equals("aigrav_build_pagoda_milestone", StringComparison.OrdinalIgnoreCase))
+            {
+                return ExecutePagodaMilestone(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_inspect_pagoda", StringComparison.OrdinalIgnoreCase))
+            {
+                return InspectPagoda(doc);
+            }
+            if (toolName.Equals("aigrav_export_pagoda_views", StringComparison.OrdinalIgnoreCase))
+            {
+                return ExportPagodaViews(doc, argument);
+            }
+            if (toolName.Equals("aigrav_build_villa_milestone", StringComparison.OrdinalIgnoreCase))
+            {
+                return ExecuteVillaMilestone(app!, doc, argument);
+            }
+            if (toolName.Equals("aigrav_inspect_villa", StringComparison.OrdinalIgnoreCase))
+            {
+                return InspectVilla(doc);
+            }
+            if (toolName.Equals("aigrav_export_villa_views", StringComparison.OrdinalIgnoreCase))
+            {
+                return ExportVillaViews(doc, argument);
             }
             if (toolName.Equals("aigrav_execute_hide_portal_links", StringComparison.OrdinalIgnoreCase))
 
