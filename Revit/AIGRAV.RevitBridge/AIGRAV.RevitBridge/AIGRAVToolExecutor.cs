@@ -484,48 +484,82 @@ public static class AIGRAVToolExecutor
                     argument);
 
             case "create_wall":
+            case "create_line_based_element":
 
-                return CreateWall(
+                return CortexModelingToolkit.CreateLineBasedElement(
                     document,
                     argument);
 
             case "create_floor":
+            case "create_surface_based_element":
 
-                return CreateFloor(
+                return CortexModelingToolkit.CreateFloor(
                     document,
                     argument);
 
             case "create_column":
 
-                return CreateFamilyInstance(
+                return CortexModelingToolkit.CreatePointBasedElement(
                     document,
                     argument,
-                    BuiltInCategory.OST_StructuralColumns,
-                    StructuralType.Column);
+                    BuiltInCategory.OST_StructuralColumns);
 
             case "create_beam":
 
-                return CreateFamilyInstance(
+                return CortexModelingToolkit.CreateLineBasedElement(
                     document,
-                    argument,
-                    BuiltInCategory.OST_StructuralFraming,
-                    StructuralType.Beam);
+                    argument);
 
             case "place_family_instance":
+            case "create_point_based_element":
 
-                return CreateFamilyInstance(
+                return CortexModelingToolkit.CreatePointBasedElement(
                     document,
                     argument,
-                    GetRequestedCategory(argument),
-                    StructuralType.NonStructural);
+                    GetRequestedCategory(argument));
 
             case "create_generic_model":
 
-                return CreateFamilyInstance(
+                return CortexModelingToolkit.CreatePointBasedElement(
                     document,
                     argument,
-                    BuiltInCategory.OST_GenericModel,
-                    StructuralType.NonStructural);
+                    BuiltInCategory.OST_GenericModel);
+
+            case "change_element_type":
+
+                return CortexModelingToolkit.ChangeElementType(
+                    document,
+                    argument);
+
+            case "modify_element":
+
+                return CortexModelingToolkit.ModifyElement(
+                    document,
+                    argument);
+
+            case "copy_elements":
+
+                return CortexModelingToolkit.CopyElements(
+                    document,
+                    argument);
+
+            case "ifc_analyze_rebuildability":
+
+                return IfcRebuildEngine.AnalyzeRebuildability(
+                    document,
+                    argument);
+
+            case "ifc_rebuild_walls":
+
+                return IfcRebuildEngine.RebuildWalls(
+                    document,
+                    argument);
+
+            case "ifc_rebuild_floors":
+
+                return IfcRebuildEngine.RebuildFloors(
+                    document,
+                    argument);
 
             case "create_sheet":
             case "aigrav_create_sheet":

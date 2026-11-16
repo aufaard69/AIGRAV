@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using AIGRAV.Contracts;
 using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.DB.Structure;
 
 namespace AIGRAV.Skills.BimAudit;
@@ -84,6 +86,29 @@ public sealed partial class SpatialAgenticSandboxSkill
         return sb.ToString();
     }
 
+    private sealed class LocalFailureCapture : IFailuresPreprocessor
+    {
+        public FailureProcessingResult PreprocessFailures(FailuresAccessor failuresAccessor)
+        {
+            foreach (var failure in failuresAccessor.GetFailureMessages())
+            {
+                if (failure.GetSeverity() == FailureSeverity.Warning)
+                {
+                    failuresAccessor.DeleteWarning(failure);
+                }
+            }
+            return FailureProcessingResult.Continue;
+        }
+    }
+
+    private static void SuppressWarnings(Transaction tx)
+    {
+        var options = tx.GetFailureHandlingOptions();
+        options.SetFailuresPreprocessor(new LocalFailureCapture());
+        options.SetClearAfterRollback(true);
+        tx.SetFailureHandlingOptions(options);
+    }
+
     private static double ReadCoordFt(JsonElement data, string mmKey, string mKey, double defaultMm = 0.0)
     {
         if (data.TryGetProperty(mmKey, out JsonElement mmEl) && mmEl.ValueKind == JsonValueKind.Number)
@@ -91,6 +116,27 @@ public sealed partial class SpatialAgenticSandboxSkill
         if (data.TryGetProperty(mKey, out JsonElement mEl) && mEl.ValueKind == JsonValueKind.Number)
             return mEl.GetDouble() / 0.3048;
         return MmToFt(defaultMm);
+    }
+
+    private static double ReadPointCoordFt(JsonElement pt, string axis)
+    {
+        string axisUpper = axis.ToUpperInvariant();
+        string axisLower = axis.ToLowerInvariant();
+        string mmKey = $"{axisLower}_mm";
+
+        if (pt.TryGetProperty(mmKey, out JsonElement mmEl) && mmEl.ValueKind == JsonValueKind.Number)
+            return MmToFt(mmEl.GetDouble());
+        if (pt.TryGetProperty(axisLower, out JsonElement el) && el.ValueKind == JsonValueKind.Number)
+        {
+            double val = el.GetDouble();
+            return Math.Abs(val) > 50.0 ? MmToFt(val) : val / 0.3048;
+        }
+        if (pt.TryGetProperty(axisUpper, out JsonElement elU) && elU.ValueKind == JsonValueKind.Number)
+        {
+            double val = elU.GetDouble();
+            return Math.Abs(val) > 50.0 ? MmToFt(val) : val / 0.3048;
+        }
+        return 0.0;
     }
 
     private static Level? ResolveLevel(Document doc, JsonElement data)
@@ -105,11 +151,17 @@ public sealed partial class SpatialAgenticSandboxSkill
             return new FilteredElementCollector(doc).OfClass(typeof(Level)).Cast<Level>()
                 .FirstOrDefault(l => l.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
+        if (data.TryGetProperty("levelElevation", out JsonElement leEl) && leEl.ValueKind == JsonValueKind.Number)
+        {
+            double elevFt = MmToFt(leEl.GetDouble());
+            return new FilteredElementCollector(doc).OfClass(typeof(Level)).Cast<Level>()
+                .OrderBy(l => Math.Abs(l.Elevation - elevFt)).FirstOrDefault();
+        }
         return new FilteredElementCollector(doc).OfClass(typeof(Level)).Cast<Level>()
             .OrderBy(l => l.Elevation).FirstOrDefault();
     }
 
-    private static string GetElementTelemetryByIds(Document doc, string? argument)
+    public static string GetElementTelemetryByIds(Document doc, string? argument)
     {
         List<ElementId> ids = new();
         if (!string.IsNullOrWhiteSpace(argument))
@@ -145,17 +197,85 @@ public sealed partial class SpatialAgenticSandboxSkill
             ?? new FilteredElementCollector(doc).OfClass(typeof(WallType)).Cast<WallType>().FirstOrDefault();
         if (wallType == null) return JsonSerializer.Serialize(new { error = $"WallType '{typeName}' not found." });
 
-        double x1 = ReadCoordFt(data, "x1_mm", "x1M");
-        double y1 = ReadCoordFt(data, "y1_mm", "y1M");
-        double x2 = ReadCoordFt(data, "x2_mm", "x2M");
-        double y2 = ReadCoordFt(data, "y2_mm", "y2M");
+        double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+        XYZ? pMid = null;
+
+        if (data.TryGetProperty("locationLine", out JsonElement locProp))
+        {
+            x1 = ReadPointCoordFt(locProp.GetProperty("p0"), "x");
+            y1 = ReadPointCoordFt(locProp.GetProperty("p0"), "y");
+            x2 = ReadPointCoordFt(locProp.GetProperty("p1"), "x");
+            y2 = ReadPointCoordFt(locProp.GetProperty("p1"), "y");
+            if (locProp.TryGetProperty("pMid", out JsonElement pmProp))
+            {
+                pMid = new XYZ(ReadPointCoordFt(pmProp, "x"), ReadPointCoordFt(pmProp, "y"), level.Elevation);
+            }
+        }
+        else
+        {
+            x1 = ReadCoordFt(data, "x1_mm", "x1M");
+            y1 = ReadCoordFt(data, "y1_mm", "y1M");
+            x2 = ReadCoordFt(data, "x2_mm", "x2M");
+            y2 = ReadCoordFt(data, "y2_mm", "y2M");
+            if (data.TryGetProperty("pMid", out JsonElement pmProp2))
+            {
+                pMid = new XYZ(ReadPointCoordFt(pmProp2, "x"), ReadPointCoordFt(pmProp2, "y"), level.Elevation);
+            }
+        }
+
         double heightFt = ReadCoordFt(data, "height_mm", "heightM", 3000.0);
+        if (data.TryGetProperty("height", out JsonElement hEl))
+        {
+            double val = hEl.GetDouble();
+            heightFt = Math.Abs(val) > 50 ? MmToFt(val) : val / 0.3048;
+        }
+
+        Curve wallCurve;
+        XYZ pStart = new(x1, y1, level.Elevation);
+        XYZ pEnd = new(x2, y2, level.Elevation);
+
+        if (pMid != null)
+            wallCurve = Arc.Create(pStart, pEnd, pMid);
+        else
+            wallCurve = Line.CreateBound(pStart, pEnd);
+
+        double baseOffsetFt = ReadCoordFt(data, "baseOffset_mm", "baseOffsetM", 0.0);
+        if (data.TryGetProperty("baseOffset", out JsonElement boEl))
+        {
+            double boVal = boEl.GetDouble();
+            baseOffsetFt = Math.Abs(boVal) > 50 ? MmToFt(boVal) : boVal / 0.3048;
+        }
 
         using Transaction tx = new(doc, "AIGRAV - Create Wall (Telemetry)");
+        SuppressWarnings(tx);
         tx.Start();
-        Wall wall = Wall.Create(doc, Line.CreateBound(new XYZ(x1, y1, level.Elevation), new XYZ(x2, y2, level.Elevation)),
-            wallType.Id, level.Id, heightFt, 0.0, false, false);
+        Wall wall = Wall.Create(doc, wallCurve, wallType.Id, level.Id, heightFt, baseOffsetFt, false, false);
         doc.Regenerate();
+
+        double slantRad = 0.0;
+        if (data.TryGetProperty("slantAngleDeg", out JsonElement saDeg)) slantRad = saDeg.GetDouble() * Math.PI / 180.0;
+        else if (data.TryGetProperty("slantAngleRad", out JsonElement saRad)) slantRad = saRad.GetDouble();
+        else if (data.TryGetProperty("slantAngle", out JsonElement saGen))
+        {
+            double val = saGen.GetDouble();
+            slantRad = Math.Abs(val) > 1.5 ? val * Math.PI / 180.0 : val;
+        }
+
+        if (Math.Abs(slantRad) > 0.0001)
+        {
+            try
+            {
+                wall.CrossSection = WallCrossSection.SingleSlanted;
+                doc.Regenerate();
+                Parameter? pAngle = wall.get_Parameter(BuiltInParameter.WALL_SINGLE_SLANT_ANGLE_FROM_VERTICAL);
+                if (pAngle != null && !pAngle.IsReadOnly)
+                {
+                    pAngle.Set(slantRad);
+                }
+            }
+            catch { /* ignore if wall type cannot be slanted */ }
+        }
+
         tx.Commit();
 
         return BuildSpatialTelemetryJson(doc, "create_wall", new[] { wall.Id });
@@ -181,6 +301,7 @@ public sealed partial class SpatialAgenticSandboxSkill
         double z = ReadCoordFt(data, "z_mm", "zM", FtToMm(level.Elevation));
 
         using Transaction tx = new(doc, "AIGRAV - Create Column (Telemetry)");
+        SuppressWarnings(tx);
         tx.Start();
         if (!symbol.IsActive) { symbol.Activate(); doc.Regenerate(); }
         FamilyInstance inst = doc.Create.NewFamilyInstance(new XYZ(x, y, z), symbol, level, StructuralType.Column);
@@ -212,6 +333,7 @@ public sealed partial class SpatialAgenticSandboxSkill
         double z = ReadCoordFt(data, "z_mm", "zM", FtToMm(level.Elevation));
 
         using Transaction tx = new(doc, "AIGRAV - Create Beam (Telemetry)");
+        SuppressWarnings(tx);
         tx.Start();
         if (!symbol.IsActive) { symbol.Activate(); doc.Regenerate(); }
         Line beamLine = Line.CreateBound(new XYZ(x1, y1, z), new XYZ(x2, y2, z));
@@ -228,7 +350,11 @@ public sealed partial class SpatialAgenticSandboxSkill
         JsonElement data = jd.RootElement;
 
         string typeName = data.TryGetProperty("typeName", out JsonElement tn) ? tn.GetString() ?? "" : "";
+        if (string.IsNullOrEmpty(typeName) && data.TryGetProperty("floorTypeName", out JsonElement ftn))
+            typeName = ftn.GetString() ?? "";
+
         Level? level = ResolveLevel(doc, data);
+        level ??= new FilteredElementCollector(doc).OfClass(typeof(Level)).Cast<Level>().OrderBy(l => l.Elevation).FirstOrDefault();
         if (level == null) return JsonSerializer.Serialize(new { error = "No valid Level found." });
 
         FloorType? floorType = new FilteredElementCollector(doc).OfClass(typeof(FloorType)).Cast<FloorType>()
@@ -236,25 +362,86 @@ public sealed partial class SpatialAgenticSandboxSkill
             ?? new FilteredElementCollector(doc).OfClass(typeof(FloorType)).Cast<FloorType>().FirstOrDefault();
         if (floorType == null) return JsonSerializer.Serialize(new { error = $"FloorType '{typeName}' not found." });
 
-        if (!data.TryGetProperty("points", out JsonElement ptsEl))
-            return JsonSerializer.Serialize(new { error = "Floor requires 'points' array." });
+        var loops = new List<CurveLoop>();
 
-        var pts = ptsEl.EnumerateArray().ToList();
-        CurveLoop loop = new();
-        for (int i = 0; i < pts.Count; i++)
+        // 1. Room-based boundary extraction (Cortex precision feature)
+        if (data.TryGetProperty("roomId", out JsonElement ridEl) && ridEl.GetInt64() > 0)
         {
-            var p1 = pts[i];
-            var p2 = pts[(i + 1) % pts.Count];
-            double x1 = p1.TryGetProperty("x_mm", out JsonElement xm1) ? MmToFt(xm1.GetDouble()) : p1.GetProperty("x").GetDouble() / 0.3048;
-            double y1 = p1.TryGetProperty("y_mm", out JsonElement ym1) ? MmToFt(ym1.GetDouble()) : p1.GetProperty("y").GetDouble() / 0.3048;
-            double x2 = p2.TryGetProperty("x_mm", out JsonElement xm2) ? MmToFt(xm2.GetDouble()) : p2.GetProperty("x").GetDouble() / 0.3048;
-            double y2 = p2.TryGetProperty("y_mm", out JsonElement ym2) ? MmToFt(ym2.GetDouble()) : p2.GetProperty("y").GetDouble() / 0.3048;
-            loop.Append(Line.CreateBound(new XYZ(x1, y1, level.Elevation), new XYZ(x2, y2, level.Elevation)));
+            var room = doc.GetElement(new ElementId(ridEl.GetInt64())) as Room;
+            if (room != null)
+            {
+                var segments = room.GetBoundarySegments(new SpatialElementBoundaryOptions());
+                if (segments != null && segments.Count > 0)
+                {
+                    foreach (var segList in segments)
+                    {
+                        var cLoop = new CurveLoop();
+                        foreach (var seg in segList) cLoop.Append(seg.GetCurve());
+                        loops.Add(cLoop);
+                    }
+                }
+            }
+        }
+
+        // 2. Boundary points outer loop
+        if (loops.Count == 0)
+        {
+            JsonElement ptsEl = default;
+            if (data.TryGetProperty("boundaryPoints", out JsonElement bpEl)) ptsEl = bpEl;
+            else if (data.TryGetProperty("points", out JsonElement pEl)) ptsEl = pEl;
+
+            if (ptsEl.ValueKind == JsonValueKind.Array)
+            {
+                var pts = ptsEl.EnumerateArray().ToList();
+                if (pts.Count >= 3)
+                {
+                    CurveLoop loop = new();
+                    for (int i = 0; i < pts.Count; i++)
+                    {
+                        var p1 = pts[i];
+                        var p2 = pts[(i + 1) % pts.Count];
+                        double x1 = ReadPointCoordFt(p1, "x");
+                        double y1 = ReadPointCoordFt(p1, "y");
+                        double x2 = ReadPointCoordFt(p2, "x");
+                        double y2 = ReadPointCoordFt(p2, "y");
+                        loop.Append(Line.CreateBound(new XYZ(x1, y1, level.Elevation), new XYZ(x2, y2, level.Elevation)));
+                    }
+                    loops.Add(loop);
+                }
+            }
+        }
+
+        if (loops.Count == 0)
+            return JsonSerializer.Serialize(new { error = "Floor requires 'boundaryPoints', 'points', or 'roomId'." });
+
+        // 3. Holes (Inner void openings for donut slabs)
+        if (data.TryGetProperty("holes", out JsonElement holesEl) && holesEl.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var hole in holesEl.EnumerateArray())
+            {
+                if (hole.ValueKind != JsonValueKind.Array) continue;
+                var hpts = hole.EnumerateArray().ToList();
+                if (hpts.Count < 3) continue;
+
+                var hloop = new CurveLoop();
+                for (int i = 0; i < hpts.Count; i++)
+                {
+                    var hp1 = hpts[i];
+                    var hp2 = hpts[(i + 1) % hpts.Count];
+                    double hx1 = ReadPointCoordFt(hp1, "x");
+                    double hy1 = ReadPointCoordFt(hp1, "y");
+                    double hx2 = ReadPointCoordFt(hp2, "x");
+                    double hy2 = ReadPointCoordFt(hp2, "y");
+                    hloop.Append(Line.CreateBound(new XYZ(hx1, hy1, level.Elevation), new XYZ(hx2, hy2, level.Elevation)));
+                }
+                loops.Add(hloop);
+            }
         }
 
         using Transaction tx = new(doc, "AIGRAV - Create Floor (Telemetry)");
+        SuppressWarnings(tx);
         tx.Start();
-        Floor fl = Floor.Create(doc, new List<CurveLoop> { loop }, floorType.Id, level.Id);
+        Floor fl = Floor.Create(doc, loops, floorType.Id, level.Id);
         doc.Regenerate();
         tx.Commit();
 

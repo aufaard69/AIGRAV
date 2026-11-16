@@ -34,6 +34,13 @@ public static class AIGRAVHttpServer
             _ = Task.Run(
                 () => ListenLoopAsync(_cts.Token));
         }
+        catch (HttpListenerException hlex) when (hlex.ErrorCode == 183)
+        {
+            // Error 183 (ERROR_ALREADY_EXISTS): Port 8765 sudah digunakan oleh instansi Revit lain yang sedang aktif.
+            // Redam modal TaskDialog agar instansi Revit kedua tetap terbuka lancar tanpa mengganggu pengguna.
+            _listener = null;
+            _cts = null;
+        }
         catch (Exception ex)
         {
             _listener = null;

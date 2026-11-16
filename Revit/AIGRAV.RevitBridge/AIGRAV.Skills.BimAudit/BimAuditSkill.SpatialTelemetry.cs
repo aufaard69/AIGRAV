@@ -52,7 +52,10 @@ public sealed partial class SpatialAgenticSandboxSkill : IAIGRAVSkill
         "capture_presentation_views", "aigrav_capture_presentation_views",
         "create_architectural_schedules", "aigrav_create_architectural_schedules",
         "detect_spatial_clashes", "aigrav_detect_spatial_clashes",
-        "audit_unresolved_warnings", "aigrav_audit_unresolved_warnings"
+        "audit_unresolved_warnings", "aigrav_audit_unresolved_warnings",
+        "color_splash", "aigrav_color_splash",
+        "clear_colors", "aigrav_clear_colors",
+        "build_modern_office", "aigrav_build_modern_office", "office_milestone", "aigrav_office_milestone"
     };
 
     public bool CanHandle(string toolName) => SupportedTools.Contains(toolName);
@@ -92,6 +95,9 @@ public sealed partial class SpatialAgenticSandboxSkill : IAIGRAVSkill
                 "create_architectural_schedules" => CreateArchitecturalSchedules(doc),
                 "detect_spatial_clashes" => DetectSpatialClashesJson(doc, argument),
                 "audit_unresolved_warnings" => AuditUnresolvedWarningsJson(doc),
+                "color_splash" => ColorSplashJson(app!, doc, argument),
+                "clear_colors" => ClearColorsJson(app!, doc, argument),
+                "build_modern_office" or "office_milestone" => ModernOfficeModeler.ExecuteOfficeMilestone(app!, doc, argument),
                 _ => JsonSerializer.Serialize(new { error = $"Unhandled tool: {toolName}" })
             };
         }

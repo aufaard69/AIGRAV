@@ -401,22 +401,49 @@ TOOLS = {
         "Create a new Revit grid.",
 
     "aigrav_create_wall":
-        "Create a wall.",
+        "Create a wall with auto-level snapping and warning suppression.",
+
+    "aigrav_create_line_based_element":
+        "Create line-based elements (walls, beams) with auto-level, curve/arc pMid, and warning suppression.",
 
     "aigrav_create_floor":
-        "Create a floor.",
+        "Create a floor from boundary points or room boundary, supporting inner void holes for zero-overlap slabs.",
+
+    "aigrav_create_surface_based_element":
+        "Create surface-based elements (floors) from boundary points or room boundary, supporting inner void holes for zero-overlap slabs.",
 
     "aigrav_create_column":
-        "Create a structural column.",
+        "Create a structural column with auto symbol activation and auto-level.",
 
     "aigrav_create_beam":
-        "Create structural framing.",
+        "Create structural framing with auto-level and symbol activation.",
 
     "aigrav_create_family_instance":
         "Create a family instance.",
 
+    "aigrav_create_point_based_element":
+        "Create point-based elements (columns, furniture) with auto symbol activation, auto-level, and rotation.",
+
     "aigrav_create_generic_model":
         "Create a generic model instance.",
+
+    "aigrav_change_element_type":
+        "Batch change the family type of elements by targetTypeId or targetTypeName.",
+
+    "aigrav_modify_element":
+        "Move, rotate, or modify an element with precise translation/angle.",
+
+    "aigrav_copy_elements":
+        "Copy elements with offset vector.",
+
+    "aigrav_ifc_analyze_rebuildability":
+        "Analyze DirectShape solids and detect convertibility to native walls, floors, columns, beams.",
+
+    "aigrav_ifc_rebuild_walls":
+        "Rebuild native parametric Revit walls from IFC/CAD DirectShapes.",
+
+    "aigrav_ifc_rebuild_floors":
+        "Rebuild native Revit floors with bottom footprint curve loops from IFC/CAD DirectShapes.",
 
     "aigrav_create_room":
         "Create a room.",

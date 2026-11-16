@@ -501,7 +501,11 @@ public sealed partial class BimAuditSkill : IAIGRAVSkill
             || toolName.Equals("aigrav_export_pagoda_views", StringComparison.OrdinalIgnoreCase)
             || toolName.Equals("aigrav_build_villa_milestone", StringComparison.OrdinalIgnoreCase)
             || toolName.Equals("aigrav_inspect_villa", StringComparison.OrdinalIgnoreCase)
-            || toolName.Equals("aigrav_export_villa_views", StringComparison.OrdinalIgnoreCase);
+            || toolName.Equals("aigrav_export_villa_views", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_build_pisa", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_build_eiffel", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_build_burj_khalifa", StringComparison.OrdinalIgnoreCase)
+            || toolName.Equals("aigrav_build_burj_foundation", StringComparison.OrdinalIgnoreCase);
 
 
 
@@ -592,6 +596,26 @@ public sealed partial class BimAuditSkill : IAIGRAVSkill
             if (toolName.Equals("aigrav_export_comparison_sheets", StringComparison.OrdinalIgnoreCase))
             {
                 return ExportComparisonSheets(doc);
+            }
+            if (toolName.Equals("aigrav_build_pisa", StringComparison.OrdinalIgnoreCase))
+            {
+                using JsonDocument jd = string.IsNullOrWhiteSpace(argument) ? JsonDocument.Parse("{}") : JsonDocument.Parse(argument);
+                return PisaTowerModeler.BuildPisaTower(doc, jd.RootElement);
+            }
+            if (toolName.Equals("aigrav_build_eiffel", StringComparison.OrdinalIgnoreCase))
+            {
+                using JsonDocument jd = string.IsNullOrWhiteSpace(argument) ? JsonDocument.Parse("{}") : JsonDocument.Parse(argument);
+                return EiffelTowerModeler.BuildEiffelTower(doc, jd.RootElement);
+            }
+            if (toolName.Equals("aigrav_build_burj_khalifa", StringComparison.OrdinalIgnoreCase))
+            {
+                using JsonDocument jd = string.IsNullOrWhiteSpace(argument) ? JsonDocument.Parse("{}") : JsonDocument.Parse(argument);
+                return BurjKhalifaModeler.BuildBurjKhalifa(doc, jd.RootElement);
+            }
+            if (toolName.Equals("aigrav_build_burj_foundation", StringComparison.OrdinalIgnoreCase))
+            {
+                using JsonDocument jd = string.IsNullOrWhiteSpace(argument) ? JsonDocument.Parse("{}") : JsonDocument.Parse(argument);
+                return BurjKhalifaModeler.BuildBurjFoundation(doc, jd.RootElement);
             }
             if (toolName.Equals("aigrav_build_pagoda_milestone", StringComparison.OrdinalIgnoreCase))
             {

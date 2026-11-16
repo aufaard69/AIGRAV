@@ -1,21 +1,18 @@
 {
-  "version": "2.9.0",
-  "release_name": "Native Slanted Wall Architecture & Zero-Overlap Multi-Loop Slab Engine",
-  "release_date": "2026-11-11",
+  "version": "3.0.0",
+  "release_name": "RevitCortex Precision Modeling Engine, Consultative Design SOP & Multi-Instance Resilience",
+  "release_date": "2026-11-16",
   "highlights": [
-    "Native Slanted Wall Integration (WallCrossSection.SingleSlanted): Eliminates stepped traps and horizontal seams on tapering towers, obelisks, and spires with continuous monolithic walls and exact inclination angles (-1.286 deg for 98m obelisk, +60.255 deg for splayed chalices)",
-    "Zero-Overlap Multi-Loop Slab Mandate (CurveLoop Donut Loops): Strict prohibition of overlapping solid floors. Slabs must utilize inner void loops (Loop 0 = Outer Boundary CCW, Loop 1..N = Inner Openings CW) ensuring zero Z-fighting, zero spatial clash, and mathematically pure Quantity Takeoff (QTO)",
-    "Strategic Architectural Tool Selection Protocol: Lead BIM Engineer must evaluate boundary loops, slanted walls, adaptive components, and massing before executing model geometry",
-    "Monas Monument & Merdeka Landscape Reference Implementation: 100% Native BIM, 0 DirectShape, 0 Overlapping Floors verified via in-memory Revit API telemetry",
-    "Professional Role Mandate: AIGRAV officially elevated to Senior BIM Engineer & Architect (prohibits blind script execution and unconstructible geometry)",
-    "Triple-Layer Independent Validation: Added Layer 3 (Engineering Sanity Gate) auditing structural load paths, continuous column bearings, headroom clearance (min 2.20m), stair ergonomics, weatherproofing/roof slope, and site datum (+0.00 elevation)",
-    "Adaptive Component Modeling Engine: Standardized LOD 350-400 parametric component placement via AdaptiveComponentInstanceUtils as the official professional alternative to DirectShape",
-    "Milestone-Based Modeling Orchestration Engine: Standardized 4-phase macro-execution (Datum & Structure -> Envelope -> Partitions & Openings -> Rooms & QTO) combining atomic TransactionGroups with visual checkpoint review"
+    "RevitCortex Precision Modeling Engine: Safe transaction preprocessor (TransactionFailureHandling.SuppressWarnings) eliminating modal freezing, nearest level auto-snap, arc/curve wall support, and IFC DirectShape-to-Native rebuilding",
+    "Interactive Consultative Design SOP (revit-consultative-design): Professional Claude-inspired design workflow with programmatic client discovery, multi-agent milestone isolation, and visual ColorSplash verification checkpoints",
+    "End-to-End Milestone Office Building Generator: Complete 3-story office building (60 bored piles, 15 pile caps, 15 pedestals, 22 sloof, 15 columns, 66 beams, 4 floor slabs, 37 curtain walls, entrance canopy, 55 partitions, 20 doors, 9 stair flights, 28 native Revit Rooms, 6 QTO schedules with zero spatial clash)",
+    "Landmark Parametric Modeling Suite: Generative engines for Burj Khalifa Spire, Eiffel Tower, and Leaning Tower of Pisa",
+    "Multi-Instance HTTP Bridge Hardening: Automatic graceful handling of Error 183 (ERROR_ALREADY_EXISTS) in AIGRAVHttpServer, allowing multiple concurrent Revit instances without modal error popups"
   ],
   "fixes": [
-    "Strictly banned overlapping floor slabs and solid-on-solid geometry in AGENTS.md (Section 1.4 & Section 7)",
-    "Resolved stepped traps on Monas obelisk by replacing 5 vertical wall segments with 4 full-height 98m Slanted Walls",
-    "Corrected Gross-vs-Net lawn and plaza areas in QTO schedules via multi-loop donut boundary subtractions",
-    "Eliminated duplicate NO=25 parameter conflict in Revit sheet documentation"
+    "Resolved Revit journal fatal rollback caused by corrupted M_Door-Passage-Single-Flush sketch by decoupling transactions and strictly binding to M_Door-Single-Panel",
+    "Fixed structural column top offset alignment (+2.5m error) via dual BuiltInParameter enforcement (SCHEDULE_TOP_LEVEL_OFFSET_PARAM)",
+    "Fixed wall creation plane ArgumentException by enforcing exact level elevation coordinate alignment",
+    "Fixed HTTP Listener startup crash on multiple Revit instances opening simultaneously"
   ]
 }

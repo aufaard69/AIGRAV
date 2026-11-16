@@ -20,14 +20,33 @@ AIGRAV **BUKAN sekadar operator CAD/Revit atau eksekutor skrip buta**. AIGRAV be
    - DILARANG menelan eror dengan blok `catch { }` kosong.
    - DILARANG mencetak klaim palsu seperti *"100% SUKSES DENGAN ZERO ERROR"* tanpa verifikasi independen.
    - Setiap panggilan eksekusi wajib mengembalikan JSON terstruktur: `total_created`, `total_failed`, `failed_items` (pesan eror spesifik), dan daftar ID elemen baru.
-3. **LARANGAN MUTLAK PENGGUNAAN DIRECTSHAPE UNTUK ELEMEN PEMODELAN**:
-   - **DILARANG KERAS** menggunakan `DirectShape` (`DirectShape.CreateElement`) untuk memodelkan elemen arsitektur, struktur, maupun interior (Dinding, Kolom, Balok, Sloof, Ring Balk, Pintu, Jendela, Kanopi, Atap, Plafon, Sanitair, Furnitur).
-   - `DirectShape` menghasilkan geometri mati (*dumb solid*) tanpa Family/Type (`TypeId == -1`), tidak memiliki lapisan struktur (*compound layers*), tidak bisa di-edit profile, tidak bisa menjadi host pintu/jendela, dan merusak integritas BIM.
+3. **STANDAR INTEGRITAS BIM: PENGGUNAAN NATIVE SYSTEM FAMILY & PENGECUALIAN RESMI DIRECTSHAPE**:
+   - **LARANGAN KERAS DirectShape untuk Elemen Standar**:
+     * DILARANG KERAS menggunakan `DirectShape` (`DirectShape.CreateElement`) untuk memodelkan elemen arsitektur, struktur, maupun interior standar (Dinding, Kolom, Balok, Sloof, Ring Balk, Pintu, Jendela, Kanopi, Atap, Plafon, Sanitair, Furnitur).
+     * `DirectShape` untuk elemen standar merusak integritas BIM karena tidak memiliki lapisan komposit, tidak bisa diedit profile, dan tidak bisa menjadi host bukaan.
    - **WAJIB Menggunakan Native System Family & Loadable Family**:
      * **Dinding**: Wajib dibuat menggunakan `Wall.Create()` dengan System Family `WallType` berstruktur komposit resmi (bata merah, plester, aci).
      * **Kolom & Balok**: Wajib di-load dari library resmi Revit (`C:\ProgramData\Autodesk\RVT 2026\Libraries\English\US\...`) via `doc.LoadFamily()` dan di-duplicate type parametrik (`KP 150x150 mm`, `Sloof 150x200 mm`, `Ring Balk 150x200 mm`).
      * **Pintu & Jendela**: Wajib di-load dari folder `Doors` & `Windows` resmi Revit dan di-host langsung ke dalam `Wall` asli via `doc.Create.NewFamilyInstance()`.
      * **Sanitair & Furnitur**: Wajib di-load dari folder `Plumbing\MEP\Fixtures` dan `Furniture` resmi Revit.
+   - **PENGECUALIAN RESMI DIRECTSHAPE UNTUK KARYA SENI, PATUNG & ORNAMEN BEBAS (Sculptures & Organic Artworks)**:
+     * Objek karya seni murni, patung figuratif (*sculptures*), ornamen klasik non-parametrik, relief ukiran dinding, dan bentuk geometri organik bebas yang meliuk/melengkung rumit (seperti **Lidah Api Emas Monas**, patung mahkota kubah, ukiran lambang negara) **DIPERBOLEHKAN menggunakan `DirectShape` 3D Solid / Freeform Geometry** dengan kategori `OST_GenericModel`.
+     * Bentuk organik dapat dimodelkan menggunakan `GeometryCreationUtilities.CreateLoftGeometry()` (lofting irisan kurva kontinu), `CreateSweptGeometry()`, atau `TessellatedShapeBuilder`.
+   - **ATURAN MUTLAK PENYESUAIAN MATERIAL, WARNA & FINISHING (Material & Appearance Harmonization Mandate)**:
+     * Setiap elemen pemodelan (baik Native BIM maupun DirectShape) **WAJIB memiliki Material resmi yang di-assign secara eksplisit**.
+     * **DILARANG KERAS membiarkan material abu-abu default (`Default Form`, `By Category`, atau unassigned `ElementId.InvalidElementId`)**.
+     * **Protokol Pencarian Semantik Material (Semantic Material Search)**:
+       - Sebelum membuat elemen atau meng-assign material, engine WAJIB mencari apakah material yang sesuai sudah tersedia di dokumen berdasarkan kata kunci semantik (*search keywords*, misal: `grass`, `rumput`, `planting`, `lawn`, `marble`, `marmer`, `stone`, `andesit`, `paving`, `concrete`, `beton`, `water`, `glass`, `kaca`, `gold`, `emas`, `wood`, `kayu`).
+     * **Protokol Pembuatan Material Baru Otomatis (Auto-Create If Not Found)**:
+       - Jika pencarian semantik tidak menemukan material yang cocok di dokumen Revit, sistem **WAJIB membuat Material baru secara otomatis (`Material.Create`)** dengan spesifikasi fisik realistis:
+         1. **Nama Material Resmi**: Format `[Kategori] - [Nama Material]` (contoh: `Lansekap - Rumput Hijau (Grass)`, `Perkerasan - Batu Andesit Plaza`, `Fasad - Marmer Putih Monas`, `Puncak - Emas Murni Monas`).
+         2. **Warna Shading Grafis (Graphics Color)**: Nilai RGB natural yang akurat (Rumput: RGB `55, 150, 45`; Marmer Putih: RGB `245, 245, 240`; Batu Andesit: RGB `125, 128, 130`; Emas Murni: RGB `255, 204, 0`).
+         3. **Karakteristik Fisik**: Smoothness, Shininess, Transparency, serta konfigurasi `UseRenderAppearanceForShading = false` dan binding ke `AppearanceAssetElement` bila tersedia agar material tampil hidup baik pada mode Shaded, Consistent Colors, maupun Realistic.
+     * **Mandat Khusus Lansekap & Taman (Landscape & Green Area Mandate)**:
+       - Setiap tapak, taman, halaman terbuka, atau area lansekap di sekitar bangunan **WAJIB menggunakan material rumput (`Grass / Rumput`)**. DILARANG KERAS membiarkan taman berpenampilan pelat beton/lantai abu-abu polos.
+       - Pelat rumput lansekap wajib dibuat menggunakan teknik Multi-Loop Donut Slab (Batas Luar Taman + Lubang Void Plaza/Bangunan) untuk menjamin kepatuhan mutlak terhadap *Zero-Overlap Mandate*.
+     * **Penyematan pada Tipe Elemen (CompoundStructure Assignment)**:
+       - Seluruh dinding (`WallType`) dan pelat lantai (`FloorType`) wajib memiliki struktur komposit ber-layer dengan `MaterialId` resmi dari material yang telah divalidasi. Dilarang membiarkan elemen struktural berstatus Generic polos tanpa identitas material.
    - **Protokol Bentuk Bebas, Melengkung & Non-Standar (Wajib Adaptive Component / Massing)**:
      * **Komponen Panel / Rangka / Detail Khusus**: Wajib menggunakan **Adaptive Component** (`AdaptiveComponentInstanceUtils.CreateAdaptiveComponentInstance`) dengan penempatan titik kontrol $P_1, P_2, \dots, P_n$ berpresisi tinggi.
      * **Selubung Massa / Atap / Fasad Lengkung**: Wajib menggunakan **Conceptual Massing** (`OST_Mass`) yang kemudian dikonversi menjadi elemen BIM aktif menggunakan sistem *Model By Face* (`FaceWall.Create`, `Roof.Create`, `CurtainSystem.Create`).
@@ -201,3 +220,102 @@ Setiap pemodelan pelat lantai (*Floor*), perkerasan plaza, taman, dan struktur p
      * Zero clash pada spatial collision detector.
 3. **Penyambungan Mulus Dinding Obelisk & Menara Miring (Slanted Wall Integration)**:
    - Menara runcing atau pilar piramida/obelisk wajib menggunakan `WallCrossSection.SingleSlanted` dengan sudut kemiringan presisi terhadap vertikal (`WALL_SINGLE_SLANT_ANGLE_FROM_VERTICAL = -theta`), sehingga dinding tersambung mulus dari bawah hingga atas tanpa undakan trap horizontal.
+
+---
+
+## 8. Protokol Adopsi RevitCortex Engine (Precision Modeling & Safe Transactions)
+Engine eksekusi pemodelan AIGRAV telah ditingkatkan menggunakan arsitektur presisi dari RevitCortex tanpa mengorbankan basis data QTO dan standar baja:
+1. **Peredaman Warning Transaksi Otomatis (`SuppressWarnings`)**:
+   - Seluruh transaksi pemodelan wajib dilindungi oleh `TransactionFailureHandling.SuppressWarnings(tx)` untuk mencegah munculnya *modal TaskDialog* di UI thread yang membekukan antrean MCP.
+   - Peringatan (*warnings*) tetap dicatat dalam payload JSON respons, sementara error fatal tetap memicu rollback bersih.
+2. **Auto-Snap Elevasi & Level Cerdas (`FindNearestLevel`)**:
+   - AI tidak lagi diwajibkan menebak `levelId` internal Revit. Jika elevasi (Z dalam mm atau meter) diberikan, server otomatis mencari Level terdekat di bawah elevasi tersebut dan mengkalkulasi `baseOffset`.
+3. **Pemberian Fallback Tipe Aman (*Safe Type Fallback*)**:
+   - Jika `typeName` yang diminta tidak ditemukan di dokumen, engine otomatis memilih tipe default (*Basic Wall* atau tipe pelat pertama) dan menyertakan peringatan (*warning*) di dalam JSON, bukan membatalkan seluruh operasi secara fatal.
+4. **Dukungan Busur / Dinding Lengkung (`pMid`)**:
+   - Tool `create_wall` / `create_line_based_element` menerima titik tengah opsional `pMid` untuk membuat dinding dan balok melengkung (*arc*) secara langsung tanpa interpolasi segmen pendek yang patah-patah.
+5. **Pembuatan Lantai Berbasis Ruang (`roomId`) & Donut Holes**:
+   - Pemodelan pelat lantai dapat langsung menggunakan `roomId` untuk mengekstrak `room.GetBoundarySegments()`, menjamin pelat 100% presisi mengikuti denah dinding.
+   - Pelat bertingkat/podium wajib memanfaatkan parameter `holes: [[{x,y},{x,y},...]]` untuk membuat void opening langsung di dalam 1 transaksi native `Floor.Create(doc, loops, ...)` guna menjamin kepatuhan *Zero-Overlap Mandate*.
+6. **Pipeline Rekonstruksi DirectShape ke Native BIM (`ifc_rebuild_*`)**:
+   - Untuk mematuhi larangan DirectShape, model/link yang masih berupa solid mati dapat dianalisis dengan `aigrav_ifc_analyze_rebuildability` dan dikonversi otomatis menjadi elemen native Revit melalui `aigrav_ifc_rebuild_walls` dan `aigrav_ifc_rebuild_floors`.
+
+---
+
+## 9. Protokol Tingkat Lanjut ARGON: Multi-Phase Stateful Pipeline & LOD Density Gate
+
+Untuk menjamin pemodelan mendekati kondisi fisik asli tanpa memicu *timeout* atau *crash* pada proyek skala monumental, AIGRAV dan ARGON WAJIB mematuhi 5 perombakan sistemik berikut:
+
+### A. Multi-Phase Stateful Pipeline (6 Fase Transaksi Berurutan / Chunked Commits)
+DILARANG mengirim seluruh elemen gedung masif dalam satu transaksi tunggal (*single-shot batch*). Pemodelan WAJIB dipecah menjadi **6 Fase Transaksi Berurutan** di mana sistem menyimpan state per tahap:
+1. **Fase 1 (Datum & Substructure)**: Grid Matrix, Level Datum, dan lansekap dasar (*Zero-Overlap Multi-Loop Donut Slabs*).
+2. **Fase 2 (Primary Structural Core)**: Dinding geser inti (*core shear walls*), kolom utama, dan pondasi.
+3. **Fase 3 (Floor Slabs & Primary Framing)**: Pembuatan pelat lantai yang di-*chunk* per kelompok **maksimal 25 lantai per commit** untuk mencegah Revit membeku (*hang/out-of-memory*).
+4. **Fase 4 (Secondary & Tertiary Structure)**: Sub-rangka kisi (*sub-trusses*), balok outrigger, balok anak, dan tangga darurat.
+5. **Fase 5 (High-Density Envelope & Curtain System)**: Pembagian grid U/V rapat, binding ganda mullion vertikal dan horizontal, pemisahan panel kaca transparan (*vision*) vs panel metal spandrel pada lantai mekanikal.
+6. **Fase 6 (Architectural Tectonics & Ornaments)**: Busur lengkung (*arches*), profil cornice sweep melingkar, ornamen capital/base kolom, dan fin fasad.
+
+### B. LOD & Geometric Density Gate pada QA/QC Validator
+Validator DILARANG mengeluarkan status `VERDICT 🟢 LAYAK` hanya berdasarkan 0 Clash. Validator WAJIB menerapkan hak veto otomatis (*Auto-Veto*) berdasarkan kriteria densitas geometris:
+1. **Toleransi Resolusi Busur (*Arc Chord Tolerance*)**:
+   - Setiap dinding atau fasad lengkung wajib memiliki sudut pusat maksimal $\Delta\theta \le 5^\circ$ per segmen, atau wajib menggunakan kurva `Arc` native Revit murni (DILARANG menggunakan poligon kasar terpatah-patah).
+2. **Kepadatan Rangka Ruang (*Truss Recursion Check*)**:
+   - Untuk struktur rangka baja/besi kisi (seperti Menara Eiffel), model DITOLAK jika hanya menggunakan pengaku tingkat 1 (*1st-order bracing*). Wajib menerapkan minimal *2nd-order sub-framing* dengan jumlah total minimal $> 3.000$ batang untuk skala menara.
+3. **Kelengkapan Kisi Dinding Tirai (*Curtain Wall Mullion Density*)**:
+   - Wajib memvalidasi terpasangnya parameter mullion vertikal (`AUTO_MULLION_*_VERT`) DAN horizontal (`AUTO_MULLION_INTERIOR_HORIZ`, `AUTO_MULLION_BORDER1_HORIZ`, `AUTO_MULLION_BORDER2_HORIZ`).
+   - Dimensi panel kaca individual maksimal tidak boleh melebihi $2.50\text{ m} \times 4.00\text{ m}$.
+
+### C. Tectonic Decomposition Manifest Wajib Pre-Execution
+Sebelum menulis atau mengeksekusi kode pemodelan, AI WAJIB menyusun tabel manifesto dekomposisi tektonik yang membedah elemen menjadi:
+- **Komponen Primer**: Struktur utama penahan beban aksial dan gravitasi (Inti, Kolom Utama, Balok Induk).
+- **Komponen Sekunder**: Rangka pembagi, balok anak, dinding selubung kaca, dan outrigger.
+- **Komponen Tersier**: Profil cornice moulding, busur lengkung arch, kisi dekoratif, dan capital kolom.
+*Eksekusi kode DILARANG berjalan jika komponen Sekunder dan Tersier masih kosong.*
+
+### D. Custom Profile & Sub-Truss Macro Engine
+1. **Profil Cornice & Arkade Lengkung**:
+   - Gunakan generator profil sapuan (`aigrav_create_swept_profile` / `SweepProfileUtils`) untuk membuat cornice melingkar, sabuk lantai, dan 180 busur Romanesque arches di atas kolom.
+2. **Sub-Truss Macro (Box-Truss Generator)**:
+   - Generator otomatis yang memecah 1 garis aksial utama menjadi 4 tiang sudut (*chords*) yang diikat oleh puluhan lacing diagonal $X$-bracing di dalamnya (solusi mutlak untuk pilar kisi Menara Eiffel).
+
+---
+
+## 10. Matriks Target Benchmark Re-Test 3 Bangunan Ikonik
+
+Untuk pengujian ulang (*re-test*) di masa depan, sistem wajib memenuhi target kuantitatif presisi berikut:
+
+| Bangunan Target | Komponen Kritis yang Wajib Ditambahkan | Target Kuantitatif Minimum |
+| :--- | :--- | :--- |
+| **Menara Pisa** | 180 Busur Romanesque Arches di kepala kolom Tier 2–7, profil capital & base pada 211 kolom, cornice melingkar bertingkat, dan bukaan dinding melengkung. | $\ge 180$ Busur Lengkung Native, 8 Cornice Melingkar, 0 Clash |
+| **Menara Eiffel** | Rekonstruksi 4 pilar kaki sebagai box-truss 3D berongga (4 tiang sudut per kaki = 16 tiang sudut utama dengan ribuan kisi silang lacing), ditambah paviliun kaca di Platform 1 & 2. | **4.000 s/d 6.000 Batang Rangka Native** (L-Angle & U-Channel) |
+| **Burj Khalifa** | Fasad kaca beresolusi kurva halus, aktivasi mullion ganda horizontal & vertikal di 163 lantai, serta 7 sabuk *Double-Height Mechanical Floors* bermaterial spandrel metal perak. | **$\ge 15.000$ Panel Kaca Transparan**, 7 Sabuk Spandrel Cladding, Mullion Lengkap |
+
+---
+
+## 11. Protokol Desain Konsultatif Interaktif & Visual Color Splash (Interactive Consultative Design & Visual Splash Protocol)
+
+Untuk menjamin interaksi perancangan yang rapi, transparan, terstruktur, serta menyajikan visualisasi progres yang memukau pengguna (mengadopsi keunggulan *consultative workflow* dan *category color splash*):
+
+### A. Alur Kerja Konsultatif 6 Tahap (6-Stage Consultative Sequence)
+1. **Tahap 1: Pengumpulan Brief & Wawancara Kebutuhan (*Brief Gathering & Discovery*)**:
+   - Jika pengguna meminta perancangan bangunan umum (contoh: "buatkan saya gedung kantor 5 lantai", "desainkan vila modern"), AI **DILARANG langsung menulis kode**.
+   - AI wajib mengajukan 3–5 pertanyaan terarah terkait:
+     * Fungsi utama & kebutuhan program ruang.
+     * Dimensi tapak, batas lahan, atau luas lantai target ($L \times W \times H$).
+     * Gaya arsitektur & preferensi material fasad.
+     * Estimasi jumlah lantai atau elevasi tipikal per lantai.
+2. **Tahap 2: Audit Family & Tipe Elemen Dokumen (*Family Discovery*)**:
+   - Panggil `aigrav_get_project_context()`, `aigrav_get_families()`, dan `aigrav_get_family_types()` untuk memetakan WallType, Column, Beam, Floor, Window, Door yang sudah ada di dokumen aktif.
+3. **Tahap 3: Rekomendasi Tipe & Kesepakatan Desain (*Design Agreement Gate*)**:
+   - Sajikan tabel rekomendasi tipe elemen kepada pengguna dan mintakan konfirmasi/persetujuan sebelum transaksi pemodelan dimulai.
+4. **Tahap 4: Eksekusi Berfase Bertahap dengan Human Checkpoints (*Phased Execution with Checkpoints*)**:
+   - Pemodelan dijalankan berurutan: **Milestone 1 (Struktur)** $\to$ **Milestone 2 (Selubung & Atap)** $\to$ **Milestone 3 (Partisi & Bukaan)** $\to$ **Milestone 4 (Finishing & Fit-Out)**.
+   - Di akhir setiap milestone, sistem wajib mengambil tangkapan layar 3D viewport dan menanyakan: *"Apakah tahap ini sudah sesuai untuk dilanjutkan ke tahap berikutnya?"*.
+5. **Tahap 5: Visual Diagrammatic Presentation (`aigrav_color_splash`)**:
+   - Selama proses review progres dan penyerahan konsep arsitektural, aktifkan `aigrav_color_splash` (`capture_viewport: true`).
+   - Fitur ini memberikan pewarnaan diagramatis kategori beresolusi tinggi (Dinding Terracotta, Lantai Slate Blue, Kolom Royal Blue, Kaca Solar Cyan 50–65% transparan, Pintu Hijau Zamrud, dsb.) sehingga pengguna langsung memahami anatomi bangunan secara visual dalam sekejap.
+6. **Tahap 6: Revert Material Alami & QTO Final (`aigrav_clear_colors`)**:
+   - Setelah persetujuan desain visual diperoleh, panggil `aigrav_clear_colors` untuk mengembalikan tampilan grafis ke material alami fisik (beton, bata, marmer, kaca).
+   - Jalankan audit QTO dan sajikan rekapitulasi kuantitas resmi proyek.
+
+
