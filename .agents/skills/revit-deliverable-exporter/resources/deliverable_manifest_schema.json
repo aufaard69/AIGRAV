@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AIGRAV Deliverable Export Manifest",
+  "type": "object",
+  "required": [
+    "project_name",
+    "local_output_dir",
+    "formats",
+    "items"
+  ],
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "description": "Project title or code used for file naming."
+    },
+    "local_output_dir": {
+      "type": "string",
+      "description": "Absolute path to local export destination directory."
+    },
+    "gdrive_folder_id": {
+      "type": "string",
+      "description": "Google Drive destination folder ID (from URL segment after /folders/)."
+    },
+    "formats": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["pdf", "cad", "xls", "rvt"]
+      },
+      "description": "Requested output formats."
+    },
+    "items": {
+      "type": "array",
+      "description": "List of sheets, views, schedules, or model components to export.",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "id": { "type": ["integer", "string"] },
+          "name": { "type": "string" },
+          "number": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["sheet", "view", "schedule", "model"]
+          },
+          "target_filename": { "type": "string" }
+        }
+      }
+    },
+    "history_policy": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "folder_name": { "type": "string", "default": "_history" },
+        "append_timestamp_type": { "type": "string", "enum": ["modified_time", "current_time"], "default": "modified_time" }
+      }
+    },
+    "gdrive_policy": {
+      "type": "object",
+      "properties": {
+        "replace_existing": { "type": "boolean", "default": true },
+        "warn_on_review": { "type": "boolean", "default": true }
+      }
+    }
+  }
+}
