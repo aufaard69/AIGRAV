@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -11,8 +11,11 @@ public static class AIGRAVHttpServer
     private static HttpListener? _listener;
     private static CancellationTokenSource? _cts;
 
-    private const string Url =
-        "http://127.0.0.1:8765/";
+    public const int BasePort = 8765;
+    public const int MaxPort = 8775;
+
+    public static int ActivePort { get; private set; } = 0;
+    public static string ActiveUrl { get; private set; } = string.Empty;
 
     public static void Start()
     {
@@ -21,37 +24,52 @@ public static class AIGRAVHttpServer
             return;
         }
 
-        try
+        Exception? lastEx = null;
+
+        for (int port = BasePort; port <= MaxPort; port++)
         {
-            _listener = new HttpListener();
+            try
+            {
+                var listener = new HttpListener();
+                string url = $"http://127.0.0.1:{port}/";
+                listener.Prefixes.Add(url);
+                listener.Start();
 
-            _listener.Prefixes.Add(Url);
+                _listener = listener;
+                ActivePort = port;
+                ActiveUrl = url;
+                _cts = new CancellationTokenSource();
 
-            _listener.Start();
+                WriteSessionFile(port);
 
-            _cts = new CancellationTokenSource();
+                _ = Task.Run(
+                    () => ListenLoopAsync(_cts.Token));
 
-            _ = Task.Run(
-                () => ListenLoopAsync(_cts.Token));
+                return;
+            }
+            catch (HttpListenerException ex)
+            {
+                lastEx = ex;
+                // Port occupied by another Revit instance, try next port
+                continue;
+            }
+            catch (Exception ex)
+            {
+                lastEx = ex;
+                break;
+            }
         }
-        catch (HttpListenerException hlex) when (hlex.ErrorCode == 183)
-        {
-            // Error 183 (ERROR_ALREADY_EXISTS): Port 8765 sudah digunakan oleh instansi Revit lain yang sedang aktif.
-            // Redam modal TaskDialog agar instansi Revit kedua tetap terbuka lancar tanpa mengganggu pengguna.
-            _listener = null;
-            _cts = null;
-        }
-        catch (Exception ex)
-        {
-            _listener = null;
-            _cts = null;
 
-            TaskDialog.Show(
-                "AIGRAV HTTP Server Error",
-                "AIGRAV HTTP Server gagal start.\n\n" +
-                ex.ToString()
-            );
-        }
+        _listener = null;
+        _cts = null;
+        ActivePort = 0;
+        ActiveUrl = string.Empty;
+
+        TaskDialog.Show(
+            "AIGRAV HTTP Server Error",
+            $"AIGRAV HTTP Server gagal start pada rentang port {BasePort}-{MaxPort}.\n\n" +
+            (lastEx?.ToString() ?? "Seluruh port dalam rentang sedang digunakan.")
+        );
     }
 
     public static void Stop()
@@ -62,6 +80,8 @@ public static class AIGRAVHttpServer
 
             _listener?.Stop();
             _listener?.Close();
+
+            RemoveSessionFile();
         }
         catch
         {
@@ -70,6 +90,52 @@ public static class AIGRAVHttpServer
 
         _listener = null;
         _cts = null;
+        ActivePort = 0;
+        ActiveUrl = string.Empty;
+    }
+
+    private static void WriteSessionFile(int port)
+    {
+        try
+        {
+            string tempDir = Path.Combine(Path.GetTempPath(), "AIGRAV", "sessions");
+            Directory.CreateDirectory(tempDir);
+
+            int pid = Environment.ProcessId;
+            string filePath = Path.Combine(tempDir, $"session_{pid}.json");
+
+            var sessionInfo = new
+            {
+                pid = pid,
+                port = port,
+                url = $"http://127.0.0.1:{port}/",
+                started_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+            };
+
+            string json = JsonSerializer.Serialize(sessionInfo, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(filePath, json, Encoding.UTF8);
+        }
+        catch
+        {
+            // Session file writing must never crash the server
+        }
+    }
+
+    private static void RemoveSessionFile()
+    {
+        try
+        {
+            int pid = Environment.ProcessId;
+            string filePath = Path.Combine(Path.GetTempPath(), "AIGRAV", "sessions", $"session_{pid}.json");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
+        catch
+        {
+            // Ignore session cleanup errors
+        }
     }
 
     private static async Task ListenLoopAsync(
