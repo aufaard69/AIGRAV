@@ -122,12 +122,17 @@ python "d:\AIGRAV\.agents\skills\revit-deliverable-exporter\scripts\deliverable_
 ```
 
 ### Langkah 4: Eksekusi Ekspor dari Revit
-Jalankan ekspor melalui Revit Bridge / Revit Python:
-1. **Ekspor Sheet (PDF & CAD)**: Panggil `doc.Export` sesuai opsi.
-2. **Ekspor Schedule (QTO)**: Panggil `sched.Export(temp_txt_dir, ...)`.
-3. **Format Jadwal ke XLSX**:
+Jalankan ekspor melalui Revit Bridge (`AIGRAV.Skills.MasterExporter`) / Revit Python:
+1. **Ekspor Gabungan Sheet (PDF & CAD)**: Panggil `aigrav_export_all_deliverables` dengan argumen `"pdfFilePath|cadDirectory"` (otomatis menempatkan `000 - COVER` di Halaman 1 dan `DG-001 - DAFTAR GAMBAR` di Halaman 2, diikuti urutan parameter `NO`), atau `aigrav_export_single_sheet` untuk lembaran revisi tertentu.
+2. **Ekspor Schedule (QTO)**: Panggil `aigrav_export_all_schedules` (otomatis mengecualikan jadwal non-konstruksi seperti `DAFTAR GAMBAR` dan `Keynote Legend`).
+3. **Format Jadwal ke XLSX (Single atau Multi-Tab WBS Workbook)**:
+   * Single schedule:
    ```powershell
    python "d:\AIGRAV\.agents\skills\revit-deliverable-exporter\scripts\deliverable_orchestrator.py" format-schedule --input "temp_dir\schedule.txt" --output "target_dir\QTO.xlsx" --title "Schedule Kolom"
+   ```
+   * Multi-tab WBS QTO Workbook (`All Schedules` + tab per jadwal, otomatis exclude `DAFTAR GAMBAR` & `Keynote Legend`):
+   ```powershell
+   python "d:\AIGRAV\.agents\skills\revit-deliverable-exporter\scripts\deliverable_orchestrator.py" build-qto-workbook --tsv-dir "temp_tsv_dir" --output "target_dir\QTO_Workbook.xlsx"
    ```
 
 ### Langkah 5: Sinkronisasi ke Google Drive
