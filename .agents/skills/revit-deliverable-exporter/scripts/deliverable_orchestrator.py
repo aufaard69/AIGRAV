@@ -12,6 +12,7 @@ Key Rules Enforced:
 """
 
 import os
+import re
 import sys
 import json
 import time
@@ -41,7 +42,9 @@ def format_timestamp_tag(ts):
 
 def get_gdrive_cmd():
     """Locate the gdrive executable or wrapper."""
-    custom_path = r"C:\Users\SAPUSER1\.gemini\config\plugins\gdrive\skills\gdrive\scripts\gdrive.cmd"
+    custom_path = os.path.expanduser(
+        os.path.join("~", ".gemini", "config", "plugins", "gdrive", "skills", "gdrive", "scripts", "gdrive.cmd")
+    )
     if os.path.exists(custom_path):
         return custom_path
     cmd = shutil.which("gdrive")
@@ -202,6 +205,135 @@ def archive_local_conflicts(local_dir, conflicts):
     return archived
 
 
+def _read_schedule_text(input_text_path):
+    """Read Revit schedule TSV export safely across UTF-8 BOM, UTF-16, and Latin-1 encodings."""
+    for enc in ("utf-8-sig", "utf-8", "utf-16", "utf-16-le", "latin1"):
+        try:
+            with open(input_text_path, "r", encoding=enc, errors="replace") as f:
+                content = f.read()
+            if content.strip():
+                return content
+        except Exception:
+            continue
+    return ""
+
+
+def _wbs_sort_key(sched_name):
+    """Natural sort key prioritizing 3-level WBS codes (e.g., A.1.1, B.1.2, C.2.1)."""
+    match = re.match(r"^([A-Z])\.(\d+)\.(\d+)", sched_name)
+    if match:
+        return (match.group(1), int(match.group(2)), int(match.group(3)), sched_name)
+    match_2 = re.match(r"^([A-Z])\.(\d+)", sched_name)
+    if match_2:
+        return (match_2.group(1), int(match_2.group(2)), 0, sched_name)
+    return ("Z", 99, 99, sched_name)
+
+
+def build_qto_workbook(tsv_dir, output_xlsx_path, exclude_keywords=None):
+    """
+    Compile exported Revit schedule TSV files into a multi-tab styled QTO Excel workbook.
+    Creates an 'All Schedules' summary tab plus individual tabs sorted by WBS code,
+    excluding non-construction documentation schedules (e.g., DAFTAR GAMBAR, Keynote Legend).
+    """
+    if not HAS_OPENPYXL:
+        raise RuntimeError("openpyxl library is required for QTO workbook compilation.")
+    if not os.path.isdir(tsv_dir):
+        raise FileNotFoundError(f"TSV directory not found: {tsv_dir}")
+
+    excludes = [k.lower() for k in (exclude_keywords if exclude_keywords is not None else ["daftar gambar", "keynote"])]
+    raw_files = [f for f in os.listdir(tsv_dir) if f.lower().endswith(".txt")]
+    selected = []
+    excluded = []
+
+    for fname in raw_files:
+        stem = os.path.splitext(fname)[0].strip()
+        stem_lower = stem.lower()
+        if any(ex in stem_lower for ex in excludes if ex):
+            excluded.append(stem)
+            continue
+        selected.append((stem, fname))
+
+    selected.sort(key=lambda item: _wbs_sort_key(item[0]))
+
+    wb = openpyxl.Workbook()
+    ws_all = wb.active
+    ws_all.title = "All Schedules"
+
+    font_title = Font(name="Segoe UI", size=11, bold=True, color="1F497D")
+    font_header = Font(name="Segoe UI", size=10, bold=True, color="FFFFFF")
+    fill_header = PatternFill(start_color="1F497D", end_color="1F497D", fill_type="solid")
+    font_data = Font(name="Segoe UI", size=10)
+    font_total = Font(name="Segoe UI", size=10, bold=True)
+    fill_total = PatternFill(start_color="F2F2F2", end_color="F2F2F2", fill_type="solid")
+    thin_border = Border(
+        left=Side(style="thin", color="D9D9D9"),
+        right=Side(style="thin", color="D9D9D9"),
+        top=Side(style="thin", color="D9D9D9"),
+        bottom=Side(style="thin", color="D9D9D9"),
+    )
+
+    cur_row = 1
+    used_titles = set()
+    compiled_count = 0
+
+    for sched_name, fname in selected:
+        content = _read_schedule_text(os.path.join(tsv_dir, fname))
+        lines = content.strip().splitlines()
+        if not lines:
+            continue
+
+        safe_title = re.sub(r"[:\\/?*\[\]]", "_", sched_name)[:31].strip() or f"Sheet_{compiled_count + 1}"
+        if safe_title in used_titles:
+            safe_title = f"{safe_title[:27]}_{len(used_titles)}"
+        used_titles.add(safe_title)
+
+        ws_single = wb.create_sheet(title=safe_title)
+        cell_t = ws_all.cell(row=cur_row, column=1, value=sched_name)
+        cell_t.font = font_title
+        cur_row += 1
+
+        is_header = True
+        s_row = 1
+        for line in lines:
+            if not line.strip():
+                continue
+            cells = [c.strip().strip('"') for c in line.split("\t")]
+            for c_idx, val in enumerate(cells, 1):
+                for cell in (ws_single.cell(row=s_row, column=c_idx, value=val), ws_all.cell(row=cur_row, column=c_idx, value=val)):
+                    cell.border = thin_border
+                    if is_header:
+                        cell.fill = fill_header
+                        cell.font = font_header
+                    elif "total" in str(val).lower():
+                        cell.fill = fill_total
+                        cell.font = font_total
+                    else:
+                        cell.font = font_data
+            is_header = False
+            s_row += 1
+            cur_row += 1
+
+        cur_row += 2
+        compiled_count += 1
+
+        for col in ws_single.columns:
+            max_len = max(len(str(c.value or "")) for c in col)
+            ws_single.column_dimensions[get_column_letter(col[0].column)].width = max(max_len + 3, 12)
+
+    for col in ws_all.columns:
+        max_len = max(len(str(c.value or "")) for c in col)
+        ws_all.column_dimensions[get_column_letter(col[0].column)].width = max(max_len + 3, 12)
+
+    os.makedirs(os.path.dirname(os.path.abspath(output_xlsx_path)), exist_ok=True)
+    wb.save(output_xlsx_path)
+    return {
+        "output_file": output_xlsx_path,
+        "compiled_schedules": compiled_count,
+        "excluded_schedules": excluded,
+        "total_tabs": len(wb.sheetnames),
+    }
+
+
 def convert_schedule_text_to_xlsx(input_text_path, output_xlsx_path, schedule_title="QTO Schedule"):
     """
     Reads a Revit tab-separated schedule export and produces an aesthetically
@@ -228,11 +360,7 @@ def convert_schedule_text_to_xlsx(input_text_path, output_xlsx_path, schedule_ti
         bottom=Side(style="thin", color="D9D9D9")
     )
 
-    with open(input_text_path, "r", encoding="utf-16", errors="replace") as f:
-        content = f.read()
-    if not content.strip():
-        with open(input_text_path, "r", encoding="utf-8", errors="replace") as f:
-            content = f.read()
+    content = _read_schedule_text(input_text_path)
 
     lines = content.strip().splitlines()
     row_idx = 1
@@ -317,11 +445,17 @@ def main():
     p_archive = subparsers.add_parser("archive", help="Archive conflicting local files to _history")
     p_archive.add_argument("--manifest", required=True, help="Path to deliverable manifest JSON")
 
-    # Format schedule command
+    # Format single schedule command
     p_sched = subparsers.add_parser("format-schedule", help="Convert raw schedule export to styled XLSX")
     p_sched.add_argument("--input", required=True, help="Path to raw tab-delimited schedule text")
     p_sched.add_argument("--output", required=True, help="Path to target .xlsx file")
     p_sched.add_argument("--title", default="QTO Schedule", help="Worksheet title")
+
+    # Compile multi-tab WBS QTO workbook command
+    p_wb = subparsers.add_parser("build-qto-workbook", help="Compile TSV folder into multi-tab styled WBS QTO workbook")
+    p_wb.add_argument("--tsv-dir", required=True, help="Directory containing exported Revit schedule .txt files")
+    p_wb.add_argument("--output", required=True, help="Path to target multi-tab .xlsx workbook")
+    p_wb.add_argument("--exclude", nargs="*", default=["daftar gambar", "keynote"], help="Schedule name substrings to exclude")
 
     # Sync drive command
     p_sync = subparsers.add_parser("sync-drive", help="Sync local deliverable file to Google Drive")
@@ -344,6 +478,10 @@ def main():
     elif args.action == "format-schedule":
         out = convert_schedule_text_to_xlsx(args.input, args.output, args.title)
         print(json.dumps({"status": "success", "output_file": out}, indent=2))
+
+    elif args.action == "build-qto-workbook":
+        summary = build_qto_workbook(args.tsv_dir, args.output, args.exclude)
+        print(json.dumps({"status": "success", **summary}, indent=2))
 
     elif args.action == "sync-drive":
         res = sync_file_to_drive(args.file, args.folder_id, args.file_id)
