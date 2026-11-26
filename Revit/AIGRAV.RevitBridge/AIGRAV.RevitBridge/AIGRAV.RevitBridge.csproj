@@ -34,10 +34,14 @@
 		<Content Include="Assets\AIGRAV_Ribbon_16.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Include="Assets\RebarSuite\*.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\AIGRAV.Contracts\AIGRAV.Contracts.csproj" />
+	  <ProjectReference Include="..\AIGRAV.Skills.RebarExtension\AIGRAV.Skills.RebarExtension.csproj" />
 	</ItemGroup>
 
 </Project>
