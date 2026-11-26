@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -19,25 +20,62 @@ public class VersionInfo
 
 public static class AIGRAVVersionChecker
 {
-    private static readonly string[] VersionFilePaths = new[] { @"D:\AIGRAV\version.json", @"C:\AIGRAV\version.json" };
     private const string RemoteVersionUrl = "https://raw.githubusercontent.com/aufaard69/AIGRAV/main/version.json";
     private static readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(5) };
+
+    private static IEnumerable<string> GetCandidateRoots()
+    {
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        string? dllDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        if (!string.IsNullOrWhiteSpace(dllDir))
+        {
+            DirectoryInfo? dir = new(dllDir);
+            for (int i = 0; i < 8 && dir != null; i++)
+            {
+                if (seen.Add(dir.FullName))
+                {
+                    yield return dir.FullName;
+                }
+                dir = dir.Parent;
+            }
+        }
+
+        foreach (string root in new[] { @"D:\AIGRAV", @"C:\AIGRAV" })
+        {
+            if (seen.Add(root))
+            {
+                yield return root;
+            }
+        }
+    }
+
+    public static string? ResolveRootFile(string fileName)
+    {
+        foreach (string root in GetCandidateRoots())
+        {
+            string candidate = Path.Combine(root, fileName);
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+        }
+        return null;
+    }
 
     public static VersionInfo GetLocalVersion()
     {
         try
         {
-            foreach (var p in VersionFilePaths)
+            string? path = ResolveRootFile("version.json");
+            if (path != null)
             {
-                if (File.Exists(p))
-                {
-                    string json = File.ReadAllText(p);
-                    return JsonSerializer.Deserialize<VersionInfo>(json) ?? new VersionInfo();
-                }
+                string json = File.ReadAllText(path);
+                return JsonSerializer.Deserialize<VersionInfo>(json) ?? new VersionInfo();
             }
         }
         catch { }
-        return new VersionInfo { version = "2.8.0", release_name = "AIGRAV Core" };
+        return new VersionInfo { version = "3.2.0", release_name = "AIGRAV Core" };
     }
 
     public static async Task<(bool hasUpdate, VersionInfo? remoteInfo)> CheckForUpdatesAsync()
@@ -82,8 +120,8 @@ public static class AIGRAVVersionChecker
 
     public static bool TriggerUpdateScript()
     {
-        string scriptPath = @"C:\AIGRAV\sync-aigrav.ps1";
-        if (!File.Exists(scriptPath)) return false;
+        string? scriptPath = ResolveRootFile("sync-aigrav.ps1");
+        if (scriptPath == null) return false;
 
         try
         {
