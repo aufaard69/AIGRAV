@@ -130,16 +130,24 @@ public static class AIGRAVSkillLoader
                 return DiscoveredSkillFiles.AsReadOnly();
             }
 
+            string hostDir =
+                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                ?? AppContext.BaseDirectory;
+
             foreach (string file in Directory.GetFiles(
                          SkillsDirectory,
                          "*.dll",
                          SearchOption.TopDirectoryOnly))
             {
+                string fileName = Path.GetFileName(file);
                 if (string.Equals(
-                        Path.GetFileName(file),
+                        fileName,
                         Path.GetFileName(Assembly.GetExecutingAssembly().Location),
-                        StringComparison.OrdinalIgnoreCase))
+                        StringComparison.OrdinalIgnoreCase)
+                    || File.Exists(Path.Combine(hostDir, fileName)))
                 {
+                    // Never load a duplicate collectible copy of an assembly already statically
+                    // shipped alongside AIGRAV.RevitBridge.dll (prevents Revit 2026 0x80131515 ALC error).
                     continue;
                 }
 
