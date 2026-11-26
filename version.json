@@ -1,18 +1,17 @@
 {
-  "version": "3.1.0",
-  "release_name": "Multi-Port Bridge Server, MasterExporter Engine & Standardized WBS QTO Pipeline",
-  "release_date": "2026-11-25",
+  "version": "3.2.0",
+  "release_name": "AI Bridge Controller UI, Offline Rebar Studio & ViewportCapture Integration",
+  "release_date": "2026-11-26",
   "highlights": [
-    "Multi-Port Bridge Server (Ports 8765-8775): Concurrent multi-Revit session routing via %TEMP%\\AIGRAV\\sessions\\session_<pid>.json, plus aigrav_list_sessions & aigrav_switch_session MCP tools",
-    "MasterExporter Engine (AIGRAV.Skills.MasterExporter): Combined Vector PDF & CAD DWG exporter with deterministic sheet sorting (Cover = Page 1, Daftar Gambar = Page 2, followed by NO parameter sequence), single-sheet export, collision-safe two-phase renumbering, and doc.Save/Sync helper",
-    "Standardized QTO Pipeline: Automatic exclusion of non-construction documentation schedules (DAFTAR GAMBAR & Keynote Legend) at both C# Revit Bridge and Python orchestrator levels",
-    "Multi-Tab QTO Excel Workbook Compiler (build-qto-workbook in deliverable_orchestrator.py): Natural WBS sorting (A.*, B.*, C.*), styled All Schedules master tab + individual tabs, UTF-8-SIG/UTF-16 BOM resilient TSV parsing",
-    "Full v3.0.0 Parity: Integrated RevitCortex Precision Modeling Engine, IFC DirectShape rebuilders, Landmark/Building Modelers, Consultative Design SOP, and CAD-to-Drafting Views skill"
+    "Interactive AI Bridge Controller Window (AIGRAVWelcomeWindow): Real-time HTTP Server Bridge status badge, editable Port Listener, Test Connection self-probe, Cari Port Bebas (+1), Revit PID & Requests Served telemetry, and Restart Bridge action",
+    "Offline Rebar Studio & Rebar Suite (AIGRAV.Skills.RebarExtension + UI/RebarSuite): Selection-driven 3D Viewport & 2D CAD preview, Beam/Column/Foundation/Floor rebar builders, SNI lap/splice solver (<= 12m stock), Reinforcement Browser dockable pane, Smart Mark, Auto-Tag, Native BBS Schedule, and CSV/BVBS export",
+    "Live Viewport Capture Engine (AIGRAV.Skills.ViewportCapture): High-resolution visual viewport/3D view exporter for automated QA visual inspection",
+    "Unified Solution Build & Multi-PC Updater (AIGRAV.RevitBridge.slnx & sync-aigrav.ps1): Included AIGRAV.Skills.BimAudit, AIGRAV.Skills.ViewportCapture, and AIGRAV.Skills.RebarExtension in the main solution, plus multi-port hot-reload across 8765-8775 and %LOCALAPPDATA%\\Microsoft\\dotnet fallback"
   ],
   "fixes": [
-    "Fixed PDF export ordering where COVER (000) and DAFTAR GAMBAR (DG-001) fell to the end when parameter NO contained non-numeric values ('-')",
-    "Sanitized user-specific paths in MCP/TestServer/server.py, deliverable_orchestrator.py, and HouseType36Perspectives.cs using dynamic Path.GetTempPath()/tempfile/expanduser",
-    "Fixed UTF-8 BOM decoding in Revit TSV schedule exports (utf-8-sig fallback before utf-16)",
-    "Added dynamic root auto-detection in aigrav_version_manager.py supporting both D:\\AIGRAV and C:\\AIGRAV deployments"
+    "Fixed AIGRAV Ribbon click handler (AIGRAVApp.ToggleAIGRAV) so clicking AIGRAV opens/focuses the AI Bridge Controller without silently shutting down the active bridge, and initialized the ribbon port tooltip at startup",
+    "Fixed AIGRAVVersionChecker root resolution to detect version.json and sync-aigrav.ps1 dynamically across D:\\AIGRAV, C:\\AIGRAV, or the active assembly tree",
+    "Updated AIGRAVSkillLoader duplicate-assembly guard so Skills\\ DLLs sharing an identity with host assemblies never trigger Revit 2026 AssemblyLoadContext errors",
+    "Built and verified all 11 solution projects with 0 errors and passed all 25 deterministic RebarExtension solver unit tests"
   ]
 }
