@@ -21,4 +21,7 @@
   <Project Path="AIGRAV.Skills.PlateStandardizer/AIGRAV.Skills.PlateStandardizer.csproj">
     <Platform Project="x64" />
   </Project>
+  <Project Path="AIGRAV.Skills.MasterExporter/AIGRAV.Skills.MasterExporter.csproj">
+    <Platform Project="x64" />
+  </Project>
 </Solution>

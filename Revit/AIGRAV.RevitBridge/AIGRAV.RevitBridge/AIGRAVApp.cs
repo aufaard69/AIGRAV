@@ -38,7 +38,15 @@ public class AIGRAVApp : IExternalApplication
                 developmentMode: true,
                 enabled: true);
 
-            AIGRAVHttpServer.Start();
+            try
+            {
+                AIGRAVHttpServer.Start();
+            }
+            catch
+            {
+                // Never halt Revit startup due to HTTP listener conflict.
+                // The user can connect or change port interactively via the Bridge Controller window.
+            }
 
             AIGRAVSkillRegistry.Initialize();
             AIGRAVSkillLoader.Initialize();
@@ -378,11 +386,14 @@ public class AIGRAVApp : IExternalApplication
 
         if (AIGRAVRuntime.IsEnabled)
         {
+            int port = AIGRAVHttpServer.ActivePort;
+            string portText = port > 0 ? $" on Port {port}" : "";
+
             _aigravButton.ToolTip =
-                "AIGRAV is ACTIVE. Click to turn AIGRAV OFF.";
+                $"AIGRAV is ACTIVE{portText}. Click to turn AIGRAV OFF.";
 
             _aigravButton.LongDescription =
-                "AIGRAV is active and accepting MCP requests. " +
+                $"AIGRAV is active{portText} and accepting MCP requests. " +
                 "Click the button again to turn AIGRAV OFF.";
         }
         else

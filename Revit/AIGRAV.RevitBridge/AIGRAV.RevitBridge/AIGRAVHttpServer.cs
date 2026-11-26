@@ -1,9 +1,12 @@
-﻿using System.Diagnostics;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using Autodesk.Revit.UI;
 
 namespace AIGRAV.RevitBridge;
@@ -13,9 +16,16 @@ public static class AIGRAVHttpServer
     private static HttpListener? _listener;
     private static CancellationTokenSource? _cts;
 
-    public const int DefaultPort = 8765;
+    public const int BasePort = 8765;
+    public const int MaxPort = 8775;
+    public const int DefaultPort = BasePort;
+
     public static int CurrentPort { get; private set; } = DefaultPort;
+    public static int ActivePort => IsRunning ? CurrentPort : 0;
+
     public static string CurrentUrl => $"http://127.0.0.1:{CurrentPort}/";
+    public static string ActiveUrl => IsRunning ? CurrentUrl : string.Empty;
+
     public static bool IsRunning => _listener != null && _listener.IsListening;
     public static string? LastError { get; private set; }
     public static DateTime? StartedAt { get; private set; }
@@ -76,6 +86,7 @@ public static class AIGRAVHttpServer
             StartedAt = DateTime.Now;
 
             SaveActivePort(port);
+            WriteSessionFile(port);
 
             _cts = new CancellationTokenSource();
             _ = Task.Run(() => ListenLoopAsync(_cts.Token));
@@ -83,11 +94,19 @@ public static class AIGRAVHttpServer
             StateChanged?.Invoke();
             return true;
         }
-        catch (HttpListenerException hlex) when (hlex.ErrorCode == 183)
+        catch (HttpListenerException hlex)
         {
             _listener = null;
             _cts = null;
-            LastError = $"Port {port} sedang digunakan oleh proses lain (ERROR_ALREADY_EXISTS / Konflik). Silakan gunakan port lain (misal: {port + 1}).";
+            int code = hlex.NativeErrorCode != 0 ? hlex.NativeErrorCode : hlex.ErrorCode;
+            if (code == 183)
+            {
+                LastError = $"Port {port} sedang digunakan atau terdapat konflik registrasi URL (ERROR_ALREADY_EXISTS). Silakan coba port {FindNextAvailablePort(port + 1)}.";
+            }
+            else
+            {
+                LastError = $"Port {port} tidak dapat diakses (HttpListener Error {code}: {hlex.Message}). Silakan coba port {FindNextAvailablePort(port + 1)}.";
+            }
             errorMessage = LastError;
             StateChanged?.Invoke();
             return false;
@@ -105,7 +124,26 @@ public static class AIGRAVHttpServer
 
     public static void Start()
     {
-        Start(CurrentPort, out _);
+        if (_listener != null && _listener.IsListening)
+        {
+            return;
+        }
+
+        // First attempt preferred CurrentPort
+        if (Start(CurrentPort, out _))
+        {
+            return;
+        }
+
+        // Automatic fallback: scan ports BasePort through MaxPort
+        for (int p = BasePort; p <= MaxPort; p++)
+        {
+            if (p == CurrentPort) continue;
+            if (Start(p, out _))
+            {
+                return;
+            }
+        }
     }
 
     public static void Stop()
@@ -121,6 +159,8 @@ public static class AIGRAVHttpServer
                 }
                 _listener.Close();
             }
+
+            RemoveSessionFile();
         }
         catch
         {
@@ -187,7 +227,7 @@ public static class AIGRAVHttpServer
         }
     }
 
-    public static int FindNextAvailablePort(int startingPort = 8765)
+    public static int FindNextAvailablePort(int startingPort = BasePort)
     {
         for (int p = startingPort; p <= startingPort + 50; p++)
         {
@@ -215,33 +255,75 @@ public static class AIGRAVHttpServer
         catch { }
     }
 
-    private static async Task ListenLoopAsync(
-        CancellationToken cancellationToken)
+    private static void WriteSessionFile(int port)
     {
-        while (!cancellationToken.IsCancellationRequested)
+        try
         {
-            HttpListenerContext? context = null;
+            string tempDir = Path.Combine(Path.GetTempPath(), "AIGRAV", "sessions");
+            Directory.CreateDirectory(tempDir);
 
-            try
-            {
-                context =
-                    await _listener!.GetContextAsync();
+            int pid = Environment.ProcessId;
+            string filePath = Path.Combine(tempDir, $"session_{pid}.json");
 
-                _ = Task.Run(
-                    () => HandleRequestAsync(context),
-                    cancellationToken);
-            }
-            catch
+            var sessionInfo = new
             {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
-            }
+                pid = pid,
+                port = port,
+                url = $"http://127.0.0.1:{port}/",
+                started_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+            };
+
+            string json = JsonSerializer.Serialize(sessionInfo, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(filePath, json, Encoding.UTF8);
+        }
+        catch
+        {
+            // Session file writing must never crash the server
         }
     }
 
-    private static async Task HandleRequestAsync(
+    private static void RemoveSessionFile()
+    {
+        try
+        {
+            int pid = Environment.ProcessId;
+            string filePath = Path.Combine(Path.GetTempPath(), "AIGRAV", "sessions", $"session_{pid}.json");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
+        catch
+        {
+            // Ignore session cleanup errors
+        }
+    }
+
+    private static async Task ListenLoopAsync(
+        CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested &&
+               _listener != null &&
+               _listener.IsListening)
+        {
+            HttpListenerContext context;
+
+            try
+            {
+                context = await _listener.GetContextAsync();
+            }
+            catch
+            {
+                break;
+            }
+
+            _ = Task.Run(
+                () => ProcessRequestAsync(context),
+                cancellationToken);
+        }
+    }
+
+    private static async Task ProcessRequestAsync(
         HttpListenerContext context)
     {
         try
@@ -253,8 +335,10 @@ public static class AIGRAVHttpServer
                 return;
             }
 
-            using StreamReader reader =
-                new(context.Request.InputStream);
+            using var reader =
+                new StreamReader(
+                    context.Request.InputStream,
+                    context.Request.ContentEncoding);
 
             string body =
                 await reader.ReadToEndAsync();
@@ -270,14 +354,8 @@ public static class AIGRAVHttpServer
             if (request == null ||
                 string.IsNullOrWhiteSpace(request.Tool))
             {
-                await WriteResponseAsync(
-                    context,
-                    new AIGRAVHttpResponse
-                    {
-                        Success = false,
-                        Result = "Invalid request."
-                    });
-
+                context.Response.StatusCode = 400;
+                context.Response.Close();
                 return;
             }
 
@@ -289,59 +367,34 @@ public static class AIGRAVHttpServer
                     request.Tool,
                     request.Argument);
 
-            await WriteResponseAsync(
-                context,
-                new AIGRAVHttpResponse
+            AIGRAVHttpResponse response =
+                new()
                 {
                     Success = true,
                     Result = result
-                });
+                };
+
+            byte[] buffer =
+                JsonSerializer.SerializeToUtf8Bytes(response);
+
+            context.Response.ContentType =
+                "application/json";
+
+            context.Response.ContentLength64 =
+                buffer.Length;
+
+            await context.Response.OutputStream.WriteAsync(buffer);
+            context.Response.Close();
         }
         catch (Exception ex)
         {
-            await WriteResponseAsync(
-                context,
-                new AIGRAVHttpResponse
-                {
-                    Success = false,
-                    Result = ex.ToString()
-                });
+            context.Response.StatusCode = 500;
+
+            byte[] error =
+                Encoding.UTF8.GetBytes(ex.ToString());
+
+            await context.Response.OutputStream.WriteAsync(error);
+            context.Response.Close();
         }
     }
-
-    private static async Task WriteResponseAsync(
-        HttpListenerContext context,
-        AIGRAVHttpResponse response)
-    {
-        string json =
-            JsonSerializer.Serialize(response);
-
-        byte[] bytes =
-            Encoding.UTF8.GetBytes(json);
-
-        context.Response.ContentType =
-            "application/json";
-
-        context.Response.ContentLength64 =
-            bytes.Length;
-
-        await context.Response.OutputStream.WriteAsync(
-            bytes);
-
-        context.Response.Close();
-    }
-}
-
-public class AIGRAVHttpRequest
-{
-    public string Tool { get; set; } = string.Empty;
-
-    public string? Argument { get; set; }
-}
-
-public class AIGRAVHttpResponse
-{
-    public bool Success { get; set; }
-
-    public string Result { get; set; } = string.Empty;
 }

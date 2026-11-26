@@ -1,4 +1,6 @@
 import json
+import os
+import tempfile
 import urllib.request
 import urllib.error
 from typing import Any
@@ -13,12 +15,33 @@ from mcp.server import MCPServer
 
 mcp = MCPServer("AIGRAV MCP Server")
 
-AIGRAV_DEFAULT_PORT = 8765
+# ============================================================
+# HTTP BRIDGE (MULTI-PORT DYNAMIC RESOLVER)
+# ============================================================
+
+DEFAULT_AIGRAV_URL = "http://127.0.0.1:8765/"
 AIGRAV_TIMEOUT = 60
+_ACTIVE_OVERRIDE_URL: str | None = None
 
+def get_active_sessions() -> list[dict[str, Any]]:
+    sessions_dir = os.path.join(tempfile.gettempdir(), "AIGRAV", "sessions")
+    sessions = []
+    if os.path.isdir(sessions_dir):
+        import glob
+        for f in glob.glob(os.path.join(sessions_dir, "session_*.json")):
+            try:
+                with open(f, "r", encoding="utf-8") as sf:
+                    sessions.append(json.load(sf))
+            except Exception:
+                pass
+    return sessions
 
-def get_aigrav_url() -> str:
-    """Dynamically resolve the active AIGRAV HTTP Bridge URL."""
+def resolve_aigrav_url() -> str:
+    global _ACTIVE_OVERRIDE_URL
+    if _ACTIVE_OVERRIDE_URL:
+        return _ACTIVE_OVERRIDE_URL
+
+    # Check port file if written by Bridge Controller
     port_files = [
         r"C:\AIGRAV\aigrav_port.txt",
         os.path.join(tempfile.gettempdir(), "aigrav_port.txt")
@@ -37,12 +60,28 @@ def get_aigrav_url() -> str:
     if env_port and env_port.isdigit():
         return f"http://127.0.0.1:{env_port}/"
 
-    return f"http://127.0.0.1:{AIGRAV_DEFAULT_PORT}/"
+    sessions = get_active_sessions()
+    if sessions:
+        # Sort by updated_at descending to get the most recent active session
+        sessions.sort(key=lambda s: s.get("updated_at", ""), reverse=True)
+        return sessions[0].get("url", DEFAULT_AIGRAV_URL)
 
+    # Fallback: probe ports 8765 to 8775
+    for port in range(8765, 8776):
+        url = f"http://127.0.0.1:{port}/"
+        try:
+            req = urllib.request.Request(
+                url,
+                data=json.dumps({"tool": "get_revit_info", "argument": ""}).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=1):
+                return url
+        except Exception:
+            continue
 
-# ============================================================
-# HTTP BRIDGE
-# ============================================================
+    return DEFAULT_AIGRAV_URL
 
 def call_aigrav(
     tool: str,
@@ -57,7 +96,7 @@ def call_aigrav(
         payload["argument"] = argument
 
     data = json.dumps(payload).encode("utf-8")
-    target_url = get_aigrav_url()
+    target_url = resolve_aigrav_url()
 
     request = urllib.request.Request(
         target_url,
@@ -469,6 +508,28 @@ TOOLS = {
     "aigrav_ifc_rebuild_floors":
         "Rebuild native Revit floors with bottom footprint curve loops from IFC/CAD DirectShapes.",
 
+    # --------------------------------------------------------
+    # MASTER EXPORTER & DELIVERABLES
+    # --------------------------------------------------------
+
+    "aigrav_get_all_sheets_meta":
+        "Get metadata (id, number, name, NO parameter) for all ViewSheets in the active document.",
+
+    "aigrav_export_all_schedules":
+        "Export standardized construction QTO schedules to tab-separated files (automatically excluding DAFTAR GAMBAR & Keynote Legend).",
+
+    "aigrav_export_single_sheet":
+        "Export a single sheet to PDF and CAD DWG. Argument: 'SheetNumber|OutDir'.",
+
+    "aigrav_export_all_deliverables":
+        "Export combined Vector PDF (Cover page 1, Daftar Gambar page 2, numbered sheets following) and all CAD DWG sheets. Argument: 'pdfFilePath|cadDirectory'.",
+
+    "aigrav_apply_renumbering_plan":
+        "Apply batch sheet renumbering and NO parameter updates using a two-phase collision-safe transaction.",
+
+    "aigrav_save_active_doc":
+        "Save active Revit document (or synchronize with central for workshared models).",
+
     "aigrav_create_room":
         "Create a room.",
 
@@ -714,7 +775,6 @@ for _tool_name, _description in TOOLS.items():
 # ============================================================
 
 import base64
-import os
 from aigrav_spatial_helper import (
     compose_quadrant_image,
     ft_to_mm,
@@ -991,6 +1051,79 @@ def aigrav_publish_version(
         fixes=fixes or [],
     )
     return json.dumps(res, indent=2, ensure_ascii=False)
+
+
+@mcp.tool(
+    name="aigrav_list_sessions",
+    description="[Multi-Window Support] Tampilkan seluruh jendela Revit yang sedang aktif beserta PID, port bridge (8765-8775), dan dokumen proyek yang sedang terbuka.",
+)
+def aigrav_list_sessions() -> str:
+    sessions = get_active_sessions()
+    if not sessions:
+        # Fallback scan ports
+        found = []
+        for port in range(8765, 8776):
+            url = f"http://127.0.0.1:{port}/"
+            try:
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps({"tool": "get_revit_info", "argument": ""}).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=1) as resp:
+                    r = json.loads(resp.read().decode("utf-8"))
+                    found.append({
+                        "port": port,
+                        "url": url,
+                        "info": r.get("Result", "")
+                    })
+            except Exception:
+                continue
+        return json.dumps({"active_sessions": found, "current_target": resolve_aigrav_url()}, indent=2)
+
+    return json.dumps({"active_sessions": sessions, "current_target": resolve_aigrav_url()}, indent=2)
+
+
+@mcp.tool(
+    name="aigrav_switch_session",
+    description="[Multi-Window Support] Pindah target eksekusi AIGRAV ke jendela Revit tertentu berdasarkan nomor port (misal 8765 atau 8766) atau nama dokumen proyek.",
+)
+def aigrav_switch_session(port_or_title: str) -> str:
+    global _ACTIVE_OVERRIDE_URL
+    target = port_or_title.strip()
+    if target.isdigit():
+        _ACTIVE_OVERRIDE_URL = f"http://127.0.0.1:{target}/"
+        return f"Target AIGRAV Bridge switched to: {_ACTIVE_OVERRIDE_URL}"
+
+    # Search in sessions by title
+    sessions = get_active_sessions()
+    for s in sessions:
+        doc = s.get("document_title", "")
+        if target.lower() in doc.lower():
+            _ACTIVE_OVERRIDE_URL = s.get("url")
+            return f"Target AIGRAV Bridge switched to project '{doc}' on {_ACTIVE_OVERRIDE_URL}"
+
+    # Try probe matching title
+    for port in range(8765, 8776):
+        url = f"http://127.0.0.1:{port}/"
+        try:
+            req = urllib.request.Request(
+                url,
+                data=json.dumps({"tool": "get_revit_info", "argument": ""}).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=1) as resp:
+                r = json.loads(resp.read().decode("utf-8"))
+                info = r.get("Result", "")
+                if target.lower() in info.lower():
+                    _ACTIVE_OVERRIDE_URL = url
+                    return f"Target AIGRAV Bridge switched to matching Revit on {url}: {info.splitlines()[0]}"
+        except Exception:
+            continue
+
+    return f"Failed to switch: no active Revit session found matching '{port_or_title}'."
 
 
 # ============================================================

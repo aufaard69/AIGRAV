@@ -14,7 +14,19 @@ import urllib.error
 import urllib.request
 from typing import Any, Dict, List, Optional
 
-AIGRAV_ROOT = r"C:\AIGRAV"
+# Dynamic detection of AIGRAV Root directory
+def _find_aigrav_root():
+    curr = os.path.abspath(__file__)
+    for _ in range(3):
+        curr = os.path.dirname(curr)
+    if os.path.isdir(curr) and (os.path.exists(os.path.join(curr, "AGENTS.md")) or os.path.exists(os.path.join(curr, "version.json"))):
+        return curr
+    for d in [r"D:\AIGRAV", r"C:\AIGRAV"]:
+        if os.path.isdir(d):
+            return d
+    return r"D:\AIGRAV"
+
+AIGRAV_ROOT = _find_aigrav_root()
 VERSION_FILE = os.path.join(AIGRAV_ROOT, "version.json")
 MCP_CONFIG_PATH = os.path.expanduser(r"~\.gemini\config\mcp_config.json")
 GITHUB_REPO = "aufaard69/AIGRAV"

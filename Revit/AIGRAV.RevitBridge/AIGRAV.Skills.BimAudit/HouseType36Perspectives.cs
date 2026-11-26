@@ -16,7 +16,9 @@ public sealed partial class BimAuditSkill
         sb.AppendLine("=== AIGRAV: MEMBUAT & MENGEKSPOR 4 OPSI PERSPEKTIF VIEW TYPE 36 ===");
         sb.AppendLine($"Model: {doc.Title} | Waktu: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
 
-        string targetDir = @"C:\Users\sapuser\.gemini\antigravity\brain\5448a500-ccc9-46e5-89ab-30362c4d8eef";
+        string targetDir = !string.IsNullOrWhiteSpace(argument) && Directory.Exists(argument)
+            ? argument
+            : Path.Combine(Path.GetTempPath(), "AIGRAV", "Captures");
         if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
 
         ViewFamilyType? vft3D = new FilteredElementCollector(doc)
@@ -176,7 +178,9 @@ public sealed partial class BimAuditSkill
         sb.AppendLine("=== AIGRAV: MEMBUAT & MENGEKSPOR INTERIOR 3D VIEWS TYPE 36 ===");
         sb.AppendLine($"Model: {doc.Title} | Waktu: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
 
-        string targetDir = @"C:\Users\sapuser\.gemini\antigravity\brain\5448a500-ccc9-46e5-89ab-30362c4d8eef";
+        string targetDir = !string.IsNullOrWhiteSpace(argument) && Directory.Exists(argument)
+            ? argument
+            : Path.Combine(Path.GetTempPath(), "AIGRAV", "Captures");
         if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
 
         ViewFamilyType? vft3D = new FilteredElementCollector(doc)
