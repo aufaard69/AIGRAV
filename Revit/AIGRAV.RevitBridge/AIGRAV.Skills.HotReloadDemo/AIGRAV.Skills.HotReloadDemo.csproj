@@ -12,10 +12,9 @@
 
   <ItemGroup>
     <!-- Shared skill contract. Do NOT reference the AIGRAV.RevitBridge host. -->
-    <Reference Include="AIGRAV.Contracts">
-      <HintPath>..\AIGRAV.Contracts\bin\x64\Debug\net10.0-windows\AIGRAV.Contracts.dll</HintPath>
+    <ProjectReference Include="..\AIGRAV.Contracts\AIGRAV.Contracts.csproj">
       <Private>False</Private>
-    </Reference>
+    </ProjectReference>
 
     <Reference Include="RevitAPI">
       <HintPath>..\..\..\..\Program Files\Autodesk\Revit 2026\RevitAPI.dll</HintPath>
