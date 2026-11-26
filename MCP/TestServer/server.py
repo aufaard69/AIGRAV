@@ -13,8 +13,31 @@ from mcp.server import MCPServer
 
 mcp = MCPServer("AIGRAV MCP Server")
 
-AIGRAV_URL = "http://127.0.0.1:8765/"
+AIGRAV_DEFAULT_PORT = 8765
 AIGRAV_TIMEOUT = 60
+
+
+def get_aigrav_url() -> str:
+    """Dynamically resolve the active AIGRAV HTTP Bridge URL."""
+    port_files = [
+        r"C:\AIGRAV\aigrav_port.txt",
+        os.path.join(tempfile.gettempdir(), "aigrav_port.txt")
+    ]
+    for pf in port_files:
+        try:
+            if os.path.isfile(pf):
+                with open(pf, "r", encoding="utf-8") as f:
+                    p = f.read().strip()
+                if p.isdigit() and 1024 < int(p) < 65535:
+                    return f"http://127.0.0.1:{p}/"
+        except Exception:
+            pass
+
+    env_port = os.environ.get("AIGRAV_PORT")
+    if env_port and env_port.isdigit():
+        return f"http://127.0.0.1:{env_port}/"
+
+    return f"http://127.0.0.1:{AIGRAV_DEFAULT_PORT}/"
 
 
 # ============================================================
@@ -34,9 +57,10 @@ def call_aigrav(
         payload["argument"] = argument
 
     data = json.dumps(payload).encode("utf-8")
+    target_url = get_aigrav_url()
 
     request = urllib.request.Request(
-        AIGRAV_URL,
+        target_url,
         data=data,
         headers={
             "Content-Type": "application/json"

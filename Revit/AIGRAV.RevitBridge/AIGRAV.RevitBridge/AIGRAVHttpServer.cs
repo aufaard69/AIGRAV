@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using Autodesk.Revit.UI;
@@ -11,47 +13,99 @@ public static class AIGRAVHttpServer
     private static HttpListener? _listener;
     private static CancellationTokenSource? _cts;
 
-    private const string Url =
-        "http://127.0.0.1:8765/";
+    public const int DefaultPort = 8765;
+    public static int CurrentPort { get; private set; } = DefaultPort;
+    public static string CurrentUrl => $"http://127.0.0.1:{CurrentPort}/";
+    public static bool IsRunning => _listener != null && _listener.IsListening;
+    public static string? LastError { get; private set; }
+    public static DateTime? StartedAt { get; private set; }
+    public static int TotalRequestsServed { get; internal set; } = 0;
 
-    public static void Start()
+    public static event Action? StateChanged;
+
+    private static readonly string PortConfigPath = Path.Combine(@"C:\AIGRAV", "aigrav_port.txt");
+    private static readonly string TempPortConfigPath = Path.Combine(Path.GetTempPath(), "aigrav_port.txt");
+
+    static AIGRAVHttpServer()
     {
-        if (_listener != null)
+        // Try reading saved port if exists
+        try
         {
-            return;
+            if (File.Exists(PortConfigPath))
+            {
+                string txt = File.ReadAllText(PortConfigPath).Trim();
+                if (int.TryParse(txt, out int savedPort) && savedPort >= 1024 && savedPort <= 65535)
+                {
+                    CurrentPort = savedPort;
+                }
+            }
         }
+        catch { }
+    }
+
+    public static bool Start(int port, out string? errorMessage)
+    {
+        errorMessage = null;
+
+        if (port < 1024 || port > 65535)
+        {
+            errorMessage = "Port harus berada dalam rentang 1024 - 65535.";
+            LastError = errorMessage;
+            StateChanged?.Invoke();
+            return false;
+        }
+
+        // If already listening on requested port, return true
+        if (_listener != null && _listener.IsListening && CurrentPort == port)
+        {
+            return true;
+        }
+
+        // Stop existing listener if on a different port or active
+        Stop();
 
         try
         {
             _listener = new HttpListener();
-
-            _listener.Prefixes.Add(Url);
-
+            string prefix = $"http://127.0.0.1:{port}/";
+            _listener.Prefixes.Add(prefix);
             _listener.Start();
 
-            _cts = new CancellationTokenSource();
+            CurrentPort = port;
+            LastError = null;
+            StartedAt = DateTime.Now;
 
-            _ = Task.Run(
-                () => ListenLoopAsync(_cts.Token));
+            SaveActivePort(port);
+
+            _cts = new CancellationTokenSource();
+            _ = Task.Run(() => ListenLoopAsync(_cts.Token));
+
+            StateChanged?.Invoke();
+            return true;
         }
         catch (HttpListenerException hlex) when (hlex.ErrorCode == 183)
         {
-            // Error 183 (ERROR_ALREADY_EXISTS): Port 8765 sudah digunakan oleh instansi Revit lain yang sedang aktif.
-            // Redam modal TaskDialog agar instansi Revit kedua tetap terbuka lancar tanpa mengganggu pengguna.
             _listener = null;
             _cts = null;
+            LastError = $"Port {port} sedang digunakan oleh proses lain (ERROR_ALREADY_EXISTS / Konflik). Silakan gunakan port lain (misal: {port + 1}).";
+            errorMessage = LastError;
+            StateChanged?.Invoke();
+            return false;
         }
         catch (Exception ex)
         {
             _listener = null;
             _cts = null;
-
-            TaskDialog.Show(
-                "AIGRAV HTTP Server Error",
-                "AIGRAV HTTP Server gagal start.\n\n" +
-                ex.ToString()
-            );
+            LastError = $"Gagal memulai server pada port {port}: {ex.Message}";
+            errorMessage = LastError;
+            StateChanged?.Invoke();
+            return false;
         }
+    }
+
+    public static void Start()
+    {
+        Start(CurrentPort, out _);
     }
 
     public static void Stop()
@@ -59,9 +113,14 @@ public static class AIGRAVHttpServer
         try
         {
             _cts?.Cancel();
-
-            _listener?.Stop();
-            _listener?.Close();
+            if (_listener != null)
+            {
+                if (_listener.IsListening)
+                {
+                    _listener.Stop();
+                }
+                _listener.Close();
+            }
         }
         catch
         {
@@ -70,6 +129,90 @@ public static class AIGRAVHttpServer
 
         _listener = null;
         _cts = null;
+        StateChanged?.Invoke();
+    }
+
+    public static (bool isAvailable, string message) TestPortAvailability(int port)
+    {
+        if (port < 1024 || port > 65535)
+        {
+            return (false, "Port tidak valid (harus antara 1024 - 65535).");
+        }
+
+        // If current server is already running on this port, it is valid and working
+        if (IsRunning && CurrentPort == port)
+        {
+            return (true, $"Server saat ini sedang aktif mendengarkan di port {port}.");
+        }
+
+        // Test with TcpListener first for immediate port in use check
+        TcpListener? tcpTest = null;
+        try
+        {
+            tcpTest = new TcpListener(IPAddress.Loopback, port);
+            tcpTest.Start();
+            tcpTest.Stop();
+        }
+        catch (SocketException sex) when (sex.SocketErrorCode == SocketError.AddressAlreadyInUse)
+        {
+            return (false, $"Port {port} sudah terpakai oleh aplikasi/proses lain.");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Port {port} tidak dapat diakses: {ex.Message}");
+        }
+
+        // Test HttpListener prefix binding
+        HttpListener? testListener = null;
+        try
+        {
+            testListener = new HttpListener();
+            testListener.Prefixes.Add($"http://127.0.0.1:{port}/");
+            testListener.Start();
+            testListener.Stop();
+            testListener.Close();
+            return (true, $"Port {port} tersedia dan siap digunakan!");
+        }
+        catch (HttpListenerException hlex) when (hlex.ErrorCode == 183)
+        {
+            return (false, $"Port {port} memiliki konflik registrasi URL di sistem (ERROR_ALREADY_EXISTS).");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Gagal menguji port {port}: {ex.Message}");
+        }
+        finally
+        {
+            try { testListener?.Close(); } catch { }
+        }
+    }
+
+    public static int FindNextAvailablePort(int startingPort = 8765)
+    {
+        for (int p = startingPort; p <= startingPort + 50; p++)
+        {
+            var (isAvail, _) = TestPortAvailability(p);
+            if (isAvail)
+            {
+                return p;
+            }
+        }
+        return startingPort;
+    }
+
+    private static void SaveActivePort(int port)
+    {
+        try
+        {
+            File.WriteAllText(PortConfigPath, port.ToString());
+        }
+        catch { }
+
+        try
+        {
+            File.WriteAllText(TempPortConfigPath, port.ToString());
+        }
+        catch { }
     }
 
     private static async Task ListenLoopAsync(
@@ -137,6 +280,9 @@ public static class AIGRAVHttpServer
 
                 return;
             }
+
+            TotalRequestsServed++;
+            StateChanged?.Invoke();
 
             string result =
                 await AIGRAVBridge.ExecuteToolAsync(
