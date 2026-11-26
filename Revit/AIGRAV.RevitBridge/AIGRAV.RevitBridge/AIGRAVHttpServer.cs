@@ -1,5 +1,7 @@
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using Autodesk.Revit.UI;
@@ -8,8 +10,10 @@ namespace AIGRAV.RevitBridge;
 
 public static class AIGRAVHttpServer
 {
+    private static readonly object StateLock = new();
     private static HttpListener? _listener;
     private static CancellationTokenSource? _cts;
+    private static long _requestsServed;
 
     public const int BasePort = 8765;
     public const int MaxPort = 8775;
@@ -17,16 +21,167 @@ public static class AIGRAVHttpServer
     public static int ActivePort { get; private set; } = 0;
     public static string ActiveUrl { get; private set; } = string.Empty;
 
+    public static bool IsRunning
+    {
+        get
+        {
+            lock (StateLock)
+            {
+                return _listener != null && _listener.IsListening && ActivePort > 0;
+            }
+        }
+    }
+
+    public static long RequestsServed => Interlocked.Read(ref _requestsServed);
+
+    public static event Action? StateChanged;
+
+    private static void NotifyStateChanged()
+    {
+        try
+        {
+            StateChanged?.Invoke();
+        }
+        catch
+        {
+            // UI subscribers must never disrupt HTTP server lifecycle
+        }
+    }
+
     public static void Start()
     {
-        if (_listener != null)
+        var (ok, _, errorMessage) = StartAuto(showErrorDialog: true);
+        if (!ok && !string.IsNullOrWhiteSpace(errorMessage))
         {
-            return;
+            // Error dialog is already handled inside StartAuto when showErrorDialog == true
+        }
+    }
+
+    public static (bool ok, int port, string message) StartAuto(bool showErrorDialog = false)
+    {
+        lock (StateLock)
+        {
+            if (_listener != null && _listener.IsListening && ActivePort > 0)
+            {
+                return (true, ActivePort, $"Bridge sudah berjalan di {ActiveUrl}");
+            }
         }
 
         Exception? lastEx = null;
 
         for (int port = BasePort; port <= MaxPort; port++)
+        {
+            var attempt = TryBindPortInternal(port);
+            if (attempt.ok)
+            {
+                return (attempt.ok, attempt.port, attempt.message);
+            }
+            lastEx = attempt.exception;
+            if (attempt.fatalNonSocketError)
+            {
+                break;
+            }
+        }
+
+        if (showErrorDialog)
+        {
+            TaskDialog.Show(
+                "AIGRAV HTTP Server Error",
+                $"AIGRAV HTTP Server gagal start pada rentang port {BasePort}-{MaxPort}.\n\n" +
+                (lastEx?.ToString() ?? "Seluruh port dalam rentang sedang digunakan."));
+        }
+
+        return (false, 0, lastEx?.Message ?? $"Seluruh port pada rentang {BasePort}-{MaxPort} sedang digunakan.");
+    }
+
+    public static (bool ok, int port, string message) Restart(int? preferredPort = null)
+    {
+        Stop();
+
+        if (preferredPort.HasValue)
+        {
+            int target = preferredPort.Value;
+            if (target < 1024 || target > 65535)
+            {
+                return (false, 0, "Port harus berada di rentang 1024-65535.");
+            }
+            var attempt = TryBindPortInternal(target);
+            if (attempt.ok)
+            {
+                return (true, attempt.port, attempt.message);
+            }
+            return (false, 0, attempt.message);
+        }
+
+        return StartAuto(showErrorDialog: false);
+    }
+
+    public static (bool ok, int port, string message) SwitchToNextFreePort()
+    {
+        int current = ActivePort > 0 ? ActivePort : BasePort - 1;
+        var candidates = new List<int>();
+
+        for (int p = Math.Max(BasePort, current + 1); p <= MaxPort; p++)
+        {
+            candidates.Add(p);
+        }
+        for (int p = BasePort; p <= Math.Min(MaxPort, current - 1); p++)
+        {
+            candidates.Add(p);
+        }
+        if (candidates.Count == 0 && ActivePort > 0)
+        {
+            candidates.Add(ActivePort);
+        }
+
+        foreach (int candidate in candidates)
+        {
+            if (IsTcpPortAvailable(candidate))
+            {
+                Stop();
+                var res = TryBindPortInternal(candidate);
+                if (res.ok)
+                {
+                    return (true, res.port, $"Berpindah ke port bebas :{res.port}");
+                }
+            }
+        }
+
+        // Fallback if candidate outside BasePort..MaxPort is needed
+        for (int p = MaxPort + 1; p <= MaxPort + 20; p++)
+        {
+            if (IsTcpPortAvailable(p))
+            {
+                Stop();
+                var res = TryBindPortInternal(p);
+                if (res.ok)
+                {
+                    return (true, res.port, $"Berpindah ke port bebas :{res.port}");
+                }
+            }
+        }
+
+        return (false, ActivePort, "Tidak ditemukan port bebas di rentang 8765-8795.");
+    }
+
+    private static bool IsTcpPortAvailable(int port)
+    {
+        try
+        {
+            using var listener = new TcpListener(IPAddress.Loopback, port);
+            listener.Start();
+            listener.Stop();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static (bool ok, int port, string message, Exception? exception, bool fatalNonSocketError) TryBindPortInternal(int port)
+    {
+        lock (StateLock)
         {
             try
             {
@@ -42,56 +197,75 @@ public static class AIGRAVHttpServer
 
                 WriteSessionFile(port);
 
-                _ = Task.Run(
-                    () => ListenLoopAsync(_cts.Token));
+                var token = _cts.Token;
+                _ = Task.Run(() => ListenLoopAsync(listener, token));
 
-                return;
+                NotifyStateChanged();
+                return (true, port, $"Bridge Connected di {url}", null, false);
             }
             catch (HttpListenerException ex)
             {
-                lastEx = ex;
-                // Port occupied by another Revit instance, try next port
-                continue;
+                return (false, 0, $"Port {port} tidak dapat dipakai ({ex.Message}).", ex, false);
             }
             catch (Exception ex)
             {
-                lastEx = ex;
-                break;
+                return (false, 0, ex.Message, ex, true);
             }
         }
-
-        _listener = null;
-        _cts = null;
-        ActivePort = 0;
-        ActiveUrl = string.Empty;
-
-        TaskDialog.Show(
-            "AIGRAV HTTP Server Error",
-            $"AIGRAV HTTP Server gagal start pada rentang port {BasePort}-{MaxPort}.\n\n" +
-            (lastEx?.ToString() ?? "Seluruh port dalam rentang sedang digunakan.")
-        );
     }
 
     public static void Stop()
     {
+        lock (StateLock)
+        {
+            try
+            {
+                _cts?.Cancel();
+                _listener?.Stop();
+                _listener?.Close();
+                RemoveSessionFile();
+            }
+            catch
+            {
+                // Ignore shutdown errors
+            }
+
+            _listener = null;
+            _cts = null;
+            ActivePort = 0;
+            ActiveUrl = string.Empty;
+        }
+
+        NotifyStateChanged();
+    }
+
+    public static async Task<(bool ok, string message)> TestSelfConnectionAsync(int? portOverride = null)
+    {
+        int targetPort = portOverride ?? ActivePort;
+        if (targetPort <= 0)
+        {
+            return (false, "HTTP Server Bridge belum aktif. Tekan Restart Bridge terlebih dahulu.");
+        }
+
+        string url = $"http://127.0.0.1:{targetPort}/";
         try
         {
-            _cts?.Cancel();
+            using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(3) };
+            using var content = new StringContent("{\"tool\":\"__bridge_health__\",\"argument\":\"\"}", Encoding.UTF8, "application/json");
+            using var resp = await client.PostAsync(url, content).ConfigureAwait(false);
+            string body = await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            _listener?.Stop();
-            _listener?.Close();
+            if (!resp.IsSuccessStatusCode)
+            {
+                return (false, $"HTTP {(int)resp.StatusCode} pada {url}");
+            }
 
-            RemoveSessionFile();
+            return (true, $"Bridge Connected di {url} • Siap melayani instruksi AI Revit.");
         }
-        catch
+        catch (Exception ex)
         {
-            // Ignore shutdown errors
+            return (false, $"Koneksi ke {url} gagal: {ex.Message}");
         }
-
-        _listener = null;
-        _cts = null;
-        ActivePort = 0;
-        ActiveUrl = string.Empty;
     }
 
     private static void WriteSessionFile(int port)
@@ -139,6 +313,7 @@ public static class AIGRAVHttpServer
     }
 
     private static async Task ListenLoopAsync(
+        HttpListener listener,
         CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested)
@@ -147,8 +322,7 @@ public static class AIGRAVHttpServer
 
             try
             {
-                context =
-                    await _listener!.GetContextAsync();
+                context = await listener.GetContextAsync();
 
                 _ = Task.Run(
                     () => HandleRequestAsync(context),
@@ -176,22 +350,17 @@ public static class AIGRAVHttpServer
                 return;
             }
 
-            using StreamReader reader =
-                new(context.Request.InputStream);
+            using StreamReader reader = new(context.Request.InputStream);
+            string body = await reader.ReadToEndAsync();
 
-            string body =
-                await reader.ReadToEndAsync();
+            AIGRAVHttpRequest? request = JsonSerializer.Deserialize<AIGRAVHttpRequest>(
+                body,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
-            AIGRAVHttpRequest? request =
-                JsonSerializer.Deserialize<AIGRAVHttpRequest>(
-                    body,
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
-            if (request == null ||
-                string.IsNullOrWhiteSpace(request.Tool))
+            if (request == null || string.IsNullOrWhiteSpace(request.Tool))
             {
                 await WriteResponseAsync(
                     context,
@@ -204,10 +373,33 @@ public static class AIGRAVHttpServer
                 return;
             }
 
-            string result =
-                await AIGRAVBridge.ExecuteToolAsync(
-                    request.Tool,
-                    request.Argument);
+            if (request.Tool.Equals("__bridge_health__", StringComparison.OrdinalIgnoreCase))
+            {
+                string payload = JsonSerializer.Serialize(new
+                {
+                    status = "Connected",
+                    port = ActivePort,
+                    url = ActiveUrl,
+                    pid = Environment.ProcessId,
+                    requests_served = RequestsServed
+                });
+
+                await WriteResponseAsync(
+                    context,
+                    new AIGRAVHttpResponse
+                    {
+                        Success = true,
+                        Result = payload
+                    });
+                return;
+            }
+
+            Interlocked.Increment(ref _requestsServed);
+            NotifyStateChanged();
+
+            string result = await AIGRAVBridge.ExecuteToolAsync(
+                request.Tool,
+                request.Argument);
 
             await WriteResponseAsync(
                 context,
@@ -233,21 +425,13 @@ public static class AIGRAVHttpServer
         HttpListenerContext context,
         AIGRAVHttpResponse response)
     {
-        string json =
-            JsonSerializer.Serialize(response);
+        string json = JsonSerializer.Serialize(response);
+        byte[] bytes = Encoding.UTF8.GetBytes(json);
 
-        byte[] bytes =
-            Encoding.UTF8.GetBytes(json);
+        context.Response.ContentType = "application/json";
+        context.Response.ContentLength64 = bytes.Length;
 
-        context.Response.ContentType =
-            "application/json";
-
-        context.Response.ContentLength64 =
-            bytes.Length;
-
-        await context.Response.OutputStream.WriteAsync(
-            bytes);
-
+        await context.Response.OutputStream.WriteAsync(bytes);
         context.Response.Close();
     }
 }
@@ -255,13 +439,11 @@ public static class AIGRAVHttpServer
 public class AIGRAVHttpRequest
 {
     public string Tool { get; set; } = string.Empty;
-
     public string? Argument { get; set; }
 }
 
 public class AIGRAVHttpResponse
 {
     public bool Success { get; set; }
-
     public string Result { get; set; } = string.Empty;
 }
