@@ -15,12 +15,8 @@ public class AIGRAVApp : IExternalApplication
         private set;
     }
 
-    public static AIGRAV.RevitBridge.Render.Core.MultiPassExportHandler? RenderExportHandler { get; private set; }
-    public static ExternalEvent? RenderExternalEvent { get; private set; }
-
     private static AIGRAVWelcomeWindow? _welcomeWindow;
     private static PushButton? _aigravButton;
-    private static PushButton? _renderButton;
 
     public Result OnStartup(
         UIControlledApplication application)
@@ -61,13 +57,6 @@ public class AIGRAVApp : IExternalApplication
 
             ExternalEvent =
                 ExternalEvent.Create(EventHandler);
-
-            // Dedicated isolated handler for AIGRAV Render module
-            RenderExportHandler =
-                new AIGRAV.RevitBridge.Render.Core.MultiPassExportHandler();
-
-            RenderExternalEvent =
-                ExternalEvent.Create(RenderExportHandler);
 
 
             // ----------------------------------------------------
@@ -116,25 +105,6 @@ public class AIGRAVApp : IExternalApplication
             if (_aigravButton != null)
             {
                 ConfigureRibbonButton(_aigravButton);
-            }
-
-            // ----------------------------------------------------
-            // PUSH BUTTON 2: AIGRAV Render
-            // ----------------------------------------------------
-
-            PushButtonData renderButtonData =
-                new PushButtonData(
-                    "AIGRAVRenderLaunch",
-                    "AIGRAV Render",
-                    assemblyPath,
-                    "AIGRAV.RevitBridge.Render.Commands.LaunchAigravRenderCommand");
-
-            _renderButton =
-                panel.AddItem(renderButtonData) as PushButton;
-
-            if (_renderButton != null)
-            {
-                ConfigureRenderRibbonButton(_renderButton);
             }
 
             // IMPORTANT:
@@ -199,61 +169,6 @@ public class AIGRAVApp : IExternalApplication
                 button.Image =
                     LoadRibbonImageFromFile(
                         smallIconPath);
-            }
-        }
-        catch
-        {
-            // Ribbon icon failure must not stop AIGRAV.
-        }
-    }
-
-    private static void ConfigureRenderRibbonButton(
-        PushButton button)
-    {
-        button.ToolTip =
-            "AIGRAV Render Studio — 4K Precision Architectural Visualizer";
-
-        button.LongDescription =
-            "Launch the AIGRAV Render Studio to extract 3-pass 4K views (Geometry, Lighting, Material ID) " +
-            "and generate photorealistic architectural renders via Antigravity Bridge or Direct AI APIs.";
-
-        try
-        {
-            string assemblyDirectory =
-                Path.GetDirectoryName(
-                    Assembly.GetExecutingAssembly().Location)
-                ?? AppContext.BaseDirectory;
-
-            string largeIconPath =
-                Path.Combine(
-                    assemblyDirectory,
-                    "Assets",
-                    "AIGRAV_Gemini_Icon.png");
-
-            string fallbackIconPath =
-                Path.Combine(
-                    assemblyDirectory,
-                    "Assets",
-                    "AIGRAV_Ribbon_32.png");
-
-            string smallIconPath =
-                Path.Combine(
-                    assemblyDirectory,
-                    "Assets",
-                    "AIGRAV_Ribbon_16.png");
-
-            if (File.Exists(largeIconPath))
-            {
-                button.LargeImage = LoadRibbonImageFromFile(largeIconPath);
-            }
-            else if (File.Exists(fallbackIconPath))
-            {
-                button.LargeImage = LoadRibbonImageFromFile(fallbackIconPath);
-            }
-
-            if (File.Exists(smallIconPath))
-            {
-                button.Image = LoadRibbonImageFromFile(smallIconPath);
             }
         }
         catch
@@ -427,14 +342,10 @@ public class AIGRAVApp : IExternalApplication
         AIGRAVHttpServer.Stop();
 
         ExternalEvent?.Dispose();
-        RenderExternalEvent?.Dispose();
 
         ExternalEvent = null;
         EventHandler = null;
-        RenderExternalEvent = null;
-        RenderExportHandler = null;
         _aigravButton = null;
-        _renderButton = null;
 
         AIGRAVRuntime.Shutdown();
 
