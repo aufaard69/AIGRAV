@@ -398,3 +398,18 @@ public static class AIGRAVHttpServer
         }
     }
 }
+
+public class AIGRAVHttpRequest
+{
+    public string Tool { get; set; } = string.Empty;
+
+    public string? Argument { get; set; }
+}
+
+public class AIGRAVHttpResponse
+{
+    public bool Success { get; set; }
+
+    public string Result { get; set; } = string.Empty;
+}
+
