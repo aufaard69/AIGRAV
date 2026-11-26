@@ -3,7 +3,8 @@
     AIGRAV One-Click Cloud Synchronizer & Version Inspector (Multi-PC)
 .DESCRIPTION
     Checks for AIGRAV updates on GitHub, displays changelog highlights and fixes,
-    and asks user confirmation before applying updates (or auto-applies with -Force).
+    pulls updates, builds AIGRAV.RevitBridge solution, and triggers hot-reload
+    across active Revit Bridge ports (8765-8775).
 #>
 
 param(
@@ -42,8 +43,7 @@ Write-Host "`n[1/4] Memeriksa pembaruan di GitHub..." -ForegroundColor Yellow
 
 try {
     git fetch origin main 2>$null | Out-Null
-} catch {
-}
+} catch {}
 
 # Compare remote vs local commit
 $localCommit = git rev-parse HEAD
@@ -53,18 +53,17 @@ if ($localCommit -eq $remoteCommit) {
     Write-Host "[OK] AIGRAV sudah berada pada versi terbaru (v$localVersion)!" -ForegroundColor Green
     if ($CheckOnly) { exit 0 }
 } else {
-    # Read remote version.json
     try {
         $remoteJsonRaw = git show origin/main:version.json 2>$null
         if ($remoteJsonRaw) {
             $remoteJson = $remoteJsonRaw | ConvertFrom-Json
             $remoteVersion = $remoteJson.version
-            
+
             Write-Host "`n=========================================" -ForegroundColor Magenta
             Write-Host " 🔔 PEMBARUAN AIGRAV TERSEDIA: v$remoteVersion" -ForegroundColor Yellow
             Write-Host " Rilis: $($remoteJson.release_name) ($($remoteJson.release_date))" -ForegroundColor Gray
             Write-Host "=========================================" -ForegroundColor Magenta
-            
+
             if ($remoteJson.highlights) {
                 Write-Host "`n✨ Fitur Baru & Peningkatan:" -ForegroundColor Cyan
                 foreach ($h in $remoteJson.highlights) {
@@ -86,7 +85,6 @@ if ($localCommit -eq $remoteCommit) {
         exit 0
     }
 
-    # Ask user confirmation if not forced
     if (-not $Force) {
         $answer = Read-Host "Apakah Anda ingin memperbarui AIGRAV sekarang? [Y/N]"
         if ($answer -notmatch "^[Yy]") {
@@ -106,41 +104,58 @@ catch {
     Write-Host "[WARNING] Git merge encountered an issue: $_" -ForegroundColor Yellow
 }
 
-# 5. Check / Compile C# Skills if needed
-$bimAuditCs = Join-Path $AigravRoot "Revit\AIGRAV.RevitBridge\AIGRAV.Skills.BimAudit\BimAuditSkill.cs"
-if (Test-Path $bimAuditCs) {
-    Write-Host "`n[3/4] Memeriksa kompilasi Revit Bridge Skills..." -ForegroundColor Yellow
-    $skillsDll = Join-Path $AigravRoot "Revit\AIGRAV.RevitBridge\AIGRAV.RevitBridge\bin\x64\Debug\net10.0-windows\Skills\AIGRAV.Skills.BimAudit.dll"
-    if (-not (Test-Path $skillsDll) -or $Force) {
-        Write-Host "Building skills for .NET 10 (Revit 2026)..." -ForegroundColor Gray
-        dotnet build "$AigravRoot\Revit\AIGRAV.RevitBridge\AIGRAV.Skills.BimAudit\AIGRAV.Skills.BimAudit.csproj" -c Debug
-        dotnet build "$AigravRoot\Revit\AIGRAV.RevitBridge\AIGRAV.Skills.SheetManager\AIGRAV.Skills.SheetManager.csproj" -c Debug
+# 5. Build Revit Bridge Solution & Skills (.NET 10 / x64)
+Write-Host "`n[3/4] Memeriksa kompilasi Revit Bridge & Skills..." -ForegroundColor Yellow
+$dotnetCmd = $null
+$dotnetInfo = Get-Command dotnet -ErrorAction SilentlyContinue
+if ($dotnetInfo) {
+    $dotnetCmd = $dotnetInfo.Source
+}
+if (-not $dotnetCmd) {
+    $localDotnet = Join-Path $env:LOCALAPPDATA "Microsoft\dotnet\dotnet.exe"
+    if (Test-Path $localDotnet) { $dotnetCmd = $localDotnet }
+}
+
+$slnxPath = Join-Path $AigravRoot "Revit\AIGRAV.RevitBridge\AIGRAV.RevitBridge.slnx"
+$runningRevit = Get-Process Revit -ErrorAction SilentlyContinue
+
+if (-not $dotnetCmd) {
+    Write-Host "[INFO] .NET SDK tidak ditemukan di PATH atau %LOCALAPPDATA%\Microsoft\dotnet." -ForegroundColor Gray
+} elseif ($runningRevit) {
+    Write-Host "[INFO] Autodesk Revit sedang terbuka (PID: $($runningRevit.Id -join ', ')). Tutup Revit untuk rebuild AIGRAV.RevitBridge.dll, atau build Skills saja." -ForegroundColor Yellow
+} elseif (Test-Path $slnxPath) {
+    Write-Host "Building $slnxPath (Debug|x64)..." -ForegroundColor Gray
+    & $dotnetCmd build $slnxPath -c Debug -p:Platform=x64 -p:NoWarn=MSB3277 -v:minimal
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "[OK] Seluruh proyek AIGRAV.RevitBridge berhasil dikompilasi." -ForegroundColor Green
     } else {
-        Write-Host "Skills DLLs ready and up to date." -ForegroundColor Green
+        Write-Host "[WARNING] Build selesai dengan peringatan/error (ExitCode: $LASTEXITCODE)." -ForegroundColor Yellow
     }
 }
 
-# 6. Trigger Live Revit Hot-Reload if Revit Bridge Listener is active
-Write-Host "`n[4/4] Memeriksa sesi Revit aktif (Port 8765)..." -ForegroundColor Yellow
-try {
-    $req = [System.Net.WebRequest]::Create("http://127.0.0.1:8765/")
-    $req.Method = "POST"
-    $req.ContentType = "application/json"
-    $req.Timeout = 3000
-    $body = '{"tool":"aigrav_reload_skills"}'
-    $bytes = [System.Text.Encoding]::UTF8.GetBytes($body)
-    $req.ContentLength = $bytes.Length
-    $stream = $req.GetRequestStream()
-    $stream.Write($bytes, 0, $bytes.Length)
-    $stream.Close()
-    
-    $resp = $req.GetResponse()
-    $reader = New-Object System.IO.StreamReader($resp.GetResponseStream())
-    $resultText = $reader.ReadToEnd()
-    Write-Host "[SUCCESS] Live Revit Bridge Hot-Reload Triggered!" -ForegroundColor Green
+# 6. Trigger Live Revit Hot-Reload across active multi-port sessions (8765-8775)
+Write-Host "`n[4/4] Memeriksa sesi Revit aktif (Port 8765-8775)..." -ForegroundColor Yellow
+$reloaded = 0
+for ($port = 8765; $port -le 8775; $port++) {
+    try {
+        $req = [System.Net.WebRequest]::Create("http://127.0.0.1:$port/")
+        $req.Method = "POST"
+        $req.ContentType = "application/json"
+        $req.Timeout = 1500
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes('{"tool":"aigrav_reload_skills"}')
+        $req.ContentLength = $bytes.Length
+        $stream = $req.GetRequestStream()
+        $stream.Write($bytes, 0, $bytes.Length)
+        $stream.Close()
+
+        $resp = $req.GetResponse()
+        $resp.Close()
+        $reloaded++
+        Write-Host "  [SUCCESS] Live Revit Skill Hot-Reload pada Port $port." -ForegroundColor Green
+    } catch {}
 }
-catch {
-    Write-Host "[INFO] Revit tidak sedang aktif di Port 8765. Pembaruan akan otomatis aktif saat Revit dibuka." -ForegroundColor Gray
+if ($reloaded -eq 0) {
+    Write-Host "[INFO] Tidak ada sesi Revit aktif yang merespons. Pembaruan akan aktif saat Revit dibuka." -ForegroundColor Gray
 }
 
 Write-Host "`n=========================================" -ForegroundColor Green
