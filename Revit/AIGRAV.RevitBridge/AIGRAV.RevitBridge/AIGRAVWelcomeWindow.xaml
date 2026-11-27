@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="AIGRAV"
-        Width="940"
-        Height="590"
+        Width="920"
+        Height="560"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         WindowStyle="None"
@@ -20,12 +20,12 @@
 		<Grid>
 
 			<!-- HEADER -->
-
 			<Border
-                Height="58"
+                Height="62"
                 VerticalAlignment="Top"
                 Background="#0D1725"
-                CornerRadius="18,18,0,0">
+                CornerRadius="18,18,0,0"
+                MouseLeftButtonDown="Header_MouseLeftButtonDown">
 
 				<Grid Margin="22,0">
 
@@ -34,8 +34,8 @@
                         VerticalAlignment="Center">
 
 						<Border
-                            Width="32"
-                            Height="32"
+                            Width="34"
+                            Height="34"
                             CornerRadius="8"
                             Background="#10213A">
 
@@ -47,21 +47,23 @@
 						<TextBlock
                             Text="AIGRAV"
                             Margin="11,0,0,0"
-                            FontSize="19"
+                            FontSize="20"
                             FontWeight="SemiBold"
                             Foreground="White"
                             VerticalAlignment="Center"/>
 
 						<Border
                             Margin="12,0,0,0"
-                            Padding="8,2"
+                            Padding="10,4"
                             CornerRadius="6"
-                            Background="#162D4A"
+                            Background="#10294A"
+                            BorderBrush="#244B7C"
+                            BorderThickness="1"
                             VerticalAlignment="Center">
 							<TextBlock
                                 Text="AI BRIDGE CONTROLLER"
-                                FontSize="10"
-                                FontWeight="Bold"
+                                FontSize="11"
+                                FontWeight="SemiBold"
                                 Foreground="#54A8FF"/>
 						</Border>
 
@@ -76,7 +78,7 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Foreground="#91A2B8"
-                        FontSize="24"
+                        FontSize="25"
                         Cursor="Hand"
                         Click="CloseButton_Click"/>
 
@@ -84,19 +86,15 @@
 
 			</Border>
 
-
-			<!-- MAIN CONTENT -->
-
-			<Grid Margin="0,58,0,0">
+			<!-- MAIN -->
+			<Grid Margin="0,62,0,0">
 
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="40*"/>
-					<ColumnDefinition Width="60*"/>
+					<ColumnDefinition Width="42*"/>
+					<ColumnDefinition Width="58*"/>
 				</Grid.ColumnDefinitions>
 
-
-				<!-- LEFT COLUMN (BRANDING & INFO) -->
-
+				<!-- LEFT BRANDING PANEL -->
 				<Border
                     Grid.Column="0"
                     Background="#071525"
@@ -105,11 +103,10 @@
 					<Grid>
 
 						<Ellipse
-                            Width="320"
-                            Height="320"
+                            Width="350"
+                            Height="350"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center">
-
 							<Ellipse.Fill>
 								<RadialGradientBrush>
 									<GradientStop Color="#173B76" Offset="0"/>
@@ -117,42 +114,36 @@
 									<GradientStop Color="#071525" Offset="1"/>
 								</RadialGradientBrush>
 							</Ellipse.Fill>
-
 						</Ellipse>
-
 
 						<StackPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center">
 
 							<Border
-                                Width="135"
-                                Height="135"
-                                CornerRadius="26"
+                                Width="145"
+                                Height="145"
+                                CornerRadius="28"
                                 Background="#0D2343"
                                 BorderBrush="#2D6AB0"
                                 BorderThickness="1">
-
 								<Image
                                     Source="/AIGRAV.RevitBridge;component/Assets/AIGRAV_Gemini_Icon.png"
-                                    Margin="16"/>
-
+                                    Margin="18"/>
 							</Border>
-
 
 							<TextBlock
                                 Text="AIGRAV"
-                                Margin="0,20,0,0"
-                                FontSize="36"
+                                Margin="0,24,0,0"
+                                FontSize="40"
                                 FontWeight="Bold"
                                 Foreground="White"
                                 HorizontalAlignment="Center"/>
 
-
 							<TextBlock
                                 Text="AI BRIDGE FOR AUTODESK REVIT"
-                                Margin="0,4,0,0"
-                                FontSize="10"
+                                Margin="0,5,0,0"
+                                FontSize="11"
                                 FontWeight="SemiBold"
                                 Foreground="#718AA9"
                                 HorizontalAlignment="Center"/>
@@ -160,16 +151,16 @@
 							<TextBlock
                                 Text="Gemini + MCP Server + C# API"
                                 HorizontalAlignment="Center"
-                                Margin="0,12,0,0"
+                                Margin="0,14,0,0"
                                 FontSize="11"
-                                Foreground="#5C718C"/>
+                                Foreground="#6C829F"/>
 
 							<TextBlock
                                 Text="Developed by Aufaard"
                                 HorizontalAlignment="Center"
-                                Margin="0,4,0,0"
-                                FontSize="11"
-                                Foreground="#A0B3CC"/>
+                                Margin="0,5,0,0"
+                                FontSize="12"
+                                Foreground="White"/>
 
 						</StackPanel>
 
@@ -177,227 +168,200 @@
 
 				</Border>
 
-
-				<!-- RIGHT COLUMN (INTERACTIVE BRIDGE CONTROLS) -->
-
+				<!-- RIGHT CONTROLLER PANEL -->
 				<Border
                     Grid.Column="1"
                     Background="#0B1421"
                     CornerRadius="0,0,18,0">
 
-					<StackPanel Margin="32,24,32,20">
+					<StackPanel Margin="36,30,36,24" VerticalAlignment="Center">
 
-						<!-- TITLE -->
-						<Grid>
-							<StackPanel>
-								<TextBlock FontSize="24" FontWeight="Bold">
-									<Run Text="AIGRAV is " Foreground="White"/>
-									<Run Text="AI ANTIGRAVITY" Foreground="#54A8FF"/>
-								</TextBlock>
-								<TextBlock
-                                    Text="AI Bridge for Autodesk Revit • Interactive Port &amp; Connection Control"
-                                    Margin="0,3,0,0"
-                                    FontSize="13"
-                                    Foreground="#A8B8CC"/>
-							</StackPanel>
-						</Grid>
+						<TextBlock FontSize="30" FontWeight="Bold">
+							<Run Text="AIGRAV is " Foreground="White"/>
+							<Run Text="AI ANTIGRAVITY" Foreground="#54A8FF"/>
+						</TextBlock>
 
+						<TextBlock
+                            Text="AI Bridge for Autodesk Revit • Interactive Port &amp; Connection Control"
+                            Margin="0,6,0,0"
+                            FontSize="13.5"
+                            Foreground="#A8B8CC"/>
+
+						<!-- HTTP SERVER BRIDGE CONTROL CARD -->
 						<Border
-                            Height="1"
-                            Background="#1E2F46"
-                            Margin="0,14,0,14"/>
-
-						<!-- INTERACTIVE BRIDGE STATUS & PORT CONTROL CARD -->
-						<Border
-                            Padding="16,14"
-                            CornerRadius="12"
+                            Margin="0,22,0,0"
+                            Padding="18"
+                            CornerRadius="13"
                             Background="#0E1928"
                             BorderBrush="#26394F"
                             BorderThickness="1">
 
 							<StackPanel>
 
-								<!-- CARD HEADER: BRIDGE NAME + DYNAMIC STATUS BADGE -->
-								<Grid>
+								<!-- Card Title + Connection Pill -->
+								<Grid Margin="0,0,0,14">
 									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-										<TextBlock
-                                            Text="▣   HTTP Server Bridge"
-                                            FontSize="14"
-                                            FontWeight="SemiBold"
-                                            Foreground="#DCE6F3"
-                                            VerticalAlignment="Center"/>
+										<TextBlock Text="▣" FontSize="14" Foreground="#DCE6F3" Margin="0,0,8,0"/>
+										<TextBlock Text="HTTP Server Bridge" FontSize="14" FontWeight="SemiBold" Foreground="#DCE6F3"/>
 									</StackPanel>
 
-									<!-- DYNAMIC CONNECTION BADGE -->
-									<Border x:Name="StatusBadgeBorder"
+									<Border x:Name="ConnectionBadgeBorder"
                                             HorizontalAlignment="Right"
                                             Padding="10,4"
                                             CornerRadius="12"
-                                            Background="#132B20"
-                                            BorderBrush="#1B4D36"
+                                            Background="#0E291D"
+                                            BorderBrush="#1F5D3E"
                                             BorderThickness="1">
 										<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-											<Ellipse x:Name="StatusDot"
-                                                     Width="8"
-                                                     Height="8"
+											<Ellipse x:Name="ConnectionBadgeDot"
+                                                     Width="7"
+                                                     Height="7"
                                                      Fill="#32D583"
                                                      Margin="0,0,6,0"/>
-											<TextBlock x:Name="StatusLabel"
+											<TextBlock x:Name="ConnectionBadgeText"
                                                        Text="Connected"
-                                                       FontSize="12"
-                                                       FontWeight="Bold"
-                                                       Foreground="#32D583"/>
+                                                       FontSize="11.5"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#48F09B"/>
 										</StackPanel>
 									</Border>
 								</Grid>
 
-								<!-- PORT CONFIGURATION & TEST CONTROLS -->
-								<Border
-                                    Margin="0,14,0,0"
-                                    Padding="12,10"
-                                    CornerRadius="8"
-                                    Background="#071322"
-                                    BorderBrush="#1A2D46"
-                                    BorderThickness="1">
+								<!-- Port Listener Controls -->
+								<Grid Margin="0,0,0,14">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto"/>
+										<ColumnDefinition Width="Auto"/>
+										<ColumnDefinition Width="Auto"/>
+										<ColumnDefinition Width="*"/>
+									</Grid.ColumnDefinitions>
 
-									<Grid>
-										<Grid.ColumnDefinitions>
-											<ColumnDefinition Width="Auto"/>
-											<ColumnDefinition Width="Auto"/>
-											<ColumnDefinition Width="Auto"/>
-											<ColumnDefinition Width="Auto"/>
-											<ColumnDefinition Width="*"/>
-										</Grid.ColumnDefinitions>
+									<TextBlock Grid.Column="0"
+                                               Text="Port Listener:"
+                                               FontSize="12.5"
+                                               Foreground="#A8B8CC"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,10,0"/>
 
-										<TextBlock
-                                            Grid.Column="0"
-                                            Text="Port Listener:"
+									<Border Grid.Column="1"
+                                            Background="#08111D"
+                                            BorderBrush="#2A405E"
+                                            BorderThickness="1"
+                                            CornerRadius="7"
+                                            Width="72"
+                                            Height="34"
+                                            Margin="0,0,10,0">
+										<TextBox x:Name="PortTextBox"
+                                                 Text="8765"
+                                                 Background="Transparent"
+                                                 BorderThickness="0"
+                                                 Foreground="White"
+                                                 FontSize="14"
+                                                 FontWeight="Bold"
+                                                 HorizontalContentAlignment="Center"
+                                                 VerticalContentAlignment="Center"
+                                                 CaretBrush="#54A8FF"
+                                                 MaxLength="5"
+                                                 KeyDown="PortTextBox_KeyDown"/>
+									</Border>
+
+									<Button x:Name="TestConnectionButton"
+                                            Grid.Column="2"
+                                            Content="⚡ Test Connection"
+                                            Height="34"
+                                            Margin="0,0,8,0"
                                             FontSize="12"
                                             FontWeight="SemiBold"
-                                            Foreground="#8FA5C0"
-                                            VerticalAlignment="Center"
-                                            Margin="0,0,10,0"/>
+                                            Foreground="White"
+                                            Background="#1976D2"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Click="TestConnectionButton_Click">
+										<Button.Template>
+											<ControlTemplate TargetType="Button">
+												<Border Background="{TemplateBinding Background}" CornerRadius="7" Padding="12,0">
+													<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+												</Border>
+											</ControlTemplate>
+										</Button.Template>
+									</Button>
 
-										<!-- PORT INPUT TEXTBOX -->
-										<TextBox x:Name="PortInput"
-                                                 Grid.Column="1"
-                                                 Text="8765"
-                                                 Width="75"
-                                                 Height="30"
-                                                 VerticalContentAlignment="Center"
-                                                 HorizontalContentAlignment="Center"
-                                                 FontSize="13"
-                                                 FontWeight="Bold"
-                                                 Foreground="White"
-                                                 Background="#0D1F35"
-                                                 BorderBrush="#2A405E"
-                                                 BorderThickness="1"
-                                                 Margin="0,0,10,0"
-                                                 ToolTip="Ketik nomor port lokal bridge Revit (default: 8765)"/>
+									<Button x:Name="FindFreePortButton"
+                                            Grid.Column="3"
+                                            Content="Cari Port Bebas (+1)"
+                                            Height="34"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Foreground="#DCE6F3"
+                                            Background="#162438"
+                                            BorderBrush="#2A405E"
+                                            BorderThickness="1"
+                                            Cursor="Hand"
+                                            Click="FindFreePortButton_Click">
+										<Button.Template>
+											<ControlTemplate TargetType="Button">
+												<Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="7"
+                                                        Padding="10,0">
+													<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+												</Border>
+											</ControlTemplate>
+										</Button.Template>
+									</Button>
+								</Grid>
 
-										<!-- TEST CONNECTION BUTTON -->
-										<Button x:Name="TestConnectionButton"
-                                                Grid.Column="2"
-                                                Content="⚡ Test Connection"
-                                                Height="30"
-                                                Padding="12,0"
-                                                FontSize="11"
-                                                FontWeight="SemiBold"
-                                                Foreground="White"
-                                                Background="#1570EF"
-                                                BorderThickness="0"
-                                                Cursor="Hand"
-                                                Click="TestConnectionButton_Click"
-                                                ToolTip="Uji ketersediaan port dan hubungkan HTTP bridge">
-											<Button.Template>
-												<ControlTemplate TargetType="Button">
-													<Border Background="{TemplateBinding Background}" CornerRadius="6">
-														<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
-													</Border>
-												</ControlTemplate>
-											</Button.Template>
-										</Button>
-
-										<!-- AUTO NEXT PORT BUTTON -->
-										<Button x:Name="AutoPortButton"
-                                                Grid.Column="3"
-                                                Content="Cari Port Bebas (+1)"
-                                                Height="30"
-                                                Padding="10,0"
-                                                Margin="8,0,0,0"
-                                                FontSize="11"
-                                                FontWeight="Medium"
-                                                Foreground="#CBD5E1"
-                                                Background="#1E2D40"
-                                                BorderBrush="#33465E"
-                                                BorderThickness="1"
-                                                Cursor="Hand"
-                                                Click="AutoPortButton_Click"
-                                                ToolTip="Cari dan atur port kosong berikutnya secara otomatis">
-											<Button.Template>
-												<ControlTemplate TargetType="Button">
-													<Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                                            CornerRadius="6">
-														<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
-													</Border>
-												</ControlTemplate>
-											</Button.Template>
-										</Button>
-
-									</Grid>
-
-								</Border>
-
-								<!-- FEEDBACK & DIAGNOSTIC STATUS MESSAGE BOX -->
-								<Border x:Name="FeedbackBorder"
-                                        Margin="0,12,0,0"
+								<!-- Live Bridge Status Strip -->
+								<Border x:Name="BridgeStatusBanner"
                                         Padding="12,9"
                                         CornerRadius="8"
-                                        Background="#0E291C"
-                                        BorderBrush="#1B4D36"
+                                        Background="#0E291D"
+                                        BorderBrush="#1F5D3E"
                                         BorderThickness="1">
-									<TextBlock x:Name="StatusDetailText"
-                                               Text="🟢 Bridge aktif pada http://127.0.0.1:8765/ • Siap melayani perintah AI Revit."
-                                               FontSize="11"
-                                               LineHeight="16"
-                                               TextWrapping="Wrap"
-                                               Foreground="#48F09B"/>
+									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+										<Ellipse x:Name="StatusBannerDot"
+                                                 Width="8"
+                                                 Height="8"
+                                                 Fill="#32D583"
+                                                 Margin="0,0,8,0"/>
+										<TextBlock x:Name="StatusBannerText"
+                                                   Text="Bridge Connected di http://127.0.0.1:8765/ • Siap melayani instruksi AI Revit."
+                                                   FontSize="12"
+                                                   Foreground="#6CE9A6"
+                                                   TextTrimming="CharacterEllipsis"/>
+									</StackPanel>
 								</Border>
 
-								<!-- DIAGNOSTIC METRICS ROW -->
+								<!-- Telemetry Footer Row -->
 								<Grid Margin="0,12,0,0">
-									<StackPanel Orientation="Horizontal">
-										<TextBlock x:Name="MetricsText"
-                                                   Text="URL: http://127.0.0.1:8765/  •  Revit PID: --  •  Requests: 0 served"
-                                                   FontSize="10"
-                                                   Foreground="#607694"/>
-									</StackPanel>
+									<TextBlock x:Name="TelemetryText"
+                                               Text="URL: http://127.0.0.1:8765/ • Revit PID: - • Requests: 0 served"
+                                               FontSize="11"
+                                               Foreground="#7D93AE"
+                                               VerticalAlignment="Center"/>
 
-									<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-										<Button x:Name="ToggleBridgeButton"
-                                                Content="Restart Bridge"
-                                                FontSize="10"
-                                                FontWeight="SemiBold"
-                                                Foreground="#54A8FF"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Cursor="Hand"
-                                                Click="ToggleBridgeButton_Click"/>
-									</StackPanel>
+									<Button x:Name="RestartBridgeButton"
+                                            Content="Restart Bridge"
+                                            HorizontalAlignment="Right"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="#54A8FF"
+                                            FontSize="11.5"
+                                            FontWeight="SemiBold"
+                                            Cursor="Hand"
+                                            Click="RestartBridgeButton_Click"/>
 								</Grid>
 
 							</StackPanel>
 
 						</Border>
 
-
 						<!-- UPDATE NOTIFICATION BANNER (NON-INTRUSIVE) -->
 						<Border x:Name="UpdateBanner"
                                 Visibility="Collapsed"
                                 Margin="0,12,0,0"
-                                Padding="12,9"
+                                Padding="12,10"
                                 CornerRadius="8"
                                 Background="#1A2D23"
                                 BorderBrush="#32D583"
@@ -411,7 +375,7 @@
 									<TextBlock x:Name="UpdateTitleText"
                                                Text="✨ Pembaruan AIGRAV Tersedia"
                                                FontWeight="SemiBold"
-                                               FontSize="11"
+                                               FontSize="12"
                                                Foreground="#48F09B"/>
 									<TextBlock x:Name="UpdateSubText"
                                                Text="Klik untuk melihat fitur baru"
@@ -440,38 +404,33 @@
 							</Grid>
 						</Border>
 
-
-						<!-- CLOSE / HIDE BUTTON -->
-
+						<!-- PRIMARY ACTION BUTTON -->
 						<Button
                             Content="Tutup Jendela (AIGRAV Tetap Berjalan)"
-                            Height="42"
-                            Margin="0,16,0,0"
-                            FontSize="13"
+                            Height="46"
+                            Margin="0,18,0,0"
+                            FontSize="14"
                             FontWeight="SemiBold"
                             Foreground="White"
-                            Background="#1E3A5F"
+                            Background="#1976D2"
                             BorderThickness="0"
                             Cursor="Hand"
                             Click="LaunchButton_Click">
-
 							<Button.Template>
 								<ControlTemplate TargetType="Button">
-									<Border Background="{TemplateBinding Background}" CornerRadius="8">
+									<Border Background="{TemplateBinding Background}" CornerRadius="9">
 										<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
 									</Border>
 								</ControlTemplate>
 							</Button.Template>
-
 						</Button>
 
-
 						<TextBlock x:Name="FooterVersionText"
-                            Text="AIGRAV v3.0.0  •  Gemini + MCP + Revit API • Aufa Ardianto"
+                            Text="AIGRAV v3.2.1  •  Gemini + MCP + Revit API • Aufa Ardianto"
                             HorizontalAlignment="Center"
-                            Margin="0,12,0,0"
-                            FontSize="10"
-                            Foreground="#4B5E78"/>
+                            Margin="0,14,0,0"
+                            FontSize="10.5"
+                            Foreground="#5C718C"/>
 
 					</StackPanel>
 

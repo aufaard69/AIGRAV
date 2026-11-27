@@ -318,4 +318,22 @@ Untuk menjamin interaksi perancangan yang rapi, transparan, terstruktur, serta m
    - Setelah persetujuan desain visual diperoleh, panggil `aigrav_clear_colors` untuk mengembalikan tampilan grafis ke material alami fisik (beton, bata, marmer, kaca).
    - Jalankan audit QTO dan sajikan rekapitulasi kuantitas resmi proyek.
 
+---
+
+## 12. Standar Dokumentasi & Detailing Drawing Struktur Pabrik (`Factory Structural DED Standard`)
+
+Setiap perencanaan sheet, penyusunan viewport, pendimensian, tagging, dan audit gambar kerja struktur pabrik industri (*Factory Structural DED*) **WAJIB** merujuk pada skill resmi [`.agents/skills/revit-factory-structural-ded/SKILL.md`](file:///C:/AIGRAV/.agents/skills/revit-factory-structural-ded/SKILL.md) dan skema [`factory_structural_ded_standard.json`](file:///C:/AIGRAV/.agents/skills/revit-factory-structural-ded/resources/factory_structural_ded_standard.json):
+
+1. **Format Kertas & Kop Gambar**: ISO **A3 Landscape (`420 × 297 mm`)** dengan **Kop Horizontal di Bagian Bawah** (margin jilid kiri `20 mm`, strip kop bawah `38 mm`, kanvas gambar efektif `~394 × 253 mm`, serta zona keep-out stempel status `48 × 18 mm` di pojok kanan-bawah di atas kop).
+2. **Taksonomi 8 Seri Sheet Terstruktur**: `000` (Cover, `NO=-`) → `DG` (Daftar Gambar, `NO=-`) → `SD` (Standard Detail via *Legend View*, `NO=001..`) → `DT` (GA Denah/Atap/Tampak/3D) → `PT` (Portal Frame *Typical Grouping* & Parsial) → `PD` (Substruktur, Denah Parsial + Keyplan, Detail Pilecap per tipe, Ramp/Poer/Pancang) → `LT` (Lantai Pengecoran/Joint & Pasangan Denah+3D/Potongan Mezzanine) → `RF` (Atap Multi-Layer, Detail Member Baja, Tangga, Matriks Joint Baja via Legend, Isometric).
+3. **5 Template Komposisi Baku**: `Template A` (Partial Plan + Keyplan + Legend), `Template B` (Elevation Overview + 2 Stacked Partials), `Template C` (Portal Frame Transversal/Longitudinal), `Template D` (**Hybrid 2D Detail + 3D Shaded Isometric** — standar wajib detail struktur & pondasi), dan `Template E` (High-Density Multi-View Assembly hingga 8 viewport per A3).
+4. **8 Guardrail Anti-Kesalahan (*Lessons Learned* dari `NUAS-FT-BU-ST.rvt`)**:
+   - **Zero Wrong Cross-Ref Bubble:** Dilarang memasang Family View Title ber-`Referencing Sheet` pada Floor Plan / Keyplan independen.
+   - **Detail Number Pendek (`<= 4` karakter):** Dilarang mengisi `Detail Number` dengan kode panjang (seperti `PC.200A`) yang menabrak bubble dan judul viewport.
+   - **Naming Hygiene Gate:** Tolak spasi ganda (`"  "`), inkonsistensi titik/strip (`AS.1` vs `AS 2-4`), typo (`LOADICK`, `PRODUKSI PRODUKSI`, `KEYPLANKOLOM`, `CEMPER`, `DETIL`, `STANDART`), view default `Detail N`, dan view `Copy 1/2` di sheet.
+   - **Disiplin Skala ISO:** Gunakan tangga skala ISO (`1:10..1:1000`, Keyplan `1:2000..1:5000`); pecah zona ke parsial + Keyplan daripada memakai skala non-standar ganjil.
+   - **Zero Link-Label Leak & Tag/Dim Anti-Overlap:** Sembunyikan nama file RVT link & tag arsitektur yang menumpuk pada denah struktur; jaga jarak callout bubble dan teks dimensi detail.
+   - **Sinkronisasi Parameter `NO.` Sebelum Export:** Cocokkan parameter `NO.` dengan `DAFTAR GAMBAR` sebelum ekspor PDF via `MasterExporter`.
+   - **Kepatuhan Zona Kop Bawah & Stamp Keep-Out:** Pastikan `SheetManager` mendeteksi kop horizontal bawah pada lembar A3/SMU agar viewport tidak menimpa kop maupun stempel status.
+   - **Paginasi Bridge Model Besar (`>250 MB` / `>50 Sheets`):** Dilarang full-scan seluruh viewport/warning dalam satu panggilan tunggal; lakukan per-sheet atau batch kecil untuk mencegah timeout 60 detik.
 

@@ -88,7 +88,7 @@ if (-not $IsSourceSameAsDest) {
         }
     }
 
-    $FilesToCopy = @("AGENTS.md", "README.md", "Install-AIGRAV.ps1", "install.bat", "Verify-AIGRAV.ps1")
+    $FilesToCopy = @("AGENTS.md", "README.md", "Install-AIGRAV.ps1", "install.bat", "Verify-AIGRAV.ps1", "version.json", "sync-aigrav.ps1")
     foreach ($file in $FilesToCopy) {
         $src = Join-Path $SourceDir $file
         if (Test-Path $src) {

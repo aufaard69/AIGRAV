@@ -1,18 +1,17 @@
 {
-  "version": "3.1.0",
-  "release_name": "Multi-Port Bridge Server, MasterExporter Engine & Standardized WBS QTO Pipeline",
-  "release_date": "2026-11-25",
+  "version": "3.2.1",
+  "release_name": "Unified AI Bridge Controller UI, Multi-Port Sync & Self-Healing Updater",
+  "release_date": "2026-11-27",
   "highlights": [
-    "Multi-Port Bridge Server (Ports 8765-8775): Concurrent multi-Revit session routing via %TEMP%\\AIGRAV\\sessions\\session_<pid>.json, plus aigrav_list_sessions & aigrav_switch_session MCP tools",
-    "MasterExporter Engine (AIGRAV.Skills.MasterExporter): Combined Vector PDF & CAD DWG exporter with deterministic sheet sorting (Cover = Page 1, Daftar Gambar = Page 2, followed by NO parameter sequence), single-sheet export, collision-safe two-phase renumbering, and doc.Save/Sync helper",
-    "Standardized QTO Pipeline: Automatic exclusion of non-construction documentation schedules (DAFTAR GAMBAR & Keynote Legend) at both C# Revit Bridge and Python orchestrator levels",
-    "Multi-Tab QTO Excel Workbook Compiler (build-qto-workbook in deliverable_orchestrator.py): Natural WBS sorting (A.*, B.*, C.*), styled All Schedules master tab + individual tabs, UTF-8-SIG/UTF-16 BOM resilient TSV parsing",
-    "Full v3.0.0 Parity: Integrated RevitCortex Precision Modeling Engine, IFC DirectShape rebuilders, Landmark/Building Modelers, Consultative Design SOP, and CAD-to-Drafting Views skill"
+    "Unified AI Bridge Controller UI (AIGRAVWelcomeWindow): Embedded AIGRAV Gemini Icon WPF Resource, real-time HTTP Server Bridge status badge, editable Port Listener, Test Connection self-probe, Cari Port Bebas (+1), Revit PID & Requests Served telemetry, and Restart Bridge action",
+    "Multi-Port Bridge Hardening (AIGRAVHttpServer + MCP server.py): Live port health verification for aigrav_port.txt and session_*.json (with updated_at timestamps) across Ports 8765-8775 so stale port hints never block Revit connection",
+    "Self-Healing Multi-PC Updater (sync-aigrav.ps1 + AIGRAVVersionChecker): Automatically waits for Revit to close before compiling AIGRAV.RevitBridge.slnx, re-executes itself if sync-aigrav.ps1 updated during pull, fails loudly on git pull or build errors, and clears RebarExtension DLL shadowing",
+    "Full v3.2.0 + Detailing Foundation Merge: Integrated Offline Rebar Studio & Rebar Suite, ViewportCapture, SheetManager JSON contract sync, BimAudit CropBox preservation, and duplicate-assembly guard in AIGRAVSkillLoader"
   ],
   "fixes": [
-    "Fixed PDF export ordering where COVER (000) and DAFTAR GAMBAR (DG-001) fell to the end when parameter NO contained non-numeric values ('-')",
-    "Sanitized user-specific paths in MCP/TestServer/server.py, deliverable_orchestrator.py, and HouseType36Perspectives.cs using dynamic Path.GetTempPath()/tempfile/expanduser",
-    "Fixed UTF-8 BOM decoding in Revit TSV schedule exports (utf-8-sig fallback before utf-16)",
-    "Added dynamic root auto-detection in aigrav_version_manager.py supporting both D:\\AIGRAV and C:\\AIGRAV deployments"
+    "Fixed AIGRAV_Gemini_Icon.png build action to WPF Resource so logo renders cleanly inside AIGRAVWelcomeWindow",
+    "Fixed SheetManager project missing from AIGRAV.RevitBridge.slnx and removed duplicate BimAudit solution entry",
+    "Fixed ViewUpdateButton_Click & sync-aigrav.ps1 silently skipping AIGRAV.RevitBridge.dll compilation when triggered from inside an active Revit session",
+    "Added hide_elements / unhide_elements / isolate_elements tool aliases in AIGRAVToolExecutor and updated server.py viewport capture view targeting"
   ]
 }

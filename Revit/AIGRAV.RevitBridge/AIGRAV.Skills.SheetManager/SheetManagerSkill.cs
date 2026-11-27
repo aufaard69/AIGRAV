@@ -267,7 +267,10 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
         return null;
     }
 
-    private static (PaperRectMm tbRect, PaperRectMm drawableRect, string paperSizeName, string tbName, long tbId) ExtractTitleBlockGeometry(Document doc, ViewSheet sheet)
+    private static (PaperRectMm tbRect, PaperRectMm drawableRect, PaperRectMm? stampKeepoutRect, string tbOrientation, string paperSizeName, string tbName, long tbId) ExtractTitleBlockGeometry(
+        Document doc,
+        ViewSheet sheet,
+        string layoutMode = "auto")
     {
         Element? tb = new FilteredElementCollector(doc, sheet.Id)
             .OfCategory(BuiltInCategory.OST_TitleBlocks)
@@ -309,21 +312,63 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
         double h = tbRect.Height;
         string paperSize = ClassifyIsoPaperSize(w, h);
 
-        // Reserve border margin (15mm left/top/bottom) and right-hand Titleblock legend strip (~14% of width)
-        double leftMargin = Math.Max(15.0, Math.Round(w * 0.025, 1));
-        double topMargin = Math.Max(12.0, Math.Round(h * 0.025, 1));
-        double bottomMargin = Math.Max(12.0, Math.Round(h * 0.025, 1));
-        double rightStampStrip = Math.Max(65.0, Math.Round(w * 0.14, 1));
+        string mode = (layoutMode ?? "auto").Trim().ToLowerInvariant();
+        bool isBottomStrip = mode == "bottom" ||
+            (mode != "right" && (
+                paperSize.StartsWith("A3", StringComparison.OrdinalIgnoreCase) ||
+                tbName.Contains("KOP", StringComparison.OrdinalIgnoreCase) ||
+                tbName.Contains("SMU", StringComparison.OrdinalIgnoreCase) ||
+                tbName.Contains("A3", StringComparison.OrdinalIgnoreCase) ||
+                tbName.Contains("NUAS", StringComparison.OrdinalIgnoreCase) ||
+                tbName.Contains("NTS", StringComparison.OrdinalIgnoreCase)));
 
-        PaperRectMm drawable = new()
+        PaperRectMm drawable;
+        PaperRectMm? stampKeepoutRect = null;
+        string tbOrientation;
+
+        if (isBottomStrip)
         {
-            MinX = Math.Round(tbRect.MinX + leftMargin, 2),
-            MinY = Math.Round(tbRect.MinY + bottomMargin, 2),
-            MaxX = Math.Round(tbRect.MaxX - rightStampStrip, 2),
-            MaxY = Math.Round(tbRect.MaxY - topMargin, 2)
-        };
+            tbOrientation = "bottom";
+            double leftMargin = 20.0;
+            double rightMargin = 6.0;
+            double topMargin = 6.0;
+            double bottomStrip = Math.Max(36.0, Math.Round(h * 0.128, 1));
 
-        return (tbRect, drawable, paperSize, tbName, tbId);
+            drawable = new()
+            {
+                MinX = Math.Round(tbRect.MinX + leftMargin, 2),
+                MinY = Math.Round(tbRect.MinY + bottomStrip, 2),
+                MaxX = Math.Round(tbRect.MaxX - rightMargin, 2),
+                MaxY = Math.Round(tbRect.MaxY - topMargin, 2)
+            };
+
+            stampKeepoutRect = new()
+            {
+                MinX = Math.Round(tbRect.MaxX - rightMargin - 48.0, 2),
+                MinY = Math.Round(tbRect.MinY + bottomStrip, 2),
+                MaxX = Math.Round(tbRect.MaxX - rightMargin, 2),
+                MaxY = Math.Round(tbRect.MinY + bottomStrip + 18.0, 2)
+            };
+        }
+        else
+        {
+            tbOrientation = "right";
+            // Reserve border margin (15mm left/top/bottom) and right-hand Titleblock legend strip (~14% of width)
+            double leftMargin = Math.Max(15.0, Math.Round(w * 0.025, 1));
+            double topMargin = Math.Max(12.0, Math.Round(h * 0.025, 1));
+            double bottomMargin = Math.Max(12.0, Math.Round(h * 0.025, 1));
+            double rightStampStrip = Math.Max(65.0, Math.Round(w * 0.14, 1));
+
+            drawable = new()
+            {
+                MinX = Math.Round(tbRect.MinX + leftMargin, 2),
+                MinY = Math.Round(tbRect.MinY + bottomMargin, 2),
+                MaxX = Math.Round(tbRect.MaxX - rightStampStrip, 2),
+                MaxY = Math.Round(tbRect.MaxY - topMargin, 2)
+            };
+        }
+
+        return (tbRect, drawable, stampKeepoutRect, tbOrientation, paperSize, tbName, tbId);
     }
 
     private static string ClassifyIsoPaperSize(double widthMm, double heightMm)
@@ -339,7 +384,12 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
         return $"Custom ({widthMm:F0} x {heightMm:F0} mm)";
     }
 
-    private static string BuildSheetAsciiMap(PaperRectMm tbRect, PaperRectMm drawableRect, List<(long vpId, string viewName, PaperRectMm box)> viewports, long highlightVpId = -1)
+    private static string BuildSheetAsciiMap(
+        PaperRectMm tbRect,
+        PaperRectMm drawableRect,
+        List<(long vpId, string viewName, PaperRectMm box)> viewports,
+        long highlightVpId = -1,
+        string tbOrientation = "right")
     {
         const int cols = 48;
         const int rows = 20;
@@ -359,12 +409,24 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
         int MapX(double xMm) => Math.Clamp((int)Math.Round(((xMm - tbRect.MinX) / spanX) * (cols - 2)) + 1, 1, cols - 2);
         int MapY(double yMm) => Math.Clamp(rows - 2 - (int)Math.Round(((yMm - tbRect.MinY) / spanY) * (rows - 2)), 1, rows - 2);
 
-        // Draw right-side titleblock stamp separator
-        int stampX = MapX(drawableRect.MaxX);
-        for (int r = 1; r < rows - 1; r++)
+        if (tbOrientation == "bottom")
         {
-            if (stampX > 1 && stampX < cols - 1)
-                canvas[r, stampX] = ':';
+            int bottomY = MapY(drawableRect.MinY);
+            if (bottomY > 1 && bottomY < rows - 1)
+            {
+                for (int c = 1; c < cols - 1; c++)
+                    canvas[bottomY, c] = '=';
+            }
+        }
+        else
+        {
+            // Draw right-side titleblock stamp separator
+            int stampX = MapX(drawableRect.MaxX);
+            for (int r = 1; r < rows - 1; r++)
+            {
+                if (stampX > 1 && stampX < cols - 1)
+                    canvas[r, stampX] = ':';
+            }
         }
 
         // Draw each viewport box
@@ -388,13 +450,25 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
         }
 
         StringBuilder sb = new();
-        sb.AppendLine($"Paper Space Map [{tbRect.Width:F0}x{tbRect.Height:F0} mm] (':' = Titleblock Stamp Strip, '#' = Active/New Viewport):");
+        string stripLegend = tbOrientation == "bottom" ? "'=' = Bottom Titleblock Strip" : "':' = Titleblock Stamp Strip";
+        sb.AppendLine($"Paper Space Map [{tbRect.Width:F0}x{tbRect.Height:F0} mm] ({stripLegend}, '#' = Active/New Viewport):");
         for (int r = 0; r < rows; r++)
         {
             for (int c = 0; c < cols; c++) sb.Append(canvas[r, c]);
             sb.AppendLine();
         }
         return sb.ToString();
+    }
+
+    private static string ParseTitleBlockLayoutMode(JsonElement root)
+    {
+        if (root.ValueKind == JsonValueKind.Object &&
+            root.TryGetProperty("titleblock_layout", out JsonElement tlEl) &&
+            tlEl.ValueKind == JsonValueKind.String)
+        {
+            return tlEl.GetString() ?? "auto";
+        }
+        return "auto";
     }
 
     private static string GetSheetPaperSpace(Document doc, string? argument)
@@ -410,7 +484,8 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
         if (sheet == null)
             return JsonSerializer.Serialize(new { error = "Target ViewSheet not found in document." });
 
-        var (tbRect, drawableRect, paperSize, tbName, tbId) = ExtractTitleBlockGeometry(doc, sheet);
+        string layoutMode = ParseTitleBlockLayoutMode(root);
+        var (tbRect, drawableRect, stampKeepoutRect, tbOrientation, paperSize, tbName, tbId) = ExtractTitleBlockGeometry(doc, sheet, layoutMode);
 
         ICollection<ElementId> vpIds = sheet.GetAllViewports();
         List<object> vpTelemetry = new();
@@ -469,6 +544,16 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
             }
         }
 
+        object? stampKeepoutPayload = stampKeepoutRect != null
+            ? new
+            {
+                min = new { x = stampKeepoutRect.MinX, y = stampKeepoutRect.MinY },
+                max = new { x = stampKeepoutRect.MaxX, y = stampKeepoutRect.MaxY },
+                width_mm = stampKeepoutRect.Width,
+                height_mm = stampKeepoutRect.Height
+            }
+            : null;
+
         var payload = new
         {
             sheet_id = sheet.Id.Value,
@@ -479,6 +564,7 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
                 element_id = tbId,
                 name = tbName,
                 paper_size_iso = paperSize,
+                titleblock_orientation = tbOrientation,
                 origin_anchor_mm = new { x = tbRect.MinX, y = tbRect.MinY },
                 bounds_mm = new
                 {
@@ -494,12 +580,13 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
                     width_mm = drawableRect.Width,
                     height_mm = drawableRect.Height,
                     center = new { x = drawableRect.CenterX, y = drawableRect.CenterY }
-                }
+                },
+                stamp_keepout_mm = stampKeepoutPayload
             },
             existing_viewports_count = vpTelemetry.Count,
             existing_viewports = vpTelemetry,
             paper_space_collisions = overlaps,
-            ascii_paper_map = BuildSheetAsciiMap(tbRect, drawableRect, vpBoxes)
+            ascii_paper_map = BuildSheetAsciiMap(tbRect, drawableRect, vpBoxes, -1, tbOrientation)
         };
 
         return JsonSerializer.Serialize(payload, new JsonSerializerOptions { WriteIndented = true });
@@ -537,7 +624,8 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
             }
         }
 
-        var (tbRect, drawableRect, paperSize, _, _) = ExtractTitleBlockGeometry(doc, sheet);
+        string layoutMode = ParseTitleBlockLayoutMode(root);
+        var (tbRect, drawableRect, stampKeepoutRect, tbOrientation, paperSize, _, _) = ExtractTitleBlockGeometry(doc, sheet, layoutMode);
 
         // Gather existing viewports on this sheet (excluding target view if already on this sheet)
         List<(long vpId, string viewName, PaperRectMm box)> existingBoxes = new();
@@ -621,7 +709,8 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
                 MaxY = cy + vpHeightMm * 0.5
             };
 
-            bool collides = existingBoxes.Any(eb => candidateRect.Intersects(eb.box, paddingMm));
+            bool collides = existingBoxes.Any(eb => candidateRect.Intersects(eb.box, paddingMm)) ||
+                            (stampKeepoutRect != null && candidateRect.Intersects(stampKeepoutRect, 2.0));
             if (!collides)
             {
                 chosenCx = cx;
@@ -660,7 +749,8 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
                 sheet_id = sheet.Id.Value,
                 sheet_number = sheet.SheetNumber,
                 sheet_name = sheet.Name,
-                paper_size_iso = paperSize
+                paper_size_iso = paperSize,
+                titleblock_orientation = tbOrientation
             },
             placed_viewport = new
             {
@@ -682,6 +772,7 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
             {
                 collision_free = collisionFree,
                 fits_inside_drawable_canvas = drawableRect.Contains(finalRectMm),
+                avoids_stamp_keepout = stampKeepoutRect == null || !finalRectMm.Intersects(stampKeepoutRect, 0.0),
                 drawable_canvas_mm = new
                 {
                     min = new { x = drawableRect.MinX, y = drawableRect.MinY },
@@ -690,7 +781,7 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
                     height_mm = drawableRect.Height
                 }
             },
-            ascii_paper_map = BuildSheetAsciiMap(tbRect, drawableRect, existingBoxes, targetVp.Id.Value)
+            ascii_paper_map = BuildSheetAsciiMap(tbRect, drawableRect, existingBoxes, targetVp.Id.Value, tbOrientation)
         };
 
         return JsonSerializer.Serialize(resultPayload, new JsonSerializerOptions { WriteIndented = true });
@@ -863,7 +954,8 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
             MaxY = FtToMm(refOutline.MaximumPoint.Y)
         };
 
-        var (tbRect, drawableRect, paperSize, _, _) = ExtractTitleBlockGeometry(doc, sheet);
+        string layoutMode = ParseTitleBlockLayoutMode(root);
+        var (tbRect, drawableRect, stampKeepoutRect, tbOrientation, paperSize, _, _) = ExtractTitleBlockGeometry(doc, sheet, layoutMode);
 
         // Find or create viewport for the new view
         Viewport? targetVp = sheet.GetAllViewports()
@@ -976,8 +1068,10 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
                 }
             },
             fits_inside_drawable_canvas = drawableRect.Contains(finalRect),
+            avoids_stamp_keepout = stampKeepoutRect == null || !finalRect.Intersects(stampKeepoutRect, 0.0),
             paper_size_iso = paperSize,
-            ascii_paper_map = BuildSheetAsciiMap(tbRect, drawableRect, allVps, targetVp.Id.Value)
+            titleblock_orientation = tbOrientation,
+            ascii_paper_map = BuildSheetAsciiMap(tbRect, drawableRect, allVps, targetVp.Id.Value, tbOrientation)
         };
 
         return JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true });

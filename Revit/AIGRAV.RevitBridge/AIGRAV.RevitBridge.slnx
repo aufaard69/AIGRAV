@@ -9,6 +9,9 @@
   <Project Path="AIGRAV.RevitBridge/AIGRAV.RevitBridge.csproj">
     <Platform Solution="*|x64" Project="x64" />
   </Project>
+  <Project Path="AIGRAV.Skills.BimAudit/AIGRAV.Skills.BimAudit.csproj">
+    <Platform Project="x64" />
+  </Project>
   <Project Path="AIGRAV.Skills.HotReloadDemo/AIGRAV.Skills.HotReloadDemo.csproj">
     <Platform Project="x64" />
   </Project>
@@ -27,7 +30,13 @@
   <Project Path="AIGRAV.Skills.SheetManager/AIGRAV.Skills.SheetManager.csproj">
     <Platform Project="x64" />
   </Project>
-  <Project Path="AIGRAV.Skills.BimAudit/AIGRAV.Skills.BimAudit.csproj">
+  <Project Path="AIGRAV.Skills.ViewportCapture/AIGRAV.Skills.ViewportCapture.csproj">
     <Platform Project="x64" />
+  </Project>
+  <Project Path="AIGRAV.Skills.RebarExtension/AIGRAV.Skills.RebarExtension.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="AIGRAV.Skills.RebarExtension.Tests/AIGRAV.Skills.RebarExtension.Tests.csproj">
+    <Platform Solution="*|x64" Project="x64" />
   </Project>
 </Solution>

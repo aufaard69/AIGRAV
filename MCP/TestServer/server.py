@@ -36,12 +36,20 @@ def get_active_sessions() -> list[dict[str, Any]]:
                 pass
     return sessions
 
+def _is_bridge_port_alive(port: int) -> bool:
+    import socket
+    try:
+        with socket.create_connection(("127.0.0.1", port), timeout=0.25):
+            return True
+    except OSError:
+        return False
+
 def resolve_aigrav_url() -> str:
     global _ACTIVE_OVERRIDE_URL
     if _ACTIVE_OVERRIDE_URL:
         return _ACTIVE_OVERRIDE_URL
 
-    # Check port file if written by Bridge Controller
+    # Check port file if written by Bridge Controller (only if port is actually alive)
     port_files = [
         r"C:\AIGRAV\aigrav_port.txt",
         os.path.join(tempfile.gettempdir(), "aigrav_port.txt")
@@ -51,7 +59,7 @@ def resolve_aigrav_url() -> str:
             if os.path.isfile(pf):
                 with open(pf, "r", encoding="utf-8") as f:
                     p = f.read().strip()
-                if p.isdigit() and 1024 < int(p) < 65535:
+                if p.isdigit() and 1024 < int(p) < 65535 and _is_bridge_port_alive(int(p)):
                     return f"http://127.0.0.1:{p}/"
         except Exception:
             pass
@@ -62,9 +70,12 @@ def resolve_aigrav_url() -> str:
 
     sessions = get_active_sessions()
     if sessions:
-        # Sort by updated_at descending to get the most recent active session
-        sessions.sort(key=lambda s: s.get("updated_at", ""), reverse=True)
-        return sessions[0].get("url", DEFAULT_AIGRAV_URL)
+        # Sort by updated_at / started_at descending to pick the most recent live session
+        sessions.sort(key=lambda s: (s.get("updated_at", ""), s.get("started_at", "")), reverse=True)
+        for s in sessions:
+            port = s.get("port")
+            if isinstance(port, int) and _is_bridge_port_alive(port):
+                return s.get("url", f"http://127.0.0.1:{port}/")
 
     # Fallback: probe ports 8765 to 8775
     for port in range(8765, 8776):

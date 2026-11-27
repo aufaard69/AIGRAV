@@ -1,7 +1,7 @@
 using System;
-using System.Diagnostics;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using Autodesk.Revit.UI;
 
@@ -10,40 +10,56 @@ namespace AIGRAV.RevitBridge;
 public partial class AIGRAVWelcomeWindow : Window
 {
     private VersionInfo? _cachedRemoteInfo;
-    private static readonly Brush GreenBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#32D583"));
-    private static readonly Brush GreenBgBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#132B20"));
-    private static readonly Brush GreenBorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1B4D36"));
-    private static readonly Brush GreenTextBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#48F09B"));
 
-    private static readonly Brush RedBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F04438"));
-    private static readonly Brush RedBgBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2B1616"));
-    private static readonly Brush RedBorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#5C2020"));
-    private static readonly Brush RedTextBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F97066"));
+    private static readonly Brush GreenBg = new SolidColorBrush(Color.FromRgb(0x0E, 0x29, 0x1D));
+    private static readonly Brush GreenBorder = new SolidColorBrush(Color.FromRgb(0x1F, 0x5D, 0x3E));
+    private static readonly Brush GreenDot = new SolidColorBrush(Color.FromRgb(0x32, 0xD5, 0x83));
+    private static readonly Brush GreenText = new SolidColorBrush(Color.FromRgb(0x48, 0xF0, 0x9B));
+    private static readonly Brush GreenBannerText = new SolidColorBrush(Color.FromRgb(0x6C, 0xE9, 0xA6));
+
+    private static readonly Brush RedBg = new SolidColorBrush(Color.FromRgb(0x2D, 0x14, 0x18));
+    private static readonly Brush RedBorder = new SolidColorBrush(Color.FromRgb(0x7A, 0x27, 0x32));
+    private static readonly Brush RedDot = new SolidColorBrush(Color.FromRgb(0xF9, 0x70, 0x66));
+    private static readonly Brush RedText = new SolidColorBrush(Color.FromRgb(0xFD, 0xA2, 0x9B));
 
     public AIGRAVWelcomeWindow()
     {
         InitializeComponent();
         Loaded += AIGRAVWelcomeWindow_Loaded;
-        Unloaded += AIGRAVWelcomeWindow_Unloaded;
+        Closed += AIGRAVWelcomeWindow_Closed;
+        Activated += (_, _) => RefreshBridgeState();
+        AIGRAVHttpServer.StateChanged += OnServerStateChanged;
+    }
+
+    private void OnServerStateChanged()
+    {
+        try
+        {
+            if (!Dispatcher.HasShutdownStarted && IsLoaded)
+            {
+                Dispatcher.BeginInvoke(() => RefreshBridgeState());
+            }
+        }
+        catch
+        {
+            // Ignore shutdown dispatch races
+        }
+    }
+
+    private void AIGRAVWelcomeWindow_Closed(object? sender, EventArgs e)
+    {
+        AIGRAVHttpServer.StateChanged -= OnServerStateChanged;
     }
 
     private async void AIGRAVWelcomeWindow_Loaded(object sender, RoutedEventArgs e)
     {
+        RefreshBridgeState();
+
         try
         {
-            PortInput.Text = AIGRAVHttpServer.CurrentPort.ToString();
-
-            // Subscribe to live state updates
-            AIGRAVHttpServer.StateChanged += OnServerStateChanged;
-
-            // Update UI state based on active bridge status
-            RefreshUiState();
-
-            // Version metadata
             var local = AIGRAVVersionChecker.GetLocalVersion();
             FooterVersionText.Text = $"AIGRAV v{local.version}  •  Gemini + MCP + Revit API • Aufa Ardianto";
 
-            // Check for updates in background
             var (hasUpdate, remote) = await AIGRAVVersionChecker.CheckForUpdatesAsync();
             if (hasUpdate && remote != null)
             {
@@ -62,115 +78,139 @@ public partial class AIGRAVWelcomeWindow : Window
         }
     }
 
-    private void AIGRAVWelcomeWindow_Unloaded(object sender, RoutedEventArgs e)
+    public void RefreshBridgeState(string? overrideStatusMessage = null, bool? overrideSuccess = null)
     {
-        AIGRAVHttpServer.StateChanged -= OnServerStateChanged;
+        bool running = AIGRAVHttpServer.IsRunning;
+        int port = AIGRAVHttpServer.ActivePort;
+        string url = port > 0 ? AIGRAVHttpServer.ActiveUrl : "-";
+        long requests = AIGRAVHttpServer.RequestsServed;
+        int pid = Environment.ProcessId;
+
+        if (!PortTextBox.IsFocused && port > 0)
+        {
+            PortTextBox.Text = port.ToString();
+        }
+
+        bool isOk = overrideSuccess ?? running;
+        SetConnectionBadge(running);
+
+        string statusMsg = overrideStatusMessage
+            ?? (running
+                ? $"Bridge Connected di {url} • Siap melayani instruksi AI Revit."
+                : "HTTP Server Bridge tidak aktif. Klik Restart Bridge atau Cari Port Bebas (+1).");
+
+        SetStatusBanner(isOk, statusMsg);
+        TelemetryText.Text = $"URL: {url} • Revit PID: {pid} • Requests: {requests} served";
     }
 
-    private void OnServerStateChanged()
+    private void SetConnectionBadge(bool connected)
     {
-        Dispatcher.Invoke(RefreshUiState);
+        ConnectionBadgeBorder.Background = connected ? GreenBg : RedBg;
+        ConnectionBadgeBorder.BorderBrush = connected ? GreenBorder : RedBorder;
+        ConnectionBadgeDot.Fill = connected ? GreenDot : RedDot;
+        ConnectionBadgeText.Text = connected ? "Connected" : "Disconnected";
+        ConnectionBadgeText.Foreground = connected ? GreenText : RedText;
     }
 
-    private void RefreshUiState()
+    private void SetStatusBanner(bool ok, string message)
     {
-        bool isRunning = AIGRAVHttpServer.IsRunning;
-        int pid = 0;
-        try { pid = Process.GetCurrentProcess().Id; } catch { }
-
-        if (isRunning)
-        {
-            StatusLabel.Text = "Connected";
-            StatusLabel.Foreground = GreenBrush;
-            StatusDot.Fill = GreenBrush;
-            StatusBadgeBorder.Background = GreenBgBrush;
-            StatusBadgeBorder.BorderBrush = GreenBorderBrush;
-
-            FeedbackBorder.Background = GreenBgBrush;
-            FeedbackBorder.BorderBrush = GreenBorderBrush;
-
-            StatusDetailText.Text = $"🟢 Bridge Connected di http://127.0.0.1:{AIGRAVHttpServer.CurrentPort}/  •  Siap melayani instruksi AI Revit.";
-            StatusDetailText.Foreground = GreenTextBrush;
-
-            ToggleBridgeButton.Content = "Restart Bridge";
-            ToggleBridgeButton.Foreground = (Brush)new BrushConverter().ConvertFromString("#54A8FF")!;
-        }
-        else
-        {
-            StatusLabel.Text = "Unconnected";
-            StatusLabel.Foreground = RedBrush;
-            StatusDot.Fill = RedBrush;
-            StatusBadgeBorder.Background = RedBgBrush;
-            StatusBadgeBorder.BorderBrush = RedBorderBrush;
-
-            FeedbackBorder.Background = RedBgBrush;
-            FeedbackBorder.BorderBrush = RedBorderBrush;
-
-            string reason = AIGRAVHttpServer.LastError ?? $"Port {AIGRAVHttpServer.CurrentPort} tidak terhubung.";
-            int nextFree = AIGRAVHttpServer.FindNextAvailablePort(AIGRAVHttpServer.CurrentPort + 1);
-
-            StatusDetailText.Text = $"🔴 Bridge Unconnected: {reason}\n💡 Masukkan port baru (misal: {nextFree}) lalu klik 'Test Connection' untuk menghubungkan.";
-            StatusDetailText.Foreground = RedTextBrush;
-
-            ToggleBridgeButton.Content = "Start Bridge";
-            ToggleBridgeButton.Foreground = GreenBrush;
-        }
-
-        MetricsText.Text = $"URL: http://127.0.0.1:{AIGRAVHttpServer.CurrentPort}/  •  Revit PID: {pid}  •  Requests: {AIGRAVHttpServer.TotalRequestsServed} served";
+        BridgeStatusBanner.Background = ok ? GreenBg : RedBg;
+        BridgeStatusBanner.BorderBrush = ok ? GreenBorder : RedBorder;
+        StatusBannerDot.Fill = ok ? GreenDot : RedDot;
+        StatusBannerText.Foreground = ok ? GreenBannerText : RedText;
+        StatusBannerText.Text = message;
     }
 
-    private void TestConnectionButton_Click(object sender, RoutedEventArgs e)
+    private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        string raw = PortInput.Text.Trim();
-        if (!int.TryParse(raw, out int port) || port < 1024 || port > 65535)
+        if (e.ButtonState == MouseButtonState.Pressed)
         {
-            StatusDetailText.Text = "⚠️ Masukkan nomor port yang valid antara 1024 dan 65535.";
-            StatusDetailText.Foreground = (Brush)new BrushConverter().ConvertFromString("#FDB022")!;
-            return;
-        }
-
-        // Test availability and start listening
-        bool started = AIGRAVHttpServer.Start(port, out string? errorMessage);
-        if (started)
-        {
-            RefreshUiState();
-            StatusDetailText.Text = $"🟢 Test Connection SUKSES! Bridge sekarang terhubung di port {port}.";
-            StatusDetailText.Foreground = GreenTextBrush;
-        }
-        else
-        {
-            RefreshUiState();
-            StatusDetailText.Text = $"🔴 Test Connection GAGAL: {errorMessage}";
-            StatusDetailText.Foreground = RedTextBrush;
+            try { DragMove(); } catch { }
         }
     }
 
-    private void AutoPortButton_Click(object sender, RoutedEventArgs e)
+    private async void TestConnectionButton_Click(object sender, RoutedEventArgs e)
     {
-        int current = AIGRAVHttpServer.CurrentPort;
-        if (int.TryParse(PortInput.Text.Trim(), out int parsed) && parsed > 0)
+        TestConnectionButton.IsEnabled = false;
+        try
         {
-            current = parsed;
+            int? targetPort = int.TryParse(PortTextBox.Text.Trim(), out int parsed) ? parsed : null;
+            if (targetPort.HasValue && targetPort.Value != AIGRAVHttpServer.ActivePort)
+            {
+                var (switched, _, switchMsg) = AIGRAVHttpServer.Restart(targetPort.Value);
+                if (!switched)
+                {
+                    RefreshBridgeState(switchMsg, false);
+                    AIGRAVApp.RefreshRibbonStatus();
+                    return;
+                }
+            }
+
+            var (ok, msg) = await AIGRAVHttpServer.TestSelfConnectionAsync();
+            RefreshBridgeState(msg, ok);
+            AIGRAVApp.RefreshRibbonStatus();
         }
-
-        int nextFree = AIGRAVHttpServer.FindNextAvailablePort(current + 1);
-        PortInput.Text = nextFree.ToString();
-
-        // Automatically connect to the newly found free port
-        TestConnectionButton_Click(sender, e);
+        finally
+        {
+            TestConnectionButton.IsEnabled = true;
+        }
     }
 
-    private void ToggleBridgeButton_Click(object sender, RoutedEventArgs e)
+    private async void FindFreePortButton_Click(object sender, RoutedEventArgs e)
     {
-        if (AIGRAVHttpServer.IsRunning)
+        FindFreePortButton.IsEnabled = false;
+        try
         {
-            // Restart
-            TestConnectionButton_Click(sender, e);
+            var (ok, newPort, msg) = AIGRAVHttpServer.SwitchToNextFreePort();
+            if (ok)
+            {
+                PortTextBox.Text = newPort.ToString();
+                var (testOk, testMsg) = await AIGRAVHttpServer.TestSelfConnectionAsync(newPort);
+                RefreshBridgeState(testOk ? testMsg : msg, testOk);
+            }
+            else
+            {
+                RefreshBridgeState(msg, false);
+            }
+            AIGRAVApp.RefreshRibbonStatus();
         }
-        else
+        finally
         {
-            // Start
-            TestConnectionButton_Click(sender, e);
+            FindFreePortButton.IsEnabled = true;
+        }
+    }
+
+    private async void RestartBridgeButton_Click(object sender, RoutedEventArgs e)
+    {
+        RestartBridgeButton.IsEnabled = false;
+        try
+        {
+            int? targetPort = int.TryParse(PortTextBox.Text.Trim(), out int parsed) ? parsed : null;
+            var (ok, newPort, msg) = AIGRAVHttpServer.Restart(targetPort);
+            if (ok)
+            {
+                PortTextBox.Text = newPort.ToString();
+                var (testOk, testMsg) = await AIGRAVHttpServer.TestSelfConnectionAsync(newPort);
+                RefreshBridgeState(testOk ? testMsg : msg, testOk);
+            }
+            else
+            {
+                RefreshBridgeState(msg, false);
+            }
+            AIGRAVApp.RefreshRibbonStatus();
+        }
+        finally
+        {
+            RestartBridgeButton.IsEnabled = true;
+        }
+    }
+
+    private void PortTextBox_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            RestartBridgeButton_Click(sender, e);
+            e.Handled = true;
         }
     }
 
@@ -220,7 +260,16 @@ public partial class AIGRAVWelcomeWindow : Window
             bool launched = AIGRAVVersionChecker.TriggerUpdateScript();
             if (launched)
             {
-                TaskDialog.Show("AIGRAV Updater", "Skrip sinkronisasi sedang berjalan di latar belakang.\nRevit akan otomatis memuat pembaruan setelah selesai.");
+                TaskDialog.Show(
+                    "AIGRAV Updater",
+                    "Jendela updater PowerShell telah dibuka untuk mengunduh pembaruan dari GitHub.\n\n" +
+                    "PENTING: Tutup Autodesk Revit setelah ini agar skrip updater dapat mengkompilasi ulang AIGRAV.RevitBridge.dll (UI & Bridge), lalu buka kembali Revit.");
+            }
+            else
+            {
+                TaskDialog.Show(
+                    "AIGRAV Updater",
+                    "Tidak dapat menjalankan sync-aigrav.ps1 secara otomatis. Tutup Revit lalu jalankan sync-aigrav.ps1 secara manual di folder AIGRAV.");
             }
         }
     }

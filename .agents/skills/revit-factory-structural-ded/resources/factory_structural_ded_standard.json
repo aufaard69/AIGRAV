@@ -1,0 +1,208 @@
+{
+  "standard_id": "AIGRAV-FAC-STR-DED-v1.0",
+  "title": "AIGRAV Factory Structural DED Drawing Standard",
+  "reference_benchmark": "NUAS-FT-BU-ST.rvt (438m x 48m Industrial Factory, 146 A3 Sheets)",
+  "paper_space_a3": {
+    "iso_size": "A3",
+    "width_mm": 420.0,
+    "height_mm": 297.0,
+    "titleblock_orientation": "bottom",
+    "margins_mm": {
+      "left_binding": 20.0,
+      "right": 6.0,
+      "top": 6.0,
+      "bottom_border": 5.0,
+      "bottom_titleblock_height": 32.0,
+      "bottom_strip_total": 38.0
+    },
+    "drawable_canvas_mm": {
+      "min_x": 20.0,
+      "min_y": 38.0,
+      "max_x": 414.0,
+      "max_y": 291.0,
+      "width_mm": 394.0,
+      "height_mm": 253.0
+    },
+    "status_stamp_keepout_mm": {
+      "label": "FOR TENDER / FOR CONSTRUCTION STAMP",
+      "min_x": 366.0,
+      "min_y": 38.0,
+      "max_x": 414.0,
+      "max_y": 56.0,
+      "width_mm": 48.0,
+      "height_mm": 18.0
+    },
+    "required_titleblock_fields": [
+      "PEMILIK",
+      "PROYEK",
+      "GAMBAR",
+      "DIRENCANAKAN",
+      "DIGAMBAR",
+      "DIPERIKSA",
+      "DISETUJUI",
+      "REVISI",
+      "CATATAN",
+      "TANGGAL",
+      "UNIT",
+      "SKALA",
+      "TGL",
+      "UKURAN",
+      "NO.",
+      "KODE GAMBAR"
+    ],
+    "sheet_code_prefix": "STR-"
+  },
+  "sheet_series": [
+    {
+      "order": 1,
+      "series_code": "000",
+      "sheet_number_pattern": "000",
+      "no_param_rule": "-",
+      "title_pattern": "COVER",
+      "primary_view_types": ["ThreeD"],
+      "preferred_scales": [1000],
+      "grouping_rule": "Single project cover sheet with 3D isometric overview."
+    },
+    {
+      "order": 2,
+      "series_code": "DG",
+      "sheet_number_pattern": "DG-001..DG-NNN",
+      "no_param_rule": "-",
+      "title_pattern": "DAFTAR GAMBAR",
+      "primary_view_types": ["Schedule"],
+      "preferred_scales": [1],
+      "grouping_rule": "Paginated sheet list schedules (~75-80 rows per A3 sheet)."
+    },
+    {
+      "order": 3,
+      "series_code": "SD",
+      "sheet_number_pattern": "SD-001..SD-NNN",
+      "no_param_rule": "001..",
+      "title_pattern": "STANDARD DETAIL STRUKTUR #<N>",
+      "primary_view_types": ["Legend"],
+      "preferred_scales": [100],
+      "grouping_rule": "Reusable Legend views for concrete/steel specs, rebar anchorage, and typical standards."
+    },
+    {
+      "order": 4,
+      "series_code": "DT",
+      "sheet_number_pattern": "DT-001..DT-NNN",
+      "no_param_rule": "sequential",
+      "title_pattern": "DENAH / TAMPAK / ISOMETRIC / PERSPEKTIF",
+      "primary_view_types": ["FloorPlan", "Elevation", "ThreeD"],
+      "preferred_scales": [1000, 500, 400, 250],
+      "grouping_rule": "Overall GA plan -> zone-split floor & roof plans with Keyplans -> 4 elevations (overview + partials) -> 3D isometric & perspective."
+    },
+    {
+      "order": 5,
+      "series_code": "PT",
+      "sheet_number_pattern": "PT-001..PT-NNN",
+      "no_param_rule": "sequential",
+      "title_pattern": "PORTAL AS <GRID_OR_RANGE>",
+      "primary_view_types": ["Section"],
+      "preferred_scales": [200, 250, 300],
+      "grouping_rule": "Group identical transverse grids (e.g., AS 5-14, AS 42-59); split longitudinal grids >150m into PARSIAL 1&2 and PARSIAL 3&4 stacked pairs."
+    },
+    {
+      "order": 6,
+      "series_code": "PD",
+      "sheet_number_pattern": "PD-001..PD-NNN",
+      "no_param_rule": "sequential",
+      "title_pattern": "DENAH PONDASI/STRAUSS/PEDESTAL/KOLOM BAJA - PARSIAL <N> | DETAIL PONDASI <TYPE>",
+      "primary_view_types": ["FloorPlan", "Detail", "Section", "ThreeD", "Legend"],
+      "preferred_scales": [500, 50, 25, 20, 15],
+      "grouping_rule": "Partial substructure plans (with Keyplans) followed by one Hybrid 2D+3D Detail sheet per unique pilecap type (PC.xxx), sloof, ramps, poer, and piles."
+    },
+    {
+      "order": 7,
+      "series_code": "LT",
+      "sheet_number_pattern": "LT-001..LT-NNN",
+      "no_param_rule": "sequential",
+      "title_pattern": "DENAH PENGECORAN/MEZZANINE | POTONGAN MEZZANINE | DETAIL PIT",
+      "primary_view_types": ["FloorPlan", "Section", "Detail", "ThreeD", "DraftingView", "Legend"],
+      "preferred_scales": [500, 200, 150, 100, 25, 20],
+      "grouping_rule": "Slab pour/joint plans followed by paired [Denah + 3D Isometric] + [Potongan] sheets for every mezzanine zone, plus lift pit & railing details."
+    },
+    {
+      "order": 8,
+      "series_code": "RF",
+      "sheet_number_pattern": "RF-001..RF-NNN",
+      "no_param_rule": "sequential",
+      "title_pattern": "DENAH ATAP | DETAIL TIE BEAM/BRACING/TALANG/CLADDING/TANGGA | DETAIL JOINT BAJA",
+      "primary_view_types": ["FloorPlan", "Detail", "Section", "DraftingView", "Legend", "ThreeD"],
+      "preferred_scales": [500, 200, 100, 50, 25, 20, 15, 10],
+      "grouping_rule": "Multi-layer roof framing plans -> secondary steel member details -> canopy/cremona/stair assembly sheets -> steel connection matrix Legend sheets -> steel 3D isometrics."
+    }
+  ],
+  "layout_templates": {
+    "A_PartialPlanWithKeyplan": {
+      "description": "Keyplan top-left, Legend top-right, 1 wide partial plan or 2 stacked partial plans.",
+      "slots_mm": {
+        "keyplan": { "min_x": 24, "min_y": 225, "max_x": 140, "max_y": 285 },
+        "legend": { "min_x": 260, "min_y": 225, "max_x": 408, "max_y": 285 },
+        "main_plan_single": { "min_x": 24, "min_y": 44, "max_x": 408, "max_y": 220 },
+        "stacked_plan_top": { "min_x": 145, "min_y": 165, "max_x": 408, "max_y": 285 },
+        "stacked_plan_bottom": { "min_x": 24, "min_y": 44, "max_x": 408, "max_y": 160 }
+      }
+    },
+    "B_ElevationWithStackedPartials": {
+      "description": "Full-building overview elevation at top with callout boxes A & B; 2 zoomed partials stacked below.",
+      "slots_mm": {
+        "overview_top": { "min_x": 24, "min_y": 225, "max_x": 408, "max_y": 285 },
+        "partial_a_middle": { "min_x": 24, "min_y": 135, "max_x": 408, "max_y": 220 },
+        "partial_b_bottom": { "min_x": 24, "min_y": 44, "max_x": 408, "max_y": 130 }
+      }
+    },
+    "C_PortalFrame": {
+      "description": "Single centered transverse portal frame OR 2 stacked longitudinal partial portals with right-aligned level heads.",
+      "slots_mm": {
+        "transverse_single": { "min_x": 30, "min_y": 58, "max_x": 400, "max_y": 278 },
+        "longitudinal_top": { "min_x": 24, "min_y": 165, "max_x": 406, "max_y": 285 },
+        "longitudinal_bottom": { "min_x": 24, "min_y": 44, "max_x": 406, "max_y": 158 }
+      }
+    },
+    "D_Hybrid2DDetailWith3DIsometric": {
+      "description": "Primary 2D plans/sections/callouts on left/center paired with mandatory 3D Shaded Isometric on the right.",
+      "slots_mm": {
+        "primary_2d_left": { "min_x": 24, "min_y": 44, "max_x": 275, "max_y": 285 },
+        "callout_strip_bottom_center": { "min_x": 140, "min_y": 44, "max_x": 290, "max_y": 170 },
+        "isometric_3d_right": { "min_x": 280, "min_y": 62, "max_x": 408, "max_y": 250 }
+      }
+    },
+    "E_HighDensityAssembly": {
+      "description": "Up to 8 viewports on A3 (e.g. stairs/mezzanine): Plan + 3D Isometric top, orthogonal sections bottom, 2-column callout chain right.",
+      "slots_mm": {
+        "plan_top_left": { "min_x": 24, "min_y": 170, "max_x": 155, "max_y": 285 },
+        "isometric_top_center": { "min_x": 160, "min_y": 170, "max_x": 280, "max_y": 285 },
+        "sections_bottom_left": { "min_x": 24, "min_y": 44, "max_x": 265, "max_y": 165 },
+        "callout_grid_right": { "min_x": 270, "min_y": 62, "max_x": 408, "max_y": 285 }
+      }
+    }
+  },
+  "approved_iso_scales": {
+    "plan_ga": [200, 250, 500, 1000],
+    "plan_partial": [100, 150, 200, 250, 400, 500],
+    "keyplan": [2000, 2500, 3000, 5000],
+    "portal_transversal": [100, 150, 200],
+    "portal_longitudinal": [200, 250, 300],
+    "elevation": [100, 200, 250, 400, 500, 1000],
+    "detail_component": [15, 20, 25, 50],
+    "detail_connection": [10, 15, 20],
+    "legend_standard": [20, 25, 50, 100]
+  },
+  "banned_non_iso_scales": {
+    "scales": [12, 26, 32, 35, 40, 60, 70, 80, 90, 110, 120, 160, 350, 550, 600, 650, 700, 800, 900, 1200, 1250, 1300],
+    "allow_with_explicit_user_override": true,
+    "override_condition": "Permitted only when user explicitly approves custom-fit scale for extreme spans >350m on A3."
+  },
+  "qa_antipattern_checks": {
+    "max_detail_number_length": 4,
+    "forbid_double_spaces_in_names": true,
+    "forbid_copy_suffix_regex": "(?i)\\bcopy\\s*\\d*\\b",
+    "forbid_default_detail_name_regex": "(?i)^(detail|section)\\s+\\d+$",
+    "typo_blocklist_regex": "(?i)(loadick|keyplankolom|cemper|detil|standart|produksi\\s+produksi)",
+    "forbid_referencing_sheet_on_independent_plans": true,
+    "require_no_param_sync_before_export": true,
+    "require_large_model_pagination_threshold_sheets": 50
+  }
+}

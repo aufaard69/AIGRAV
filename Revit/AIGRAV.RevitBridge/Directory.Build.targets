@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <Revit2026Dir Condition="'$(Revit2026Dir)' == ''">C:\Program Files\Autodesk\Revit 2026</Revit2026Dir>
+  </PropertyGroup>
+  <Target Name="ResolveMissingRevitReferences" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <Reference Condition="'%(Reference.Identity)' == 'RevitAPI' And !Exists('%(Reference.HintPath)') And Exists('$(Revit2026Dir)\RevitAPI.dll')">
+        <HintPath>$(Revit2026Dir)\RevitAPI.dll</HintPath>
+      </Reference>
+      <Reference Condition="'%(Reference.Identity)' == 'RevitAPIUI' And !Exists('%(Reference.HintPath)') And Exists('$(Revit2026Dir)\RevitAPIUI.dll')">
+        <HintPath>$(Revit2026Dir)\RevitAPIUI.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+  </Target>
+</Project>

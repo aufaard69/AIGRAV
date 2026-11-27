@@ -1,256 +1,324 @@
-using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using Autodesk.Revit.UI;
 
 namespace AIGRAV.RevitBridge;
 
 public static class AIGRAVHttpServer
 {
+    private static readonly object StateLock = new();
     private static HttpListener? _listener;
     private static CancellationTokenSource? _cts;
+    private static long _requestsServed;
 
     public const int BasePort = 8765;
     public const int MaxPort = 8775;
-    public const int DefaultPort = BasePort;
 
-    public static int CurrentPort { get; private set; } = DefaultPort;
-    public static int ActivePort => IsRunning ? CurrentPort : 0;
+    private static readonly string TempPortConfigPath = Path.Combine(Path.GetTempPath(), "aigrav_port.txt");
 
-    public static string CurrentUrl => $"http://127.0.0.1:{CurrentPort}/";
-    public static string ActiveUrl => IsRunning ? CurrentUrl : string.Empty;
+    public static int ActivePort { get; private set; } = 0;
+    public static string ActiveUrl { get; private set; } = string.Empty;
 
-    public static bool IsRunning => _listener != null && _listener.IsListening;
-    public static string? LastError { get; private set; }
-    public static DateTime? StartedAt { get; private set; }
-    public static int TotalRequestsServed { get; internal set; } = 0;
+    public static bool IsRunning
+    {
+        get
+        {
+            lock (StateLock)
+            {
+                return _listener != null && _listener.IsListening && ActivePort > 0;
+            }
+        }
+    }
+
+    public static long RequestsServed => Interlocked.Read(ref _requestsServed);
 
     public static event Action? StateChanged;
 
-    private static readonly string PortConfigPath = Path.Combine(@"C:\AIGRAV", "aigrav_port.txt");
-    private static readonly string TempPortConfigPath = Path.Combine(Path.GetTempPath(), "aigrav_port.txt");
-
-    static AIGRAVHttpServer()
+    private static void NotifyStateChanged()
     {
-        // Try reading saved port if exists
         try
         {
-            if (File.Exists(PortConfigPath))
-            {
-                string txt = File.ReadAllText(PortConfigPath).Trim();
-                if (int.TryParse(txt, out int savedPort) && savedPort >= 1024 && savedPort <= 65535)
-                {
-                    CurrentPort = savedPort;
-                }
-            }
-        }
-        catch { }
-    }
-
-    public static bool Start(int port, out string? errorMessage)
-    {
-        errorMessage = null;
-
-        if (port < 1024 || port > 65535)
-        {
-            errorMessage = "Port harus berada dalam rentang 1024 - 65535.";
-            LastError = errorMessage;
             StateChanged?.Invoke();
-            return false;
         }
-
-        // If already listening on requested port, return true
-        if (_listener != null && _listener.IsListening && CurrentPort == port)
+        catch
         {
-            return true;
-        }
-
-        // Stop existing listener if on a different port or active
-        Stop();
-
-        try
-        {
-            _listener = new HttpListener();
-            string prefix = $"http://127.0.0.1:{port}/";
-            _listener.Prefixes.Add(prefix);
-            _listener.Start();
-
-            CurrentPort = port;
-            LastError = null;
-            StartedAt = DateTime.Now;
-
-            SaveActivePort(port);
-            WriteSessionFile(port);
-
-            _cts = new CancellationTokenSource();
-            _ = Task.Run(() => ListenLoopAsync(_cts.Token));
-
-            StateChanged?.Invoke();
-            return true;
-        }
-        catch (HttpListenerException hlex)
-        {
-            _listener = null;
-            _cts = null;
-            int code = hlex.NativeErrorCode != 0 ? hlex.NativeErrorCode : hlex.ErrorCode;
-            if (code == 183)
-            {
-                LastError = $"Port {port} sedang digunakan atau terdapat konflik registrasi URL (ERROR_ALREADY_EXISTS). Silakan coba port {FindNextAvailablePort(port + 1)}.";
-            }
-            else
-            {
-                LastError = $"Port {port} tidak dapat diakses (HttpListener Error {code}: {hlex.Message}). Silakan coba port {FindNextAvailablePort(port + 1)}.";
-            }
-            errorMessage = LastError;
-            StateChanged?.Invoke();
-            return false;
-        }
-        catch (Exception ex)
-        {
-            _listener = null;
-            _cts = null;
-            LastError = $"Gagal memulai server pada port {port}: {ex.Message}";
-            errorMessage = LastError;
-            StateChanged?.Invoke();
-            return false;
+            // UI subscribers must never disrupt HTTP server lifecycle
         }
     }
 
     public static void Start()
     {
-        if (_listener != null && _listener.IsListening)
+        var (ok, _, errorMessage) = StartAuto(showErrorDialog: true);
+        if (!ok && !string.IsNullOrWhiteSpace(errorMessage))
         {
-            return;
+            // Error dialog is already handled inside StartAuto when showErrorDialog == true
         }
+    }
 
-        // First attempt preferred CurrentPort
-        if (Start(CurrentPort, out _))
+    public static (bool ok, int port, string message) StartAuto(bool showErrorDialog = false)
+    {
+        lock (StateLock)
         {
-            return;
-        }
-
-        // Automatic fallback: scan ports BasePort through MaxPort
-        for (int p = BasePort; p <= MaxPort; p++)
-        {
-            if (p == CurrentPort) continue;
-            if (Start(p, out _))
+            if (_listener != null && _listener.IsListening && ActivePort > 0)
             {
-                return;
+                return (true, ActivePort, $"Bridge sudah berjalan di {ActiveUrl}");
+            }
+        }
+
+        Exception? lastEx = null;
+
+        for (int port = BasePort; port <= MaxPort; port++)
+        {
+            var attempt = TryBindPortInternal(port);
+            if (attempt.ok)
+            {
+                return (attempt.ok, attempt.port, attempt.message);
+            }
+            lastEx = attempt.exception;
+            if (attempt.fatalNonSocketError)
+            {
+                break;
+            }
+        }
+
+        if (showErrorDialog)
+        {
+            TaskDialog.Show(
+                "AIGRAV HTTP Server Error",
+                $"AIGRAV HTTP Server gagal start pada rentang port {BasePort}-{MaxPort}.\n\n" +
+                (lastEx?.ToString() ?? "Seluruh port dalam rentang sedang digunakan."));
+        }
+
+        return (false, 0, lastEx?.Message ?? $"Seluruh port pada rentang {BasePort}-{MaxPort} sedang digunakan.");
+    }
+
+    public static (bool ok, int port, string message) Restart(int? preferredPort = null)
+    {
+        Stop();
+
+        if (preferredPort.HasValue)
+        {
+            int target = preferredPort.Value;
+            if (target < 1024 || target > 65535)
+            {
+                return (false, 0, "Port harus berada di rentang 1024-65535.");
+            }
+            var attempt = TryBindPortInternal(target);
+            if (attempt.ok)
+            {
+                return (true, attempt.port, attempt.message);
+            }
+            return (false, 0, attempt.message);
+        }
+
+        return StartAuto(showErrorDialog: false);
+    }
+
+    public static (bool ok, int port, string message) SwitchToNextFreePort()
+    {
+        int current = ActivePort > 0 ? ActivePort : BasePort - 1;
+        var candidates = new List<int>();
+
+        for (int p = Math.Max(BasePort, current + 1); p <= MaxPort; p++)
+        {
+            candidates.Add(p);
+        }
+        for (int p = BasePort; p <= Math.Min(MaxPort, current - 1); p++)
+        {
+            candidates.Add(p);
+        }
+        if (candidates.Count == 0 && ActivePort > 0)
+        {
+            candidates.Add(ActivePort);
+        }
+
+        foreach (int candidate in candidates)
+        {
+            if (IsTcpPortAvailable(candidate))
+            {
+                Stop();
+                var res = TryBindPortInternal(candidate);
+                if (res.ok)
+                {
+                    return (true, res.port, $"Berpindah ke port bebas :{res.port}");
+                }
+            }
+        }
+
+        // Fallback if candidate outside BasePort..MaxPort is needed
+        for (int p = MaxPort + 1; p <= MaxPort + 20; p++)
+        {
+            if (IsTcpPortAvailable(p))
+            {
+                Stop();
+                var res = TryBindPortInternal(p);
+                if (res.ok)
+                {
+                    return (true, res.port, $"Berpindah ke port bebas :{res.port}");
+                }
+            }
+        }
+
+        return (false, ActivePort, "Tidak ditemukan port bebas di rentang 8765-8795.");
+    }
+
+    private static bool IsTcpPortAvailable(int port)
+    {
+        try
+        {
+            using var listener = new TcpListener(IPAddress.Loopback, port);
+            listener.Start();
+            listener.Stop();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static (bool ok, int port, string message, Exception? exception, bool fatalNonSocketError) TryBindPortInternal(int port)
+    {
+        lock (StateLock)
+        {
+            try
+            {
+                var listener = new HttpListener();
+                string url = $"http://127.0.0.1:{port}/";
+                listener.Prefixes.Add(url);
+                listener.Start();
+
+                _listener = listener;
+                ActivePort = port;
+                ActiveUrl = url;
+                _cts = new CancellationTokenSource();
+
+                WriteSessionFile(port);
+                SaveActivePortHint(port);
+
+                var token = _cts.Token;
+                _ = Task.Run(() => ListenLoopAsync(listener, token));
+
+                NotifyStateChanged();
+                return (true, port, $"Bridge Connected di {url}", null, false);
+            }
+            catch (HttpListenerException ex)
+            {
+                int code = ex.NativeErrorCode != 0 ? ex.NativeErrorCode : ex.ErrorCode;
+                string detail = code == 183
+                    ? $"Port {port} sedang digunakan atau terdapat konflik registrasi URL (ERROR_ALREADY_EXISTS)."
+                    : $"Port {port} tidak dapat dipakai (Error {code}: {ex.Message}).";
+                return (false, 0, detail, ex, false);
+            }
+            catch (Exception ex)
+            {
+                return (false, 0, ex.Message, ex, true);
             }
         }
     }
 
     public static void Stop()
     {
-        try
+        lock (StateLock)
         {
-            _cts?.Cancel();
-            if (_listener != null)
+            int previousPort = ActivePort;
+            try
             {
-                if (_listener.IsListening)
-                {
-                    _listener.Stop();
-                }
-                _listener.Close();
+                _cts?.Cancel();
+                _listener?.Stop();
+                _listener?.Close();
+                RemoveSessionFile();
+                RemoveActivePortHintIfOwned(previousPort);
+            }
+            catch
+            {
+                // Ignore shutdown errors
             }
 
-            RemoveSessionFile();
-        }
-        catch
-        {
-            // Ignore shutdown errors
+            _listener = null;
+            _cts = null;
+            ActivePort = 0;
+            ActiveUrl = string.Empty;
         }
 
-        _listener = null;
-        _cts = null;
-        StateChanged?.Invoke();
+        NotifyStateChanged();
     }
 
-    public static (bool isAvailable, string message) TestPortAvailability(int port)
+    public static async Task<(bool ok, string message)> TestSelfConnectionAsync(int? portOverride = null)
     {
-        if (port < 1024 || port > 65535)
+        int targetPort = portOverride ?? ActivePort;
+        if (targetPort <= 0)
         {
-            return (false, "Port tidak valid (harus antara 1024 - 65535).");
+            return (false, "HTTP Server Bridge belum aktif. Tekan Restart Bridge terlebih dahulu.");
         }
 
-        // If current server is already running on this port, it is valid and working
-        if (IsRunning && CurrentPort == port)
-        {
-            return (true, $"Server saat ini sedang aktif mendengarkan di port {port}.");
-        }
-
-        // Test with TcpListener first for immediate port in use check
-        TcpListener? tcpTest = null;
+        string url = $"http://127.0.0.1:{targetPort}/";
         try
         {
-            tcpTest = new TcpListener(IPAddress.Loopback, port);
-            tcpTest.Start();
-            tcpTest.Stop();
-        }
-        catch (SocketException sex) when (sex.SocketErrorCode == SocketError.AddressAlreadyInUse)
-        {
-            return (false, $"Port {port} sudah terpakai oleh aplikasi/proses lain.");
+            using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(3) };
+            using var content = new StringContent("{\"tool\":\"__bridge_health__\",\"argument\":\"\"}", Encoding.UTF8, "application/json");
+            using var resp = await client.PostAsync(url, content).ConfigureAwait(false);
+            string body = await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            if (!resp.IsSuccessStatusCode)
+            {
+                return (false, $"HTTP {(int)resp.StatusCode} pada {url}");
+            }
+
+            return (true, $"Bridge Connected di {url} • Siap melayani instruksi AI Revit.");
         }
         catch (Exception ex)
         {
-            return (false, $"Port {port} tidak dapat diakses: {ex.Message}");
-        }
-
-        // Test HttpListener prefix binding
-        HttpListener? testListener = null;
-        try
-        {
-            testListener = new HttpListener();
-            testListener.Prefixes.Add($"http://127.0.0.1:{port}/");
-            testListener.Start();
-            testListener.Stop();
-            testListener.Close();
-            return (true, $"Port {port} tersedia dan siap digunakan!");
-        }
-        catch (HttpListenerException hlex) when (hlex.ErrorCode == 183)
-        {
-            return (false, $"Port {port} memiliki konflik registrasi URL di sistem (ERROR_ALREADY_EXISTS).");
-        }
-        catch (Exception ex)
-        {
-            return (false, $"Gagal menguji port {port}: {ex.Message}");
-        }
-        finally
-        {
-            try { testListener?.Close(); } catch { }
+            return (false, $"Koneksi ke {url} gagal: {ex.Message}");
         }
     }
 
-    public static int FindNextAvailablePort(int startingPort = BasePort)
-    {
-        for (int p = startingPort; p <= startingPort + 50; p++)
-        {
-            var (isAvail, _) = TestPortAvailability(p);
-            if (isAvail)
-            {
-                return p;
-            }
-        }
-        return startingPort;
-    }
-
-    private static void SaveActivePort(int port)
+    private static void SaveActivePortHint(int port)
     {
         try
         {
-            File.WriteAllText(PortConfigPath, port.ToString());
+            File.WriteAllText(TempPortConfigPath, port.ToString(), Encoding.UTF8);
         }
         catch { }
 
         try
         {
-            File.WriteAllText(TempPortConfigPath, port.ToString());
+            string? rootPortPath = AIGRAVVersionChecker.ResolveRootFile("aigrav_port.txt");
+            if (!string.IsNullOrWhiteSpace(rootPortPath))
+            {
+                File.WriteAllText(rootPortPath, port.ToString(), Encoding.UTF8);
+            }
+        }
+        catch { }
+    }
+
+    private static void RemoveActivePortHintIfOwned(int port)
+    {
+        if (port <= 0) return;
+
+        try
+        {
+            if (File.Exists(TempPortConfigPath) &&
+                File.ReadAllText(TempPortConfigPath).Trim() == port.ToString())
+            {
+                File.Delete(TempPortConfigPath);
+            }
+        }
+        catch { }
+
+        try
+        {
+            string? rootPortPath = AIGRAVVersionChecker.ResolveRootFile("aigrav_port.txt");
+            if (!string.IsNullOrWhiteSpace(rootPortPath) &&
+                File.Exists(rootPortPath) &&
+                File.ReadAllText(rootPortPath).Trim() == port.ToString())
+            {
+                File.Delete(rootPortPath);
+            }
         }
         catch { }
     }
@@ -264,13 +332,15 @@ public static class AIGRAVHttpServer
 
             int pid = Environment.ProcessId;
             string filePath = Path.Combine(tempDir, $"session_{pid}.json");
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
             var sessionInfo = new
             {
                 pid = pid,
                 port = port,
                 url = $"http://127.0.0.1:{port}/",
-                started_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                started_at = timestamp,
+                updated_at = timestamp
             };
 
             string json = JsonSerializer.Serialize(sessionInfo, new JsonSerializerOptions { WriteIndented = true });
@@ -300,30 +370,30 @@ public static class AIGRAVHttpServer
     }
 
     private static async Task ListenLoopAsync(
+        HttpListener listener,
         CancellationToken cancellationToken)
     {
-        while (!cancellationToken.IsCancellationRequested &&
-               _listener != null &&
-               _listener.IsListening)
+        while (!cancellationToken.IsCancellationRequested && listener.IsListening)
         {
-            HttpListenerContext context;
-
             try
             {
-                context = await _listener.GetContextAsync();
+                HttpListenerContext context = await listener.GetContextAsync();
+
+                _ = Task.Run(
+                    () => HandleRequestAsync(context),
+                    cancellationToken);
             }
             catch
             {
-                break;
+                if (cancellationToken.IsCancellationRequested || !listener.IsListening)
+                {
+                    break;
+                }
             }
-
-            _ = Task.Run(
-                () => ProcessRequestAsync(context),
-                cancellationToken);
         }
     }
 
-    private static async Task ProcessRequestAsync(
+    private static async Task HandleRequestAsync(
         HttpListenerContext context)
     {
         try
@@ -335,81 +405,102 @@ public static class AIGRAVHttpServer
                 return;
             }
 
-            using var reader =
-                new StreamReader(
-                    context.Request.InputStream,
-                    context.Request.ContentEncoding);
+            using StreamReader reader = new(
+                context.Request.InputStream,
+                context.Request.ContentEncoding ?? Encoding.UTF8);
+            string body = await reader.ReadToEndAsync();
 
-            string body =
-                await reader.ReadToEndAsync();
+            AIGRAVHttpRequest? request = JsonSerializer.Deserialize<AIGRAVHttpRequest>(
+                body,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
-            AIGRAVHttpRequest? request =
-                JsonSerializer.Deserialize<AIGRAVHttpRequest>(
-                    body,
-                    new JsonSerializerOptions
+            if (request == null || string.IsNullOrWhiteSpace(request.Tool))
+            {
+                await WriteResponseAsync(
+                    context,
+                    new AIGRAVHttpResponse
                     {
-                        PropertyNameCaseInsensitive = true
+                        Success = false,
+                        Result = "Invalid request."
                     });
 
-            if (request == null ||
-                string.IsNullOrWhiteSpace(request.Tool))
-            {
-                context.Response.StatusCode = 400;
-                context.Response.Close();
                 return;
             }
 
-            TotalRequestsServed++;
-            StateChanged?.Invoke();
+            if (request.Tool.Equals("__bridge_health__", StringComparison.OrdinalIgnoreCase))
+            {
+                string payload = JsonSerializer.Serialize(new
+                {
+                    status = "Connected",
+                    port = ActivePort,
+                    url = ActiveUrl,
+                    pid = Environment.ProcessId,
+                    requests_served = RequestsServed
+                });
 
-            string result =
-                await AIGRAVBridge.ExecuteToolAsync(
-                    request.Tool,
-                    request.Argument);
+                await WriteResponseAsync(
+                    context,
+                    new AIGRAVHttpResponse
+                    {
+                        Success = true,
+                        Result = payload
+                    });
+                return;
+            }
 
-            AIGRAVHttpResponse response =
-                new()
+            Interlocked.Increment(ref _requestsServed);
+            NotifyStateChanged();
+
+            string result = await AIGRAVBridge.ExecuteToolAsync(
+                request.Tool,
+                request.Argument);
+
+            await WriteResponseAsync(
+                context,
+                new AIGRAVHttpResponse
                 {
                     Success = true,
                     Result = result
-                };
-
-            byte[] buffer =
-                JsonSerializer.SerializeToUtf8Bytes(response);
-
-            context.Response.ContentType =
-                "application/json";
-
-            context.Response.ContentLength64 =
-                buffer.Length;
-
-            await context.Response.OutputStream.WriteAsync(buffer);
-            context.Response.Close();
+                });
         }
         catch (Exception ex)
         {
-            context.Response.StatusCode = 500;
-
-            byte[] error =
-                Encoding.UTF8.GetBytes(ex.ToString());
-
-            await context.Response.OutputStream.WriteAsync(error);
-            context.Response.Close();
+            await WriteResponseAsync(
+                context,
+                new AIGRAVHttpResponse
+                {
+                    Success = false,
+                    Result = ex.ToString()
+                });
         }
+    }
+
+    private static async Task WriteResponseAsync(
+        HttpListenerContext context,
+        AIGRAVHttpResponse response)
+    {
+        string json = JsonSerializer.Serialize(response);
+        byte[] bytes = Encoding.UTF8.GetBytes(json);
+
+        context.Response.ContentType = "application/json";
+        context.Response.ContentLength64 = bytes.Length;
+
+        await context.Response.OutputStream.WriteAsync(bytes);
+        context.Response.Close();
     }
 }
 
 public class AIGRAVHttpRequest
 {
     public string Tool { get; set; } = string.Empty;
-
     public string? Argument { get; set; }
 }
 
 public class AIGRAVHttpResponse
 {
     public bool Success { get; set; }
-
     public string Result { get; set; } = string.Empty;
 }
-
