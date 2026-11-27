@@ -26,7 +26,7 @@ When structural framing (such as tapered haunches, split WF beams, or voute cuts
 Revit provides a dedicated native subelement category:
 > **`BuiltInCategory.OST_StructConnectionProfiles` (Structural Connection Profiles)**
 
-By targeting `OST_StructConnectionProfiles`, all embedded connection cuts are fully accessible, schedulable, and report accurate geometry.
+By targeting `OST_StructConnectionProfiles` AND enforcing **QTO v4.0 Dual-Key Parameter Injection** via `aigrav_qto_sync_connection_params` (`mode: "plan"` -> `"execute"`), `Type of Connection` and `Lokasi` are automatically bound across all 10 Advance Steel categories and propagated from every parent Custom Steel Connection handler into 100% of embedded voutes/plates/bolts/anchors so none escape QTO filtering.
 
 ---
 

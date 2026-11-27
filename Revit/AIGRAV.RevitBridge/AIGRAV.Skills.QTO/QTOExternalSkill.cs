@@ -1,8 +1,6 @@
 using System.Globalization;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using AIGRAV.Contracts;
 using AIGRAV.Skills.QTO.Models;
 using Autodesk.Revit.DB;
@@ -15,16 +13,14 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
     public AIGRAVSkillInfo Info { get; } = new()
     {
         Name = "QTO Engine",
-        Version = "3.1",
+        Version = "4.0",
         Category = "Quantity Takeoff",
-        Description = "QTO measurement and classification engine with steel weight calculation from the user-provided AIGRAV steel database.",
+        Description = "Universal multi-discipline QTO measurement engine with cleaned SNI/JIS steel table calibration, solid-volume plate/voute weight, surface painting area, and Lokasi grouping.",
         Source = "External",
         Priority = 1500
     };
 
-    private static readonly object DatabaseSync = new();
-    private static SteelDatabase? _database;
-    private static string _databasePath = string.Empty;
+    private const double SteelDensityKgPerM3 = 7850.0;
 
     public bool CanHandle(string toolName) =>
         toolName.Equals("aigrav_qto", StringComparison.OrdinalIgnoreCase);
@@ -48,17 +44,14 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
                 return $"QTO failed: unknown BuiltInCategory '{request.Category}'.";
 
             QTOOutputTemplate template = QTOTemplates.Resolve(request.Template);
-            QTOOutputMode mode = ResolveOutputMode(template);
+            QTOOutputMode mode = ResolveOutputMode(template, category);
 
-            SteelDatabase? database = null;
-            string databaseMessage = string.Empty;
-            if (mode == QTOOutputMode.Steel)
-                database = LoadSteelDatabase(out databaseMessage);
+            SteelDatabaseProvider? database = mode == QTOOutputMode.Steel ? SteelDatabaseProvider.LoadDefault() : null;
 
-            List<QTORecord> records = CollectRecords(doc, category, mode, database);
+            List<QTORecord> records = CollectRecords(doc, category, mode, database, request);
             List<QTORecord> grouped = GroupRecords(records, request, template, mode);
 
-            string renderText = RenderResult(doc, template, category, mode, records, grouped, database, databaseMessage);
+            string renderText = RenderResult(doc, template, category, mode, records, grouped, database);
 
             if (!string.IsNullOrWhiteSpace(request.ScheduleName))
             {
@@ -78,7 +71,7 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
         }
     }
 
-    private static List<QTORecord> CollectRecords(Document doc, BuiltInCategory category, QTOOutputMode mode, SteelDatabase? database)
+    private static List<QTORecord> CollectRecords(Document doc, BuiltInCategory category, QTOOutputMode mode, SteelDatabaseProvider? database, QTORequest request)
     {
         List<Element> elements = new FilteredElementCollector(doc)
             .OfCategory(category)
@@ -88,22 +81,34 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
 
         List<QTORecord> records = new(elements.Count);
         foreach (Element element in elements)
-            records.Add(BuildRecord(doc, element, mode, database));
+        {
+            QTORecord rec = BuildRecord(doc, element, category, mode, database);
+            if (!string.IsNullOrWhiteSpace(request.LokasiFilter) &&
+                !string.Equals(rec.Lokasi, request.LokasiFilter, StringComparison.OrdinalIgnoreCase))
+                continue;
+            if (!string.IsNullOrWhiteSpace(request.CommentsFilter) &&
+                !rec.Comments.Contains(request.CommentsFilter, StringComparison.OrdinalIgnoreCase))
+                continue;
+            records.Add(rec);
+        }
 
         return records;
     }
 
-    private static QTORecord BuildRecord(Document doc, Element element, QTOOutputMode mode, SteelDatabase? database)
+    private static QTORecord BuildRecord(Document doc, Element element, BuiltInCategory category, QTOOutputMode mode, SteelDatabaseProvider? database)
     {
-        Element? typeElement = null;
-        ElementId typeId = element.GetTypeId();
-        if (typeId != ElementId.InvalidElementId)
-            typeElement = doc.GetElement(typeId);
+        ElementType? typeElement = doc.GetElement(element.GetTypeId()) as ElementType;
+
+        string lokasi = FirstNonEmpty(
+            GetStringParameter(element, "Lokasi"),
+            GetStringParameter(element, "LOKASI"));
 
         string comments = FirstNonEmpty(
             GetStringParameter(element, "Comments"),
+            GetStringParameter(element, "Type of Connection"),
             GetStringParameter(typeElement, "Comments"));
 
+        string familyName = typeElement?.FamilyName ?? string.Empty;
         string typeName = FirstNonEmpty(
             GetStringParameter(element, "Type"),
             typeElement?.Name,
@@ -114,45 +119,72 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
             GetStringParameter(typeElement, "Profile"),
             typeName);
 
+        double? lengthMm = FirstNonNull(
+            GetLengthMm(element, "Cut Length"),
+            GetLengthMm(element, "Length"),
+            GetLocationCurveLengthMm(element));
+        double? volumeM3 = GetVolumeM3(element, "Volume");
+
         QTORecord record = new()
         {
+            Lokasi = lokasi,
             Comments = comments,
             Type = typeName,
             Profile = profile,
             Level = GetLevelName(doc, element),
-            LengthMm = FirstNonNull(
-                GetLengthMm(element, "Cut Length"),
-                GetLengthMm(element, "Length"),
-                GetLocationCurveLengthMm(element)),
+            LengthMm = lengthMm,
             AreaM2 = GetAreaM2(element, "Area"),
-            VolumeM3 = GetVolumeM3(element, "Volume"),
+            VolumeM3 = volumeM3,
             Count = 1,
             Source = "Revit",
             Notes = $"ElementId={element.Id.Value}"
         };
 
-        if (mode == QTOOutputMode.Steel && database != null)
+        if (mode == QTOOutputMode.Steel)
         {
-            SteelMatch? match = database.Find(profile, typeName);
-            if (match != null)
+            // Plates & Voutes use net solid volume * 7850 kg/m3
+            if (category == BuiltInCategory.OST_StructConnectionPlates ||
+                category == BuiltInCategory.OST_StructConnectionProfiles)
             {
-                record.ReferenceWeightKgPerMeter = match.WeightPerMeterKg;
-                if (record.LengthMm.HasValue)
-                    record.CalibratedWeightKg = record.LengthMm.Value / 1000.0 * match.WeightPerMeterKg;
+                double? exactKg = GetNumericParam(element, "Exact Weight") ?? GetNumericParam(element, "Weight");
+                if (!exactKg.HasValue && volumeM3.HasValue)
+                    exactKg = volumeM3.Value * SteelDensityKgPerM3;
 
-                record.Notes += $"; SteelMatch={match.Family}:{match.Profile}; kg/m={match.WeightPerMeterKg.ToString("0.######", CultureInfo.InvariantCulture)}";
+                record.CalibratedWeightKg = exactKg;
+                record.SteelMatchStatus = "SOLID_VOLUME";
+                record.Notes += "; SteelMatch=SOLID_VOLUME_7850";
             }
-            else
+            else if (database != null)
             {
-                record.Notes += "; SteelMatch=NOT_FOUND";
+                SteelProfileMatch match = database.TryMatch(familyName, typeName, profile);
+                record.SteelMatchStatus = match.MatchStatus;
+                if (match.MatchStatus == "EXACT" || match.MatchStatus == "ALIAS")
+                {
+                    record.ReferenceWeightKgPerMeter = match.WeightPerMeterKg;
+                    if (lengthMm.HasValue)
+                    {
+                        double lenM = lengthMm.Value / 1000.0;
+                        record.CalibratedWeightKg = lenM * match.WeightPerMeterKg;
+                        if (match.SurfaceAreaM2PerM > 0)
+                            record.SurfaceAreaM2 = lenM * match.SurfaceAreaM2PerM;
+                    }
+                    record.Notes += $"; SteelMatch={match.Family}:{match.Profile}; kg/m={match.WeightPerMeterKg.ToString("0.######", CultureInfo.InvariantCulture)}";
+                }
+                else
+                {
+                    record.Notes += $"; SteelMatch={match.MatchStatus}";
+                }
             }
         }
 
         return record;
     }
 
-    private static QTOOutputMode ResolveOutputMode(QTOOutputTemplate template)
+    private static QTOOutputMode ResolveOutputMode(QTOOutputTemplate template, BuiltInCategory category)
     {
+        if (category == BuiltInCategory.OST_StructConnectionPlates ||
+            category == BuiltInCategory.OST_StructConnectionProfiles)
+            return QTOOutputMode.Steel;
         if (template.Name.Contains("Steel", StringComparison.OrdinalIgnoreCase)) return QTOOutputMode.Steel;
         if (template.Name.Contains("Concrete", StringComparison.OrdinalIgnoreCase)) return QTOOutputMode.Concrete;
         if (template.Name.Contains("Area", StringComparison.OrdinalIgnoreCase)) return QTOOutputMode.Area;
@@ -164,23 +196,20 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
         List<string> groupBy = request.GroupBy.Count > 0
             ? request.GroupBy
             : mode == QTOOutputMode.Steel
-                ? new List<string> { "Comments", "Profile" }
+                ? new List<string> { "Lokasi", "Comments", "Profile" }
                 : template.GroupBy;
 
         if (groupBy.Count == 0) return records;
 
         return records
-            .GroupBy(record => BuildGroupKey(record, groupBy))
+            .GroupBy(record => string.Join("¦", groupBy.Select(field => GetFieldText(record, field))))
             .Select(group => AggregateGroup(group, groupBy, mode))
-            .OrderBy(record => record.Comments)
+            .OrderBy(record => record.Lokasi)
+            .ThenBy(record => record.Comments)
             .ThenBy(record => record.Profile)
             .ThenBy(record => record.Type)
-            .ThenBy(record => record.Level)
             .ToList();
     }
-
-    private static string BuildGroupKey(QTORecord record, IReadOnlyList<string> groupBy) =>
-        string.Join("¦", groupBy.Select(field => GetFieldText(record, field)));
 
     private static QTORecord AggregateGroup(IEnumerable<QTORecord> group, IReadOnlyList<string> groupBy, QTOOutputMode mode)
     {
@@ -189,12 +218,13 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
 
         bool hasLength = items.Any(x => x.LengthMm.HasValue);
         bool hasArea = items.Any(x => x.AreaM2.HasValue);
+        bool hasSurface = items.Any(x => x.SurfaceAreaM2.HasValue);
         bool hasVolume = items.Any(x => x.VolumeM3.HasValue);
         bool hasWeight = items.Any(x => x.CalibratedWeightKg.HasValue);
-        bool hasReferenceWeight = items.Any(x => x.ReferenceWeightKgPerMeter.HasValue);
 
         return new QTORecord
         {
+            Lokasi = ContainsField(groupBy, "Lokasi") ? first.Lokasi : string.Empty,
             Comments = ContainsField(groupBy, "Comments") ? first.Comments : string.Empty,
             Type = first.Type,
             Profile = first.Profile,
@@ -202,30 +232,19 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
             Count = items.Sum(x => x.Count),
             LengthMm = hasLength ? items.Sum(x => x.LengthMm ?? 0) : null,
             AreaM2 = hasArea ? items.Sum(x => x.AreaM2 ?? 0) : null,
+            SurfaceAreaM2 = hasSurface ? items.Sum(x => x.SurfaceAreaM2 ?? 0) : null,
             VolumeM3 = hasVolume ? items.Sum(x => x.VolumeM3 ?? 0) : null,
-            ReferenceWeightKgPerMeter = hasReferenceWeight ? ResolveGroupReferenceWeight(items) : null,
             CalibratedWeightKg = mode == QTOOutputMode.Steel && hasWeight ? items.Sum(x => x.CalibratedWeightKg ?? 0) : null,
             Source = "Revit / Grouped",
             Notes = $"Grouped from {items.Count} element(s); mode={mode}."
         };
     }
 
-    private static double? ResolveGroupReferenceWeight(IReadOnlyList<QTORecord> items)
-    {
-        double first = items.Where(x => x.ReferenceWeightKgPerMeter.HasValue)
-            .Select(x => x.ReferenceWeightKgPerMeter!.Value).FirstOrDefault();
-        if (first <= 0) return null;
-
-        bool consistent = items.Where(x => x.ReferenceWeightKgPerMeter.HasValue)
-            .All(x => Math.Abs(x.ReferenceWeightKgPerMeter!.Value - first) < 0.000001);
-        return consistent ? first : null;
-    }
-
     private static string RenderResult(Document doc, QTOOutputTemplate template, BuiltInCategory category, QTOOutputMode mode,
-        IReadOnlyList<QTORecord> rawRecords, IReadOnlyList<QTORecord> groupedRecords, SteelDatabase? database, string databaseMessage)
+        IReadOnlyList<QTORecord> rawRecords, IReadOnlyList<QTORecord> groupedRecords, SteelDatabaseProvider? database)
     {
         StringBuilder sb = new();
-        sb.AppendLine("AIGRAV QTO RESULT");
+        sb.AppendLine("AIGRAV QTO v4.0 RESULT");
         sb.AppendLine();
         sb.AppendLine($"Project       : {doc.Title}");
         sb.AppendLine($"Category      : {category}");
@@ -233,14 +252,10 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
         sb.AppendLine($"Mode          : {mode}");
         sb.AppendLine($"Raw Elements  : {rawRecords.Count}");
         sb.AppendLine($"QTO Groups    : {groupedRecords.Count}");
-        sb.AppendLine($"Grouping      : {string.Join(" + ", mode == QTOOutputMode.Steel ? new[] { "Comments", "Profile" } : template.GroupBy)}");
 
-        if (mode == QTOOutputMode.Steel)
+        if (mode == QTOOutputMode.Steel && database != null)
         {
-            sb.AppendLine($"Steel DB      : {(database == null ? "NOT LOADED" : "LOADED")}");
-            sb.AppendLine($"Steel DB Path : {_databasePath}");
-            sb.AppendLine($"Steel DB Rows : {database?.Records.Count ?? 0}");
-            if (!string.IsNullOrWhiteSpace(databaseMessage)) sb.AppendLine($"Steel DB Info : {databaseMessage}");
+            sb.AppendLine($"Steel DB      : v{database.Version} ({database.Records.Count} clean rows) -> {database.LoadedPath}");
         }
 
         sb.AppendLine();
@@ -248,21 +263,22 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
 
         if (mode == QTOOutputMode.Steel)
         {
-            int matched = rawRecords.Count(x => x.ReferenceWeightKgPerMeter.HasValue);
-            int unmatched = rawRecords.Count - matched;
+            int matched = rawRecords.Count(x => x.SteelMatchStatus is "EXACT" or "ALIAS" or "SOLID_VOLUME");
+            int ambiguous = rawRecords.Count(x => x.SteelMatchStatus == "AMBIGUOUS");
+            int unmatched = rawRecords.Count - matched - ambiguous;
             sb.AppendLine();
-            sb.AppendLine($"Steel match   : {matched} matched / {unmatched} unmatched");
-            sb.AppendLine("Steel note    : Weight = actual Revit length × user steel-table kg/m. Volume is hidden.");
+            sb.AppendLine($"Steel match   : {matched} matched / {ambiguous} ambiguous / {unmatched} unmatched");
+            sb.AppendLine($"Grand Weight  : {groupedRecords.Sum(x => x.CalibratedWeightKg ?? 0):N2} kg");
         }
         else if (mode == QTOOutputMode.Concrete)
         {
             sb.AppendLine();
-            sb.AppendLine("Concrete note: Volume is shown in m³ with 2 decimal places.");
+            sb.AppendLine($"Grand Volume  : {groupedRecords.Sum(x => x.VolumeM3 ?? 0):N2} m³");
         }
         else if (mode == QTOOutputMode.Area)
         {
             sb.AppendLine();
-            sb.AppendLine("Area note: Area is shown in m² with 2 decimal places.");
+            sb.AppendLine($"Grand Area    : {groupedRecords.Sum(x => x.AreaM2 ?? 0):N2} m²");
         }
 
         return sb.ToString().TrimEnd();
@@ -272,297 +288,35 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
     {
         if (mode == QTOOutputMode.Steel)
         {
-            sb.AppendLine("| Comments / Fungsi | Type / Profil | Total Panjang (m) | Qty (Unit) | Berat (kg) |");
-            sb.AppendLine("|---|---|---:|---:|---:|");
-            foreach (QTORecord record in records)
-                sb.AppendLine($"| {Safe(record.Comments)} | {Safe(record.Profile)} | {FormatMeters(record.LengthMm)} | {record.Count.ToString("0", CultureInfo.InvariantCulture)} | {FormatNumber(record.CalibratedWeightKg)} |");
+            sb.AppendLine("| Lokasi | Comments / Fungsi | Type / Profil | Total Panjang (m) | Qty | Berat (kg) | Luas Cat (m²) |");
+            sb.AppendLine("|---|---|---|---:|---:|---:|---:|");
+            foreach (QTORecord r in records)
+                sb.AppendLine($"| {Safe(r.Lokasi)} | {Safe(r.Comments)} | {Safe(r.Profile)} | {FormatMeters(r.LengthMm)} | {r.Count:0} | {FormatNumber(r.CalibratedWeightKg)} | {FormatNumber(r.SurfaceAreaM2)} |");
             return;
         }
 
         if (mode == QTOOutputMode.Concrete)
         {
-            sb.AppendLine("| Comments / Fungsi | Type | Total Panjang (m) | Qty (Unit) | Volume (m³) |");
-            sb.AppendLine("|---|---|---:|---:|---:|");
-            foreach (QTORecord record in records)
-                sb.AppendLine($"| {Safe(record.Comments)} | {Safe(record.Type)} | {FormatMeters(record.LengthMm)} | {record.Count.ToString("0", CultureInfo.InvariantCulture)} | {FormatNumber(record.VolumeM3)} |");
+            sb.AppendLine("| Lokasi | Comments / Fungsi | Type | Total Panjang (m) | Qty | Volume (m³) |");
+            sb.AppendLine("|---|---|---|---:|---:|---:|");
+            foreach (QTORecord r in records)
+                sb.AppendLine($"| {Safe(r.Lokasi)} | {Safe(r.Comments)} | {Safe(r.Type)} | {FormatMeters(r.LengthMm)} | {r.Count:0} | {FormatNumber(r.VolumeM3)} |");
             return;
         }
 
         if (mode == QTOOutputMode.Area)
         {
-            sb.AppendLine("| Comments / Fungsi | Type | Area (m²) | Qty (Unit) |");
-            sb.AppendLine("|---|---|---:|---:|");
-            foreach (QTORecord record in records)
-                sb.AppendLine($"| {Safe(record.Comments)} | {Safe(record.Type)} | {FormatNumber(record.AreaM2)} | {record.Count.ToString("0", CultureInfo.InvariantCulture)} |");
+            sb.AppendLine("| Lokasi | Comments / Fungsi | Type | Area (m²) | Qty |");
+            sb.AppendLine("|---|---|---|---:|---:|");
+            foreach (QTORecord r in records)
+                sb.AppendLine($"| {Safe(r.Lokasi)} | {Safe(r.Comments)} | {Safe(r.Type)} | {FormatNumber(r.AreaM2)} | {r.Count:0} |");
             return;
         }
 
-        sb.AppendLine("| Comments / Fungsi | Type | Total Panjang (m) | Qty (Unit) | Volume (m³) | Area (m²) |");
-        sb.AppendLine("|---|---|---:|---:|---:|---:|");
-        foreach (QTORecord record in records)
-            sb.AppendLine($"| {Safe(record.Comments)} | {Safe(record.Type)} | {FormatMeters(record.LengthMm)} | {record.Count.ToString("0", CultureInfo.InvariantCulture)} | {FormatNumber(record.VolumeM3)} | {FormatNumber(record.AreaM2)} |");
-    }
-
-    private static SteelDatabase? LoadSteelDatabase(out string message)
-    {
-        lock (DatabaseSync)
-        {
-            string path = ResolveSteelDatabasePath();
-            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
-            {
-                _database = null;
-                _databasePath = path;
-                message = "Steel database JSON not found.";
-                return null;
-            }
-
-            try
-            {
-                string json = File.ReadAllText(path);
-                SteelDatabase? database = JsonSerializer.Deserialize<SteelDatabase>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                if (database == null || database.Records.Count == 0)
-                {
-                    _database = null;
-                    _databasePath = path;
-                    message = "Steel database is empty.";
-                    return null;
-                }
-
-                database.BuildIndex();
-                _database = database;
-                _databasePath = path;
-                message = "Loaded successfully.";
-                return _database;
-            }
-            catch (Exception ex)
-            {
-                _database = null;
-                _databasePath = path;
-                message = $"Load error: {ex.Message}";
-                return null;
-            }
-        }
-    }
-
-    private static string ResolveSteelDatabasePath()
-    {
-        string? environmentPath = Environment.GetEnvironmentVariable("AIGRAV_STEEL_DATABASE");
-        if (!string.IsNullOrWhiteSpace(environmentPath)) return Path.GetFullPath(environmentPath);
-
-        Assembly? hostAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(assembly =>
-            string.Equals(assembly.GetName().Name, "AIGRAV.RevitBridge", StringComparison.OrdinalIgnoreCase));
-
-        string? hostLocation = hostAssembly?.Location;
-        if (!string.IsNullOrWhiteSpace(hostLocation))
-        {
-            string? hostDirectory = Path.GetDirectoryName(hostLocation);
-            if (!string.IsNullOrWhiteSpace(hostDirectory))
-                return Path.Combine(hostDirectory, "Skills", "SteelDatabase", "AIGRAV.SteelDatabase.json");
-        }
-
-        return Path.Combine(AppContext.BaseDirectory, "Skills", "SteelDatabase", "AIGRAV.SteelDatabase.json");
-    }
-
-    private static string FormatMeters(double? lengthMm) =>
-        lengthMm.HasValue ? (lengthMm.Value / 1000.0).ToString("0.00", CultureInfo.InvariantCulture) : "-";
-
-    private static string FormatNumber(double? value) =>
-        value.HasValue ? value.Value.ToString("0.00", CultureInfo.InvariantCulture) : "-";
-
-    private static string Safe(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? "—" : value.Replace("|", "/").Trim();
-
-    private static string GetFieldText(QTORecord record, string field)
-    {
-        if (field.Equals("Comments", StringComparison.OrdinalIgnoreCase)) return record.Comments;
-        if (field.Equals("Type", StringComparison.OrdinalIgnoreCase)) return record.Type;
-        if (field.Equals("Profile", StringComparison.OrdinalIgnoreCase)) return record.Profile;
-        if (field.Equals("Level", StringComparison.OrdinalIgnoreCase)) return record.Level;
-        return string.Empty;
-    }
-
-    private static Parameter? FindParameter(Element? element, string parameterName) =>
-        element?.LookupParameter(parameterName);
-
-    private static string? GetStringParameter(Element? element, string parameterName)
-    {
-        Parameter? parameter = FindParameter(element, parameterName);
-        if (parameter == null) return null;
-        return parameter.StorageType == StorageType.String ? parameter.AsString() : parameter.AsValueString();
-    }
-
-    private static double? GetLengthMm(Element element, string parameterName)
-    {
-        Parameter? parameter = FindParameter(element, parameterName);
-        if (parameter == null || parameter.StorageType != StorageType.Double) return null;
-        return UnitUtils.ConvertFromInternalUnits(parameter.AsDouble(), UnitTypeId.Millimeters);
-    }
-
-    private static double? GetLocationCurveLengthMm(Element element)
-    {
-        if (element.Location is not LocationCurve locationCurve || locationCurve.Curve == null) return null;
-        return UnitUtils.ConvertFromInternalUnits(locationCurve.Curve.Length, UnitTypeId.Millimeters);
-    }
-
-    private static double? GetAreaM2(Element element, string parameterName)
-    {
-        Parameter? parameter = FindParameter(element, parameterName);
-        if (parameter == null || parameter.StorageType != StorageType.Double) return null;
-        return UnitUtils.ConvertFromInternalUnits(parameter.AsDouble(), UnitTypeId.SquareMeters);
-    }
-
-    private static double? GetVolumeM3(Element element, string parameterName)
-    {
-        Parameter? parameter = FindParameter(element, parameterName);
-        if (parameter == null || parameter.StorageType != StorageType.Double) return null;
-        return UnitUtils.ConvertFromInternalUnits(parameter.AsDouble(), UnitTypeId.CubicMeters);
-    }
-
-    private static string GetLevelName(Document doc, Element element)
-    {
-        ElementId levelId = element.LevelId;
-        if (levelId == ElementId.InvalidElementId)
-        {
-            Parameter? levelParameter = element.LookupParameter("Reference Level");
-            if (levelParameter != null && levelParameter.StorageType == StorageType.ElementId)
-                levelId = levelParameter.AsElementId();
-        }
-        if (levelId == ElementId.InvalidElementId) return string.Empty;
-        return doc.GetElement(levelId)?.Name ?? string.Empty;
-    }
-
-    private static string FirstNonEmpty(params string?[] values) =>
-        values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
-
-    private static double? FirstNonNull(params double?[] values) =>
-        values.FirstOrDefault(value => value.HasValue);
-
-    private static bool ContainsField(IReadOnlyList<string> fields, string target) =>
-        fields.Any(field => field.Equals(target, StringComparison.OrdinalIgnoreCase));
-
-    private static QTORequest ParseRequest(string? argument)
-    {
-        if (string.IsNullOrWhiteSpace(argument)) return new QTORequest { Category = string.Empty };
-        return JsonSerializer.Deserialize<QTORequest>(argument, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new QTORequest();
-    }
-
-    private static string BuildUsage() =>
-        "AIGRAV QTO requires a Revit BuiltInCategory.\n\n" +
-        "Steel:\n" +
-        "{\"category\":\"OST_StructuralFraming\",\"template\":\"StructuralSteel\"}\n\n" +
-        "Concrete:\n" +
-        "{\"category\":\"OST_StructuralColumns\",\"template\":\"Concrete\"}\n\n" +
-        "Area:\n" +
-        "{\"category\":\"OST_Walls\",\"template\":\"FinishingArea\"}";
-
-    private enum QTOOutputMode { Generic, Steel, Concrete, Area }
-
-    private sealed class SteelDatabase
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Version { get; set; } = string.Empty;
-        public string SourceFile { get; set; } = string.Empty;
-        public string SourceOfTruth { get; set; } = string.Empty;
-        public int RecordCount { get; set; }
-        public string WeightUnit { get; set; } = "kg/m";
-        public List<SteelRecord> Records { get; set; } = new();
-
-        private Dictionary<string, List<SteelRecord>> DimensionIndex { get; set; } = new(StringComparer.OrdinalIgnoreCase);
-
-        public void BuildIndex()
-        {
-            DimensionIndex = new Dictionary<string, List<SteelRecord>>(StringComparer.OrdinalIgnoreCase);
-            foreach (SteelRecord record in Records)
-            {
-                string key = NormalizeDimensions(record.Profile);
-                if (!DimensionIndex.TryGetValue(key, out List<SteelRecord>? list))
-                {
-                    list = new List<SteelRecord>();
-                    DimensionIndex[key] = list;
-                }
-                list.Add(record);
-            }
-        }
-
-        public SteelMatch? Find(string? profile, string? type)
-        {
-            string profileText = profile ?? string.Empty;
-            string typeText = type ?? string.Empty;
-
-            string dimensions = NormalizeDimensions(profileText);
-            if (string.IsNullOrWhiteSpace(dimensions))
-                dimensions = NormalizeDimensions(typeText);
-
-            if (string.IsNullOrWhiteSpace(dimensions)) return null;
-            if (!DimensionIndex.TryGetValue(dimensions, out List<SteelRecord>? candidates)) return null;
-
-            SteelRecord? familyMatch = FindBestFamilyMatch(candidates, $"{profileText} {typeText}");
-            if (familyMatch != null)
-                return new SteelMatch(familyMatch.Family, familyMatch.Profile, familyMatch.WeightPerMeterKg);
-
-            // If multiple steel families share the same dimensions, do not guess.
-            return candidates.Count == 1
-                ? new SteelMatch(candidates[0].Family, candidates[0].Profile, candidates[0].WeightPerMeterKg)
-                : null;
-        }
-
-        private static SteelRecord? FindBestFamilyMatch(IEnumerable<SteelRecord> candidates, string text)
-        {
-            string normalized = NormalizeFamily(text);
-            foreach (SteelRecord candidate in candidates)
-            {
-                string family = NormalizeFamily(candidate.Family);
-                if (normalized.Contains(family, StringComparison.OrdinalIgnoreCase)) return candidate;
-            }
-            return candidates.FirstOrDefault();
-        }
-    }
-
-    private sealed class SteelRecord
-    {
-        public string Family { get; set; } = string.Empty;
-        public string Profile { get; set; } = string.Empty;
-        public string ProfileKey { get; set; } = string.Empty;
-        public double WeightPerMeterKg { get; set; }
-        public double StandardLengthM { get; set; }
-    }
-
-    private sealed record SteelMatch(string Family, string Profile, double WeightPerMeterKg);
-
-    private static string NormalizeFamily(string? text)
-    {
-        string value = (text ?? string.Empty).ToUpperInvariant()
-            .Replace("×", "X").Replace("*", "X");
-        value = Regex.Replace(value, @"\s+", " ").Trim();
-
-        if (value.Contains("H-BEAM") || value.Contains("H BEAM") || value.StartsWith("H")) return "HBEAM";
-        if (value.Contains("WIDE FLANGE") || value.StartsWith("WF") || value.StartsWith("W ")) return "WF";
-        if (value.Contains("CNP")) return "CNP";
-        if (value.Contains("UNP")) return "UNP";
-        if (value.Contains("INP")) return "INP";
-        if (value.Contains("SIKU") || value.Contains("ANGLE") || value.Contains("L ")) return "SIKU";
-        if (value.Contains("SEAMLESS")) return "SEAMLESS";
-        if (value.Contains("STAAL-BUIS")) return "PIPA STAAL-BUIS";
-        if (value.Contains("STK41")) return "PIPA HITAM STK41";
-        if (value.Contains("PIPA")) return "PIPA";
-        return value.Replace(" ", string.Empty);
-    }
-
-    private static string NormalizeDimensions(string? text)
-    {
-        string value = (text ?? string.Empty).ToUpperInvariant()
-            .Replace("×", "X").Replace("*", "X").Replace(",", ".");
-
-        MatchCollection matches = Regex.Matches(value, @"\d+(?:\.\d+)?");
-        if (matches.Count == 0) return string.Empty;
-
-        List<string> numbers = new();
-        foreach (Match match in matches)
-        {
-            if (double.TryParse(match.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double number))
-                numbers.Add(number.ToString("0.######", CultureInfo.InvariantCulture));
-        }
-        return string.Join("X", numbers);
+        sb.AppendLine("| Lokasi | Comments / Fungsi | Type | Total Panjang (m) | Qty | Volume (m³) | Area (m²) |");
+        sb.AppendLine("|---|---|---|---:|---:|---:|---:|");
+        foreach (QTORecord r in records)
+            sb.AppendLine($"| {Safe(r.Lokasi)} | {Safe(r.Comments)} | {Safe(r.Type)} | {FormatMeters(r.LengthMm)} | {r.Count:0} | {FormatNumber(r.VolumeM3)} | {FormatNumber(r.AreaM2)} |");
     }
 
     private static string CreateRevitSchedule(Document doc, BuiltInCategory category, string scheduleName)
@@ -576,14 +330,18 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
             schedule.Name = scheduleName;
 
             ScheduleDefinition definition = schedule.Definition;
-            var schedulableFields = definition.GetSchedulableFields();
             var fieldMap = new Dictionary<string, SchedulableField>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (SchedulableField sf in schedulableFields)
+            foreach (SchedulableField sf in definition.GetSchedulableFields())
             {
                 string name = sf.GetName(doc);
-                if (!fieldMap.ContainsKey(name))
-                    fieldMap[name] = sf;
+                if (!fieldMap.ContainsKey(name)) fieldMap[name] = sf;
+            }
+
+            // Column A = Lokasi mandatory
+            if (fieldMap.TryGetValue("Lokasi", out SchedulableField? sfLok))
+            {
+                var fLok = definition.AddField(sfLok);
+                fLok.ColumnHeading = "Lokasi";
             }
 
             ScheduleField? commentsField = null;
@@ -601,26 +359,23 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
                 typeField.ColumnHeading = "Type / Profil";
             }
 
-            ScheduleField? lengthField = null;
             if (fieldMap.TryGetValue("Cut Length", out SchedulableField? sfLen) ||
                 fieldMap.TryGetValue("Length", out sfLen))
             {
-                lengthField = definition.AddField(sfLen);
-                lengthField.ColumnHeading = "Total Panjang (m)";
-                lengthField.DisplayType = ScheduleFieldDisplayType.Totals;
+                var lf = definition.AddField(sfLen);
+                lf.ColumnHeading = "Total Panjang (m)";
+                lf.DisplayType = ScheduleFieldDisplayType.Totals;
             }
 
-            ScheduleField? countField = null;
             if (fieldMap.TryGetValue("Count", out SchedulableField? sfCount))
             {
-                countField = definition.AddField(sfCount);
-                countField.ColumnHeading = "Qty (Unit)";
-                countField.DisplayType = ScheduleFieldDisplayType.Totals;
+                var cf = definition.AddField(sfCount);
+                cf.ColumnHeading = "Qty (Unit)";
+                cf.DisplayType = ScheduleFieldDisplayType.Totals;
             }
 
             if (commentsField != null)
                 definition.AddSortGroupField(new ScheduleSortGroupField(commentsField.FieldId, ScheduleSortOrder.Ascending));
-
             if (typeField != null)
                 definition.AddSortGroupField(new ScheduleSortGroupField(typeField.FieldId, ScheduleSortOrder.Ascending));
 
@@ -630,7 +385,6 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
             definition.ShowGrandTotalCount = true;
 
             transaction.Commit();
-
             return $"Schedule Created in Revit: '{schedule.Name}' (View ID: {schedule.Id.Value})";
         }
         catch (Exception ex)
@@ -638,4 +392,99 @@ public sealed class QTOExternalSkill : IAIGRAVSkill
             return $"Failed to create Revit Schedule: {ex.Message}";
         }
     }
+
+    private static string FormatMeters(double? lengthMm) =>
+        lengthMm.HasValue ? (lengthMm.Value / 1000.0).ToString("0.00", CultureInfo.InvariantCulture) : "-";
+
+    private static string FormatNumber(double? value) =>
+        value.HasValue ? value.Value.ToString("0.00", CultureInfo.InvariantCulture) : "-";
+
+    private static string Safe(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? "—" : value.Replace("|", "/").Trim();
+
+    private static string GetFieldText(QTORecord record, string field)
+    {
+        if (field.Equals("Lokasi", StringComparison.OrdinalIgnoreCase)) return record.Lokasi;
+        if (field.Equals("Comments", StringComparison.OrdinalIgnoreCase)) return record.Comments;
+        if (field.Equals("Type", StringComparison.OrdinalIgnoreCase)) return record.Type;
+        if (field.Equals("Profile", StringComparison.OrdinalIgnoreCase)) return record.Profile;
+        if (field.Equals("Level", StringComparison.OrdinalIgnoreCase)) return record.Level;
+        return string.Empty;
+    }
+
+    private static string? GetStringParameter(Element? element, string parameterName)
+    {
+        Parameter? p = element?.LookupParameter(parameterName);
+        if (p == null) return null;
+        return p.StorageType == StorageType.String ? p.AsString() : p.AsValueString();
+    }
+
+    private static double? GetNumericParam(Element element, string parameterName)
+    {
+        Parameter? p = element.LookupParameter(parameterName);
+        if (p == null || p.StorageType != StorageType.Double) return null;
+        return p.AsDouble();
+    }
+
+    private static double? GetLengthMm(Element element, string parameterName)
+    {
+        Parameter? p = element.LookupParameter(parameterName);
+        if (p == null || p.StorageType != StorageType.Double) return null;
+        return UnitUtils.ConvertFromInternalUnits(p.AsDouble(), UnitTypeId.Millimeters);
+    }
+
+    private static double? GetLocationCurveLengthMm(Element element)
+    {
+        if (element.Location is not LocationCurve locationCurve || locationCurve.Curve == null) return null;
+        return UnitUtils.ConvertFromInternalUnits(locationCurve.Curve.Length, UnitTypeId.Millimeters);
+    }
+
+    private static double? GetAreaM2(Element element, string parameterName)
+    {
+        Parameter? p = element.LookupParameter(parameterName);
+        if (p == null || p.StorageType != StorageType.Double) return null;
+        return UnitUtils.ConvertFromInternalUnits(p.AsDouble(), UnitTypeId.SquareMeters);
+    }
+
+    private static double? GetVolumeM3(Element element, string parameterName)
+    {
+        Parameter? p = element.LookupParameter(parameterName);
+        if (p == null || p.StorageType != StorageType.Double) return null;
+        return UnitUtils.ConvertFromInternalUnits(p.AsDouble(), UnitTypeId.CubicMeters);
+    }
+
+    private static string GetLevelName(Document doc, Element element)
+    {
+        ElementId levelId = element.LevelId;
+        if (levelId == ElementId.InvalidElementId)
+        {
+            Parameter? lp = element.LookupParameter("Reference Level");
+            if (lp != null && lp.StorageType == StorageType.ElementId) levelId = lp.AsElementId();
+        }
+        return levelId == ElementId.InvalidElementId ? string.Empty : doc.GetElement(levelId)?.Name ?? string.Empty;
+    }
+
+    private static string FirstNonEmpty(params string?[] values) =>
+        values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v))?.Trim() ?? string.Empty;
+
+    private static double? FirstNonNull(params double?[] values) =>
+        values.FirstOrDefault(v => v.HasValue);
+
+    private static bool ContainsField(IReadOnlyList<string> fields, string target) =>
+        fields.Any(f => f.Equals(target, StringComparison.OrdinalIgnoreCase));
+
+    private static QTORequest ParseRequest(string? argument)
+    {
+        if (string.IsNullOrWhiteSpace(argument)) return new QTORequest();
+        return JsonSerializer.Deserialize<QTORequest>(argument, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new QTORequest();
+    }
+
+    private static string BuildUsage() =>
+        "AIGRAV QTO v4.0 requires a Revit BuiltInCategory.\n" +
+        "Examples:\n" +
+        "{\"category\":\"OST_StructuralFraming\",\"template\":\"StructuralSteel\"}\n" +
+        "{\"category\":\"OST_StructuralColumns\",\"template\":\"Concrete\"}\n" +
+        "{\"category\":\"OST_Walls\",\"template\":\"FinishingArea\"}";
+
+    private enum QTOOutputMode { Generic, Steel, Concrete, Area }
 }

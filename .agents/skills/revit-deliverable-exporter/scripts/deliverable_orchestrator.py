@@ -219,21 +219,77 @@ def _read_schedule_text(input_text_path):
 
 
 def _wbs_sort_key(sched_name):
-    """Natural sort key prioritizing 3-level WBS codes (e.g., A.1.1, B.1.2, C.2.1)."""
-    match = re.match(r"^([A-Z])\.(\d+)\.(\d+)", sched_name)
+    """Natural sort key prioritizing WBS hierarchy (e.g., A.1.1, SP-D.1.1a, AR-B.2, C.3.1.22, KDB)."""
+    name = (sched_name or "").strip()
+    if re.match(r"^(?:KDB|Summary|Rekap)", name, re.IGNORECASE):
+        return ("ZZ", 0, 99, 99, 99, "", name)
+
+    match = re.match(r"^(?:([A-Z]{2,3})-)?([A-Z])\.(\d+)(?:\.(\d+))?(?:\.(\d+))?([a-z])?(?:\b|\s|$)", name)
     if match:
-        return (match.group(1), int(match.group(2)), int(match.group(3)), sched_name)
-    match_2 = re.match(r"^([A-Z])\.(\d+)", sched_name)
-    if match_2:
-        return (match_2.group(1), int(match_2.group(2)), 0, sched_name)
-    return ("Z", 99, 99, sched_name)
+        disc = match.group(1) or ""
+        letter = match.group(2)
+        n1 = int(match.group(3))
+        n2 = int(match.group(4)) if match.group(4) else 0
+        n3 = int(match.group(5)) if match.group(5) else 0
+        suffix = match.group(6) or ""
+        return (disc, 0, ord(letter), n1, n2, n3, suffix, name)
+
+    return ("ZZ", 1, 999, 99, 99, 99, "", name)
+
+
+_UNIT_SUFFIX_PATTERNS = [
+    (re.compile(r"^(-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*%$"), 0.01, "0.00%", "%"),
+    (re.compile(r"^(-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*m[³3]$", re.IGNORECASE), 1.0, '#,##0.00" m³"', "m³"),
+    (re.compile(r"^(-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*m[²2]$", re.IGNORECASE), 1.0, '#,##0.00" m²"', "m²"),
+    (re.compile(r"^(-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*kg$", re.IGNORECASE), 1.0, '#,##0.00" kg"', "kg"),
+    (re.compile(r"^(-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*mm$", re.IGNORECASE), 1.0, '#,##0" mm"', "mm"),
+    (re.compile(r"^(-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*m$", re.IGNORECASE), 1.0, '#,##0.00" m"', "m"),
+]
+_PLAIN_NUM_RE = re.compile(r"^(-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)$")
+
+
+def _parse_numeric_and_unit(raw_val):
+    """Parse numeric Revit schedule cell values cleanly into (number, excel_num_format, unit_label)."""
+    if raw_val is None:
+        return None, None, ""
+    text = str(raw_val).strip()
+    if not text or text in {"-", "—", "N/A"}:
+        return None, None, ""
+
+    for pat, scale, num_fmt, unit in _UNIT_SUFFIX_PATTERNS:
+        m = pat.match(text)
+        if m:
+            num = float(m.group(1).replace(",", "")) * scale
+            return num, num_fmt, unit
+
+    m_plain = _PLAIN_NUM_RE.match(text)
+    if m_plain:
+        cleaned = m_plain.group(1).replace(",", "")
+        if "." in cleaned:
+            return float(cleaned), "#,##0.00", ""
+        return int(cleaned), "#,##0", ""
+
+    return None, None, ""
+
+
+def _is_summable_column(header_name, unit_hint):
+    """Identify columns safe for Excel =SUM() aggregation (avoids summing Diameters/Lengths per item unless Cut Length)."""
+    h = (header_name or "").lower()
+    if any(k in h for k in ["volume", "area", "luas", "berat", "weight", "qty", "number", "count", "jumlah", "total bar"]):
+        return True
+    if unit_hint in {"m³", "m²", "kg"}:
+        return True
+    if ("length" in h or "panjang" in h) and ("total" in h or "cut" in h):
+        return True
+    return False
 
 
 def build_qto_workbook(tsv_dir, output_xlsx_path, exclude_keywords=None):
     """
-    Compile exported Revit schedule TSV files into a multi-tab styled QTO Excel workbook.
-    Creates an 'All Schedules' summary tab plus individual tabs sorted by WBS code,
-    excluding non-construction documentation schedules (e.g., DAFTAR GAMBAR, Keynote Legend).
+    Compile exported Revit schedule TSV files into a multi-tab Smart BOQ Excel workbook (.xlsx):
+    1. 'Executive BOQ Summary' tab with live cross-sheet formula links (='Tab'!Cell)
+    2. 'All Schedules' combined audit tab
+    3. Individual WBS-sorted schedule tabs with true numeric cells and live =SUM() Total rows.
     """
     if not HAS_OPENPYXL:
         raise RuntimeError("openpyxl library is required for QTO workbook compilation.")
@@ -256,15 +312,21 @@ def build_qto_workbook(tsv_dir, output_xlsx_path, exclude_keywords=None):
     selected.sort(key=lambda item: _wbs_sort_key(item[0]))
 
     wb = openpyxl.Workbook()
-    ws_all = wb.active
-    ws_all.title = "All Schedules"
+    ws_summary = wb.active
+    ws_summary.title = "Executive BOQ Summary"
+    ws_all = wb.create_sheet(title="All Schedules")
 
     font_title = Font(name="Segoe UI", size=11, bold=True, color="1F497D")
+    fill_title = PatternFill(start_color="E8EEF5", end_color="E8EEF5", fill_type="solid")
     font_header = Font(name="Segoe UI", size=10, bold=True, color="FFFFFF")
     fill_header = PatternFill(start_color="1F497D", end_color="1F497D", fill_type="solid")
     font_data = Font(name="Segoe UI", size=10)
     font_total = Font(name="Segoe UI", size=10, bold=True)
     fill_total = PatternFill(start_color="F2F2F2", end_color="F2F2F2", fill_type="solid")
+    font_empty = Font(name="Segoe UI", size=10, bold=True, color="9C0006")
+    fill_empty = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+    font_ok = Font(name="Segoe UI", size=10, bold=True, color="006100")
+    fill_ok = PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid")
     thin_border = Border(
         left=Side(style="thin", color="D9D9D9"),
         right=Side(style="thin", color="D9D9D9"),
@@ -273,13 +335,22 @@ def build_qto_workbook(tsv_dir, output_xlsx_path, exclude_keywords=None):
     )
 
     cur_row = 1
-    used_titles = set()
+    used_titles = {"Executive BOQ Summary", "All Schedules"}
     compiled_count = 0
+    summary_entries = []
 
     for sched_name, fname in selected:
         content = _read_schedule_text(os.path.join(tsv_dir, fname))
-        lines = content.strip().splitlines()
-        if not lines:
+        raw_lines = content.splitlines()
+        parsed_rows = []
+        for line in raw_lines:
+            if not line.strip():
+                continue
+            cells = [c.strip().strip('"') for c in line.split("\t")]
+            if any(c != "" for c in cells):
+                parsed_rows.append(cells)
+
+        if not parsed_rows:
             continue
 
         safe_title = re.sub(r"[:\\/?*\[\]]", "_", sched_name)[:31].strip() or f"Sheet_{compiled_count + 1}"
@@ -292,37 +363,204 @@ def build_qto_workbook(tsv_dir, output_xlsx_path, exclude_keywords=None):
         cell_t.font = font_title
         cur_row += 1
 
-        is_header = True
+        # Detect optional Revit Schedule Title banner in row 0
+        has_banner = len(parsed_rows) >= 2 and (
+            sum(1 for c in parsed_rows[0] if c) == 1
+            and parsed_rows[0][0].lower().startswith(sched_name[:12].lower())
+        )
+        header_idx = 1 if has_banner else 0
+        headers = parsed_rows[header_idx]
+        data_rows = parsed_rows[header_idx + 1:]
+
+        # Detect whether the last row is Revit's existing Grand Total row
+        has_existing_total = False
+        if len(data_rows) >= 1:
+            last_row = data_rows[-1]
+            has_total_word = any("total" in c.lower() for c in last_row)
+            leading_blank_numeric = (
+                len(last_row) >= 2
+                and last_row[0] == ""
+                and any(_parse_numeric_and_unit(c)[0] is not None for c in last_row[1:])
+            )
+            if has_total_word or (leading_blank_numeric and len(data_rows) >= 2):
+                has_existing_total = True
+
+        body_rows = data_rows[:-1] if has_existing_total else data_rows
+        existing_total_row = data_rows[-1] if has_existing_total else None
+
         s_row = 1
-        for line in lines:
-            if not line.strip():
-                continue
-            cells = [c.strip().strip('"') for c in line.split("\t")]
-            for c_idx, val in enumerate(cells, 1):
-                for cell in (ws_single.cell(row=s_row, column=c_idx, value=val), ws_all.cell(row=cur_row, column=c_idx, value=val)):
+        if has_banner:
+            for c_idx in range(1, max(len(headers), len(parsed_rows[0])) + 1):
+                val = parsed_rows[0][c_idx - 1] if c_idx - 1 < len(parsed_rows[0]) else ""
+                c1 = ws_single.cell(row=s_row, column=c_idx, value=val if c_idx == 1 else None)
+                c1.font = font_title
+                c1.fill = fill_title
+                c1.border = thin_border
+            ws_single.row_dimensions[s_row].height = 24
+            s_row += 1
+
+        # Write Column Header row
+        header_row_single = s_row
+        for c_idx, h_val in enumerate(headers, 1):
+            for cell in (ws_single.cell(row=s_row, column=c_idx, value=h_val), ws_all.cell(row=cur_row, column=c_idx, value=h_val)):
+                cell.border = thin_border
+                cell.fill = fill_header
+                cell.font = font_header
+                cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        ws_single.row_dimensions[s_row].height = 24
+        s_row += 1
+        cur_row += 1
+
+        data_start_row = s_row
+        col_formats = {}
+        col_units = {}
+
+        for row_cells in body_rows:
+            for c_idx, raw_val in enumerate(row_cells, 1):
+                num_val, num_fmt, unit = _parse_numeric_and_unit(raw_val)
+                if num_val is not None:
+                    if c_idx not in col_formats:
+                        col_formats[c_idx] = num_fmt
+                    if unit and c_idx not in col_units:
+                        col_units[c_idx] = unit
+                    write_val = num_val
+                else:
+                    write_val = raw_val
+
+                for cell in (ws_single.cell(row=s_row, column=c_idx, value=write_val), ws_all.cell(row=cur_row, column=c_idx, value=write_val)):
                     cell.border = thin_border
-                    if is_header:
-                        cell.fill = fill_header
-                        cell.font = font_header
-                    elif "total" in str(val).lower():
-                        cell.fill = fill_total
-                        cell.font = font_total
+                    cell.font = font_data
+                    if num_val is not None:
+                        cell.number_format = num_fmt
+                        cell.alignment = Alignment(horizontal="right", vertical="center")
                     else:
-                        cell.font = font_data
-            is_header = False
+                        cell.alignment = Alignment(horizontal="left", vertical="center")
             s_row += 1
             cur_row += 1
 
+        data_end_row = s_row - 1
+        total_row_single = None
+
+        # Write Live Excel =SUM() Total Row
+        if len(body_rows) >= 1:
+            total_row_single = s_row
+            max_cols = max(len(headers), len(existing_total_row or []))
+            wrote_label = False
+            for c_idx in range(1, max_cols + 1):
+                h_name = headers[c_idx - 1] if c_idx - 1 < len(headers) else ""
+                orig_tot = existing_total_row[c_idx - 1] if existing_total_row and c_idx - 1 < len(existing_total_row) else ""
+                orig_num, orig_fmt, orig_unit = _parse_numeric_and_unit(orig_tot)
+                unit_hint = orig_unit or col_units.get(c_idx, "")
+                fmt_hint = orig_fmt or col_formats.get(c_idx, "#,##0.00")
+
+                should_sum = (orig_num is not None) or (existing_total_row is None and c_idx in col_formats and _is_summable_column(h_name, unit_hint))
+                col_letter = get_column_letter(c_idx)
+
+                if should_sum:
+                    single_val = f"=SUM({col_letter}{data_start_row}:{col_letter}{data_end_row})"
+                    all_val = orig_num if orig_num is not None else single_val
+                elif not wrote_label and c_idx == 1:
+                    single_val = orig_tot if orig_tot else "Total"
+                    all_val = single_val
+                    wrote_label = True
+                else:
+                    single_val = orig_tot or None
+                    all_val = single_val
+
+                c1 = ws_single.cell(row=s_row, column=c_idx, value=single_val)
+                c2 = ws_all.cell(row=cur_row, column=c_idx, value=all_val)
+                for cell in (c1, c2):
+                    cell.border = thin_border
+                    cell.fill = fill_total
+                    cell.font = font_total
+                    if should_sum:
+                        cell.number_format = fmt_hint
+                        cell.alignment = Alignment(horizontal="right", vertical="center")
+                    else:
+                        cell.alignment = Alignment(horizontal="left", vertical="center")
+            s_row += 1
+            cur_row += 1
+
+        # Collect metrics for Executive BOQ Summary tab
+        metric_links = []
+        if total_row_single is not None:
+            for c_idx in range(1, len(headers) + 1):
+                h_name = headers[c_idx - 1]
+                unit_hint = col_units.get(c_idx, "")
+                fmt_hint = col_formats.get(c_idx)
+                cell_val = ws_single.cell(row=total_row_single, column=c_idx).value
+                if isinstance(cell_val, str) and cell_val.startswith("=SUM(") and _is_summable_column(h_name, unit_hint):
+                    col_letter = get_column_letter(c_idx)
+                    escaped_tab = safe_title.replace("'", "''")
+                    metric_links.append((h_name, f"='{escaped_tab}'!{col_letter}{total_row_single}", unit_hint or h_name, fmt_hint or "#,##0.00"))
+
+        summary_entries.append({
+            "name": sched_name,
+            "tab": safe_title,
+            "data_rows": len(body_rows),
+            "metrics": metric_links[:2],
+        })
+
+        ws_single.freeze_panes = f"A{header_row_single + 1}"
         cur_row += 2
         compiled_count += 1
 
         for col in ws_single.columns:
-            max_len = max(len(str(c.value or "")) for c in col)
-            ws_single.column_dimensions[get_column_letter(col[0].column)].width = max(max_len + 3, 12)
+            max_len = max((len(str(c.value or "")) if not (isinstance(c.value, str) and c.value.startswith("=")) else 14) for c in col)
+            ws_single.column_dimensions[get_column_letter(col[0].column)].width = min(max(max_len + 3, 12), 48)
 
-    for col in ws_all.columns:
-        max_len = max(len(str(c.value or "")) for c in col)
-        ws_all.column_dimensions[get_column_letter(col[0].column)].width = max(max_len + 3, 12)
+    # Populate Executive BOQ Summary Tab (Tab 1)
+    ws_summary.cell(row=1, column=1, value="AIGRAV QTO v4.0 — EXECUTIVE BOQ SUMMARY").font = Font(name="Segoe UI", size=13, bold=True, color="1F497D")
+    sum_headers = ["No", "WBS / Schedule Name", "Worksheet Tab", "Data Rows", "Primary Quantity", "Label / Unit 1", "Secondary Quantity", "Label / Unit 2", "Status"]
+    for c_idx, h in enumerate(sum_headers, 1):
+        c = ws_summary.cell(row=3, column=c_idx, value=h)
+        c.fill = fill_header
+        c.font = font_header
+        c.border = thin_border
+        c.alignment = Alignment(horizontal="center", vertical="center")
+    ws_summary.row_dimensions[3].height = 24
+
+    for idx, entry in enumerate(summary_entries, 1):
+        r = idx + 3
+        row_vals = [
+            idx,
+            entry["name"],
+            entry["tab"],
+            entry["data_rows"],
+            entry["metrics"][0][1] if len(entry["metrics"]) >= 1 else None,
+            entry["metrics"][0][2] if len(entry["metrics"]) >= 1 else "",
+            entry["metrics"][1][1] if len(entry["metrics"]) >= 2 else None,
+            entry["metrics"][1][2] if len(entry["metrics"]) >= 2 else "",
+            "EMPTY" if entry["data_rows"] == 0 else "OK",
+        ]
+        for c_idx, val in enumerate(row_vals, 1):
+            cell = ws_summary.cell(row=r, column=c_idx, value=val)
+            cell.border = thin_border
+            cell.font = font_data
+            if c_idx in (1, 4):
+                cell.alignment = Alignment(horizontal="center", vertical="center")
+            elif c_idx == 5 and len(entry["metrics"]) >= 1:
+                cell.number_format = entry["metrics"][0][3]
+                cell.alignment = Alignment(horizontal="right", vertical="center")
+            elif c_idx == 7 and len(entry["metrics"]) >= 2:
+                cell.number_format = entry["metrics"][1][3]
+                cell.alignment = Alignment(horizontal="right", vertical="center")
+            elif c_idx == 9:
+                cell.alignment = Alignment(horizontal="center", vertical="center")
+                if val == "EMPTY":
+                    cell.fill = fill_empty
+                    cell.font = font_empty
+                else:
+                    cell.fill = fill_ok
+                    cell.font = font_ok
+            else:
+                cell.alignment = Alignment(horizontal="left", vertical="center")
+
+    ws_summary.freeze_panes = "A4"
+    for ws in (ws_summary, ws_all):
+        for col in ws.columns:
+            max_len = max((len(str(c.value or "")) if not (isinstance(c.value, str) and c.value.startswith("=")) else 14) for c in col)
+            ws.column_dimensions[get_column_letter(col[0].column)].width = min(max(max_len + 3, 12), 52)
 
     os.makedirs(os.path.dirname(os.path.abspath(output_xlsx_path)), exist_ok=True)
     wb.save(output_xlsx_path)
@@ -331,6 +569,7 @@ def build_qto_workbook(tsv_dir, output_xlsx_path, exclude_keywords=None):
         "compiled_schedules": compiled_count,
         "excluded_schedules": excluded,
         "total_tabs": len(wb.sheetnames),
+        "empty_schedules": sum(1 for e in summary_entries if e["data_rows"] == 0),
     }
 
 

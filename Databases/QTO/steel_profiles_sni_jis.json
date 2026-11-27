@@ -1,0 +1,3441 @@
+{
+  "name": "AIGRAV Steel Profiles Database (SNI / JIS / DIN Cleaned)",
+  "version": "4.0.0",
+  "lastUpdated": "2026-11-27",
+  "sourceOfTruth": "SNI 1729 / Gunung Garuda / JIS G3192 / DIN 1025-1026",
+  "densityKgPerM3": 7850.0,
+  "recordCount": 268,
+  "weightUnit": "kg/m",
+  "notes": [
+    "Cleaned all 25 2x-overcounted INP 180-500 and UNP 180-400 entries from legacy CSV.",
+    "Disambiguated PIPA CARBON (SCH40 vs SCH80) and PIPA HITAM (HEAVY/MEDIUM/LIGHT).",
+    "Fixed WF 800x30 typo -> 800x300, SIKU 200x200x15 vs x20, and removed CNP 59.6 garbage row.",
+    "Added RCWF (Castellated), 2L (Double Angle), 2CNP, HOLLOW (SHS/RHS), and ROD families + painting surfaceAreaM2PerM."
+  ],
+  "records": [
+    {
+      "family": "WF",
+      "profile": "100x50.0x5.0x7.0",
+      "profileKey": "100X50.0X5.0X7.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 9.333333,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "WF 100",
+        "WF.100",
+        "WF-100",
+        "M_W-Wide Flange : WF 100"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "125x60.0x6.0x8.0",
+      "profileKey": "125X60.0X6.0X8.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 13.2,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.49,
+      "aliases": [
+        "WF 125",
+        "WF.125",
+        "WF-125",
+        "M_W-Wide Flange : WF 125"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "148x100.0x6.0x9.0",
+      "profileKey": "148X100.0X6.0X9.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 21.1,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.696,
+      "aliases": [
+        "WF 148",
+        "WF.148",
+        "WF-148",
+        "M_W-Wide Flange : WF 148"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "150x75.0x5.0x7.0",
+      "profileKey": "150X75.0X5.0X7.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 14.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.6,
+      "aliases": [
+        "WF 150",
+        "WF.150",
+        "WF-150",
+        "M_W-Wide Flange : WF 150"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "175x90.0x5.0x8.0",
+      "profileKey": "175X90.0X5.0X8.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 18.1,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.71,
+      "aliases": [
+        "WF 175",
+        "WF.175",
+        "WF-175",
+        "M_W-Wide Flange : WF 175"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "198x99.0x4.5x7.0",
+      "profileKey": "198X99.0X4.5X7.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 18.2,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.792,
+      "aliases": [
+        "WF 198",
+        "WF.198",
+        "WF-198",
+        "M_W-Wide Flange : WF 198"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "200x100.0x3.2x4.5",
+      "profileKey": "200X100.0X3.2X4.5",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 11.916667,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.8,
+      "aliases": [
+        "WF 200",
+        "WF.200",
+        "WF-200",
+        "M_W-Wide Flange : WF 200"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "200x100.0x5.5x8.0",
+      "profileKey": "200X100.0X5.5X8.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 21.333333,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.8,
+      "aliases": [
+        "WF 200",
+        "WF.200",
+        "WF-200",
+        "M_W-Wide Flange : WF 200"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "248x124.0x5.0x8.0",
+      "profileKey": "248X124.0X5.0X8.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 25.7,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.992,
+      "aliases": [
+        "WF 248",
+        "WF.248",
+        "WF-248",
+        "M_W-Wide Flange : WF 248"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "250x125.0x6.0x9.0",
+      "profileKey": "250X125.0X6.0X9.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 29.6,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.0,
+      "aliases": [
+        "WF 250",
+        "WF.250",
+        "WF-250",
+        "M_W-Wide Flange : WF 250"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "298x149.0x6.0x8.0",
+      "profileKey": "298X149.0X6.0X8.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 32.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.192,
+      "aliases": [
+        "WF 298",
+        "WF.298",
+        "WF-298",
+        "M_W-Wide Flange : WF 298"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "300x150.0x6.5x9.0",
+      "profileKey": "300X150.0X6.5X9.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 36.7,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.2,
+      "aliases": [
+        "WF 300",
+        "WF.300",
+        "WF-300",
+        "M_W-Wide Flange : WF 300"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "346x174.0x6.0x9.0",
+      "profileKey": "346X174.0X6.0X9.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 41.416667,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.388,
+      "aliases": [
+        "WF 346",
+        "WF.346",
+        "WF-346",
+        "M_W-Wide Flange : WF 346"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "350x175.0x7.0x11.0",
+      "profileKey": "350X175.0X7.0X11.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 49.6,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.4,
+      "aliases": [
+        "WF 350",
+        "WF.350",
+        "WF-350",
+        "M_W-Wide Flange : WF 350"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "396x199.0x7.0x11.0",
+      "profileKey": "396X199.0X7.0X11.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 56.625,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.588,
+      "aliases": [
+        "WF 396",
+        "WF.396",
+        "WF-396",
+        "M_W-Wide Flange : WF 396"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "400x200.0x8.0x13.0",
+      "profileKey": "400X200.0X8.0X13.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 66.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.6,
+      "aliases": [
+        "WF 400",
+        "WF.400",
+        "WF-400",
+        "M_W-Wide Flange : WF 400"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "446x199.0x8.0x12.0",
+      "profileKey": "446X199.0X8.0X12.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 66.2,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.688,
+      "aliases": [
+        "WF 446",
+        "WF.446",
+        "WF-446",
+        "M_W-Wide Flange : WF 446"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "450x200.0x9.0x14.0",
+      "profileKey": "450X200.0X9.0X14.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 76.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.7,
+      "aliases": [
+        "WF 450",
+        "WF.450",
+        "WF-450",
+        "M_W-Wide Flange : WF 450"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "500x200.0x10.0x16.0",
+      "profileKey": "500X200.0X10.0X16.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 89.583333,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.8,
+      "aliases": [
+        "WF 500",
+        "WF.500",
+        "WF-500",
+        "M_W-Wide Flange : WF 500"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "588x300.0x10.0x16.0",
+      "profileKey": "588X300.0X10.0X16.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 151.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 2.376,
+      "aliases": [
+        "WF 588",
+        "WF.588",
+        "WF-588",
+        "M_W-Wide Flange : WF 588"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "600x200.0x11.0x17.0",
+      "profileKey": "600X200.0X11.0X17.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 106.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 2.0,
+      "aliases": [
+        "WF 600",
+        "WF.600",
+        "WF-600",
+        "M_W-Wide Flange : WF 600"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "700x300.0x13.0x24.0",
+      "profileKey": "700X300.0X13.0X24.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 185.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 2.6,
+      "aliases": [
+        "WF 700",
+        "WF.700",
+        "WF-700",
+        "M_W-Wide Flange : WF 700"
+      ]
+    },
+    {
+      "family": "WF",
+      "profile": "800x300.0x14.0x26.0",
+      "profileKey": "800X300.0X14.0X26.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 210.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 2.8,
+      "aliases": [
+        "WF 800",
+        "WF 800x300"
+      ]
+    },
+    {
+      "family": "HBEAM",
+      "profile": "100x100.0x6.0x8.0",
+      "profileKey": "100X100.0X6.0X8.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 17.166667,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.6,
+      "aliases": [
+        "H 100",
+        "H-100",
+        "H100",
+        "HBEAM 100"
+      ]
+    },
+    {
+      "family": "HBEAM",
+      "profile": "125x125.0x5.0x7.0",
+      "profileKey": "125X125.0X5.0X7.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 18.5,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.75,
+      "aliases": [
+        "H 125x125x5x7"
+      ]
+    },
+    {
+      "family": "HBEAM",
+      "profile": "125x125.0x6.5x9.0",
+      "profileKey": "125X125.0X6.5X9.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 23.833333,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.75,
+      "aliases": [
+        "H 125",
+        "H-125",
+        "H125",
+        "HBEAM 125"
+      ]
+    },
+    {
+      "family": "HBEAM",
+      "profile": "150x150.0x7.0x10.0",
+      "profileKey": "150X150.0X7.0X10.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 31.5,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.9,
+      "aliases": [
+        "H 150",
+        "H-150",
+        "H150",
+        "HBEAM 150"
+      ]
+    },
+    {
+      "family": "HBEAM",
+      "profile": "175x175.0x7.0x11.0",
+      "profileKey": "175X175.0X7.0X11.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 40.166667,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.05,
+      "aliases": [
+        "H 175",
+        "H-175",
+        "H175",
+        "HBEAM 175"
+      ]
+    },
+    {
+      "family": "HBEAM",
+      "profile": "200x200.0x8.0x12.0",
+      "profileKey": "200X200.0X8.0X12.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 49.916667,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.2,
+      "aliases": [
+        "H 200",
+        "H-200",
+        "H200",
+        "HBEAM 200"
+      ]
+    },
+    {
+      "family": "HBEAM",
+      "profile": "250x250.0x9.0x14.0",
+      "profileKey": "250X250.0X9.0X14.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 72.416667,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.5,
+      "aliases": [
+        "H 250",
+        "H-250",
+        "H250",
+        "HBEAM 250"
+      ]
+    },
+    {
+      "family": "HBEAM",
+      "profile": "300x300.0x10.0x15.0",
+      "profileKey": "300X300.0X10.0X15.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 94.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.8,
+      "aliases": [
+        "H 300",
+        "H-300",
+        "H300",
+        "HBEAM 300"
+      ]
+    },
+    {
+      "family": "HBEAM",
+      "profile": "350x350.0x12.0x19.0",
+      "profileKey": "350X350.0X12.0X19.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 137.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 2.1,
+      "aliases": [
+        "H 350",
+        "H-350",
+        "H350",
+        "HBEAM 350"
+      ]
+    },
+    {
+      "family": "HBEAM",
+      "profile": "400x400.0x13.0x21.0",
+      "profileKey": "400X400.0X13.0X21.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 172.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 2.4,
+      "aliases": [
+        "H 400",
+        "H-400",
+        "H400",
+        "HBEAM 400"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "80x42.0x3.9x5.9x2.3",
+      "profileKey": "80X42.0X3.9X5.9X2.3",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 6.416667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.328,
+      "aliases": [
+        "INP 80",
+        "INP.80"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "100x50.0x4.5x6.8x2.7",
+      "profileKey": "100X50.0X4.5X6.8X2.7",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 8.433333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "INP 100",
+        "INP.100"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "120x58.0x5.1x7.7x3.1",
+      "profileKey": "120X58.0X5.1X7.7X3.1",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 11.25,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.472,
+      "aliases": [
+        "INP 120",
+        "INP.120"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "140x66.0x5.7x8.6x3.4",
+      "profileKey": "140X66.0X5.7X8.6X3.4",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 14.583333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.544,
+      "aliases": [
+        "INP 140",
+        "INP.140"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "160x74.0x6.5x9.5x3.8",
+      "profileKey": "160X74.0X6.5X9.5X3.8",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 18.083333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.616,
+      "aliases": [
+        "INP 160",
+        "INP.160"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "180x82.0x6.9x10.4x4.1",
+      "profileKey": "180X82.0X6.9X10.4X4.1",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 21.9,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.688,
+      "aliases": [
+        "INP 180",
+        "INP.180"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "200x90.0x7.5x11.3x4.5",
+      "profileKey": "200X90.0X7.5X11.3X4.5",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 26.2,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.76,
+      "aliases": [
+        "INP 200",
+        "INP.200"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "220x98.0x8.1x12.2x4.9",
+      "profileKey": "220X98.0X8.1X12.2X4.9",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 31.1,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.832,
+      "aliases": [
+        "INP 220",
+        "INP.220"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "240x106.0x8.7x13.1x5.2",
+      "profileKey": "240X106.0X8.7X13.1X5.2",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 36.2,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.904,
+      "aliases": [
+        "INP 240",
+        "INP.240"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "250x125.0x7.5x12.5x6.0",
+      "profileKey": "250X125.0X7.5X12.5X6.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 39.7,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.0,
+      "aliases": [
+        "INP 250",
+        "INP.250"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "260x113.0x9.4x14.1x5.6",
+      "profileKey": "260X113.0X9.4X14.1X5.6",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 41.9,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.972,
+      "aliases": [
+        "INP 260",
+        "INP.260"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "280x119.0x10.1x15.2x6.1",
+      "profileKey": "280X119.0X10.1X15.2X6.1",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 47.9,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.036,
+      "aliases": [
+        "INP 280",
+        "INP.280"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "300x125.0x10.8x16.2x6.5",
+      "profileKey": "300X125.0X10.8X16.2X6.5",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 54.2,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.1,
+      "aliases": [
+        "INP 300",
+        "INP.300"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "320x131.0x11.1x17.3x6.9",
+      "profileKey": "320X131.0X11.1X17.3X6.9",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 61.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.164,
+      "aliases": [
+        "INP 320",
+        "INP.320"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "340x137.0x12.2x18.3x7.3",
+      "profileKey": "340X137.0X12.2X18.3X7.3",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 68.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.228,
+      "aliases": [
+        "INP 340",
+        "INP.340"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "360x143.0x13.0x19.5x7.8",
+      "profileKey": "360X143.0X13.0X19.5X7.8",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 76.1,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.292,
+      "aliases": [
+        "INP 360",
+        "INP.360"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "380x149.0x13.7x20.5x7.8",
+      "profileKey": "380X149.0X13.7X20.5X7.8",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 84.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.356,
+      "aliases": [
+        "INP 380",
+        "INP.380"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "400x155.0x14.4x21.6x8.6",
+      "profileKey": "400X155.0X14.4X21.6X8.6",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 92.4,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.42,
+      "aliases": [
+        "INP 400",
+        "INP.400"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "450x170.0x16.2x21.3x9.7",
+      "profileKey": "450X170.0X16.2X21.3X9.7",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 115.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.58,
+      "aliases": [
+        "INP 450",
+        "INP.450"
+      ]
+    },
+    {
+      "family": "INP",
+      "profile": "500x185.0x18.0x27.0x10.8",
+      "profileKey": "500X185.0X18.0X27.0X10.8",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 141.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.74,
+      "aliases": [
+        "INP 500",
+        "INP.500"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "50x38.0x5.0",
+      "profileKey": "50X38.0X5.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 5.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.252,
+      "aliases": [
+        "UNP 50",
+        "UNP 50x38"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "65x42.0x5.0",
+      "profileKey": "65X42.0X5.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 6.833333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.298,
+      "aliases": [
+        "UNP 65",
+        "UNP 65x42"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "75x40.0x5.0",
+      "profileKey": "75X40.0X5.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 7.55,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.31,
+      "aliases": [
+        "UNP 75",
+        "UNP 75x40"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "80x45.0x5.0",
+      "profileKey": "80X45.0X5.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 7.833333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.34,
+      "aliases": [
+        "UNP 80",
+        "UNP 80x45"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "100x50.0x5.0",
+      "profileKey": "100X50.0X5.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 9.366667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "UNP 100",
+        "UNP 100x50"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "120x55.0x6.0",
+      "profileKey": "120X55.0X6.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 12.5,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.46,
+      "aliases": [
+        "UNP 120",
+        "UNP 120x55"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "125x65.0x6.0",
+      "profileKey": "125X65.0X6.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 13.4,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.51,
+      "aliases": [
+        "UNP 125",
+        "UNP 125x65"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "150x75.0x6.5",
+      "profileKey": "150X75.0X6.5",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 18.666667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.6,
+      "aliases": [
+        "UNP 150",
+        "UNP 150x75"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "180x75.0x7.0",
+      "profileKey": "180X75.0X7.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 21.333333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.66,
+      "aliases": [
+        "UNP 180",
+        "UNP 180x75"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "200x80.0x7.5",
+      "profileKey": "200X80.0X7.5",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 24.666667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.72,
+      "aliases": [
+        "UNP 200",
+        "UNP 200x80"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "250x90.0x9.0",
+      "profileKey": "250X90.0X9.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 34.666667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.86,
+      "aliases": [
+        "UNP 250",
+        "UNP 250x90"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "140x60.0x7.0",
+      "profileKey": "140X60.0X7.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 16.166667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.52,
+      "aliases": [
+        "UNP 140",
+        "UNP 140x60"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "160x65.0x7.5",
+      "profileKey": "160X65.0X7.5",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 19.25,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.58,
+      "aliases": [
+        "UNP 160",
+        "UNP 160x65"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "180x70.0x8.0",
+      "profileKey": "180X70.0X8.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 22.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.64,
+      "aliases": [
+        "UNP 180",
+        "UNP 180x70"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "200x75.0x8.5",
+      "profileKey": "200X75.0X8.5",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 25.3,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.7,
+      "aliases": [
+        "UNP 200",
+        "UNP 200x75"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "220x80.0x9.0",
+      "profileKey": "220X80.0X9.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 29.4,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.76,
+      "aliases": [
+        "UNP 220",
+        "UNP 220x80"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "220x85.0x9.5",
+      "profileKey": "220X85.0X9.5",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 31.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.78,
+      "aliases": [
+        "UNP 220",
+        "UNP 220x85"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "260x90.0x10.0",
+      "profileKey": "260X90.0X10.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 37.9,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.88,
+      "aliases": [
+        "UNP 260",
+        "UNP 260x90"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "280x95.0x10.0",
+      "profileKey": "280X95.0X10.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 41.8,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.94,
+      "aliases": [
+        "UNP 280",
+        "UNP 280x95"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "300x100.0x10.0",
+      "profileKey": "300X100.0X10.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 46.2,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.0,
+      "aliases": [
+        "UNP 300",
+        "UNP 300x100"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "320x100.0x14.0",
+      "profileKey": "320X100.0X14.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 59.5,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.04,
+      "aliases": [
+        "UNP 320",
+        "UNP 320x100"
+      ]
+    },
+    {
+      "family": "UNP",
+      "profile": "400x110.0x14.0",
+      "profileKey": "400X110.0X14.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 71.8,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.24,
+      "aliases": [
+        "UNP 400",
+        "UNP 400x110"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "20x20.0x3.0",
+      "profileKey": "20X20.0X3.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.885,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.08,
+      "aliases": [
+        "L 20x20x3",
+        "L 20X20X3",
+        "SIKU 20x20x3"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "25x25.0x3.0",
+      "profileKey": "25X25.0X3.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 1.12,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.1,
+      "aliases": [
+        "L 25x25x3",
+        "L 25X25X3",
+        "SIKU 25x25x3"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "25x25.0x5.0",
+      "profileKey": "25X25.0X5.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 1.766667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.1,
+      "aliases": [
+        "L 25x25x5",
+        "L 25X25X5",
+        "SIKU 25x25x5"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "30x30.0x3.0",
+      "profileKey": "30X30.0X3.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 1.36,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.12,
+      "aliases": [
+        "L 30x30x3",
+        "L 30X30X3",
+        "SIKU 30x30x3"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "40x40.0x3.0",
+      "profileKey": "40X40.0X3.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 1.833333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.16,
+      "aliases": [
+        "L 40x40x3",
+        "L 40X40X3",
+        "SIKU 40x40x3"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "40x40.0x4.0",
+      "profileKey": "40X40.0X4.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 2.416667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.16,
+      "aliases": [
+        "L 40x40x4",
+        "L 40X40X4",
+        "SIKU 40x40x4"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "40x40.0x5.0",
+      "profileKey": "40X40.0X5.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 3.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.16,
+      "aliases": [
+        "L 40x40x5",
+        "L 40X40X5",
+        "SIKU 40x40x5"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "45x45.0x4.0",
+      "profileKey": "45X45.0X4.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 2.74,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.18,
+      "aliases": [
+        "L 45x45x4",
+        "L 45X45X4",
+        "SIKU 45x45x4"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "45x45.0x5.0",
+      "profileKey": "45X45.0X5.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 3.416667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.18,
+      "aliases": [
+        "L 45x45x5",
+        "L 45X45X5",
+        "SIKU 45x45x5"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "50x50.0x4.0",
+      "profileKey": "50X50.0X4.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 3.066667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.2,
+      "aliases": [
+        "L 50x50x4",
+        "L 50X50X4",
+        "SIKU 50x50x4"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "50x50.0x5.0",
+      "profileKey": "50X50.0X5.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 3.75,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.2,
+      "aliases": [
+        "L 50x50x5",
+        "L 50X50X5",
+        "SIKU 50x50x5"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "50x50.0x6.0",
+      "profileKey": "50X50.0X6.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 4.596667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.2,
+      "aliases": [
+        "L 50x50x6",
+        "L 50X50X6",
+        "SIKU 50x50x6"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "60x60.0x5.0",
+      "profileKey": "60X60.0X5.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 4.55,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.24,
+      "aliases": [
+        "L 60x60x5",
+        "L 60X60X5",
+        "SIKU 60x60x5"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "60x60.0x6.0",
+      "profileKey": "60X60.0X6.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 5.416667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.24,
+      "aliases": [
+        "L 60x60x6",
+        "L 60X60X6",
+        "SIKU 60x60x6"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "65x65.0x6.0",
+      "profileKey": "65X65.0X6.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 5.916667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.26,
+      "aliases": [
+        "L 65x65x6",
+        "L 65X65X6",
+        "SIKU 65x65x6"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "70x70.0x6.0",
+      "profileKey": "70X70.0X6.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 6.38,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.28,
+      "aliases": [
+        "L 70x70x6",
+        "L 70X70X6",
+        "SIKU 70x70x6"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "70x70.0x7.0",
+      "profileKey": "70X70.0X7.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 7.383333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.28,
+      "aliases": [
+        "L 70x70x7",
+        "L 70X70X7",
+        "SIKU 70x70x7"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "75x75.0x6.0",
+      "profileKey": "75X75.0X6.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 6.87,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.3,
+      "aliases": [
+        "L 75x75x6",
+        "L 75X75X6",
+        "SIKU 75x75x6"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "75x75.0x7.0",
+      "profileKey": "75X75.0X7.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 7.94,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.3,
+      "aliases": [
+        "L 75x75x7",
+        "L 75X75X7",
+        "SIKU 75x75x7"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "75x75.0x8.0",
+      "profileKey": "75X75.0X8.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 9.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.3,
+      "aliases": [
+        "L 75x75x8",
+        "L 75X75X8",
+        "SIKU 75x75x8"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "75x75.0x9.0",
+      "profileKey": "75X75.0X9.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 9.966667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.3,
+      "aliases": [
+        "L 75x75x9",
+        "L 75X75X9",
+        "SIKU 75x75x9"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "80x80.0x8.0",
+      "profileKey": "80X80.0X8.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 9.66,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.32,
+      "aliases": [
+        "L 80x80x8",
+        "L 80X80X8",
+        "SIKU 80x80x8"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "90x90.0x7.0",
+      "profileKey": "90X90.0X7.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 9.59,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.36,
+      "aliases": [
+        "L 90x90x7",
+        "L 90X90X7",
+        "SIKU 90x90x7"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "90x90.0x9.0",
+      "profileKey": "90X90.0X9.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 12.2,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.36,
+      "aliases": [
+        "L 90x90x9",
+        "L 90X90X9",
+        "SIKU 90x90x9"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "90x90.0x10.0",
+      "profileKey": "90X90.0X10.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 13.3,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.36,
+      "aliases": [
+        "L 90x90x10",
+        "L 90X90X10",
+        "SIKU 90x90x10"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "100x100.0x7.0",
+      "profileKey": "100X100.0X7.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 10.708333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "L 100x100x7",
+        "L 100X100X7",
+        "SIKU 100x100x7"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "100x100.0x8.0",
+      "profileKey": "100X100.0X8.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 12.2,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "L 100x100x8",
+        "L 100X100X8",
+        "SIKU 100x100x8"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "100x100.0x10.0",
+      "profileKey": "100X100.0X10.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 14.9,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "L 100x100x10",
+        "L 100X100X10",
+        "SIKU 100x100x10"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "120x120.0x8.0",
+      "profileKey": "120X120.0X8.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 14.7,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.48,
+      "aliases": [
+        "L 120x120x8",
+        "L 120X120X8",
+        "SIKU 120x120x8"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "120x120.0x12.0",
+      "profileKey": "120X120.0X12.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 21.666667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.48,
+      "aliases": [
+        "L 120x120x12",
+        "L 120X120X12",
+        "SIKU 120x120x12"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "125x125.0x12.0",
+      "profileKey": "125X125.0X12.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 23.333333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.5,
+      "aliases": [
+        "L 125x125x12",
+        "L 125X125X12",
+        "SIKU 125x125x12"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "130x130.0x9.0",
+      "profileKey": "130X130.0X9.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 17.85,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.52,
+      "aliases": [
+        "L 130x130x9",
+        "L 130X130X9",
+        "SIKU 130x130x9"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "130x130.0x12.0",
+      "profileKey": "130X130.0X12.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 23.35,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.52,
+      "aliases": [
+        "L 130x130x12",
+        "L 130X130X12",
+        "SIKU 130x130x12"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "150x150.0x12.0",
+      "profileKey": "150X150.0X12.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 27.333333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.6,
+      "aliases": [
+        "L 150x150x12",
+        "L 150X150X12",
+        "SIKU 150x150x12"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "150x150.0x15.0",
+      "profileKey": "150X150.0X15.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 33.666667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.6,
+      "aliases": [
+        "L 150x150x15",
+        "L 150X150X15",
+        "SIKU 150x150x15"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "200x200.0x15.0",
+      "profileKey": "200X200.0X15.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 45.3,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.8,
+      "aliases": [
+        "L 200x200x15",
+        "L 200X200X15"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "200x200.0x20.0",
+      "profileKey": "200X200.0X20.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 59.7,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.8,
+      "aliases": [
+        "L 200x200x20",
+        "L 200X200X20"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "200x200.0x25.0",
+      "profileKey": "200X200.0X25.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 73.666667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.8,
+      "aliases": [
+        "L 200x200x25",
+        "L 200X200X25",
+        "SIKU 200x200x25"
+      ]
+    },
+    {
+      "family": "SIKU",
+      "profile": "250x250.0x25.0",
+      "profileKey": "250X250.0X25.0",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 93.666667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.0,
+      "aliases": [
+        "L 250x250x25",
+        "L 250X250X25",
+        "SIKU 250x250x25"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "75x45.0x1.6",
+      "profileKey": "75X45.0X1.6",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 2.32,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.33,
+      "aliases": [
+        "C 75",
+        "CNP 75",
+        "C75"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "75x45.0x2.3",
+      "profileKey": "75X45.0X2.3",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 3.25,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.33,
+      "aliases": [
+        "C 75",
+        "CNP 75",
+        "C75"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "100x50.0x1.6",
+      "profileKey": "100X50.0X1.6",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 2.916667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "C 100",
+        "CNP 100",
+        "C100"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "100x50.0x2.3",
+      "profileKey": "100X50.0X2.3",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 4.066667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "C 100",
+        "CNP 100",
+        "C100"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "100x50.0x3.2",
+      "profileKey": "100X50.0X3.2",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 5.5,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "C 100",
+        "CNP 100",
+        "C100"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "125x50.0x2.3",
+      "profileKey": "125X50.0X2.3",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 4.516667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.45,
+      "aliases": [
+        "C 125",
+        "CNP 125",
+        "C125"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "125x50.0x3.2",
+      "profileKey": "125X50.0X3.2",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 6.133333,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.45,
+      "aliases": [
+        "C 125",
+        "CNP 125",
+        "C125"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "150x50.0x2.3",
+      "profileKey": "150X50.0X2.3",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 4.966667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.5,
+      "aliases": [
+        "C 150",
+        "CNP 150",
+        "C150"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "150x50.0x3.2",
+      "profileKey": "150X50.0X3.2",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 6.766667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.5,
+      "aliases": [
+        "C 150",
+        "CNP 150",
+        "C150"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "150x65.0x2.3",
+      "profileKey": "150X65.0X2.3",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 5.5,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.56,
+      "aliases": [
+        "C 150",
+        "CNP 150",
+        "C150"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "150x65.0x3.2",
+      "profileKey": "150X65.0X3.2",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 7.516667,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.56,
+      "aliases": [
+        "C 150",
+        "CNP 150",
+        "C150"
+      ]
+    },
+    {
+      "family": "CNP",
+      "profile": "200x75.0x3.2",
+      "profileKey": "200X75.0X3.2",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 9.27,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.7,
+      "aliases": [
+        "C 200",
+        "CNP 200",
+        "C200"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "0.5\" SCH40",
+      "profileKey": "0.5\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 1.31,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.052,
+      "aliases": [
+        "PIPA CARBON 0.5\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "0.75\" SCH40",
+      "profileKey": "0.75\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 1.74,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.072,
+      "aliases": [
+        "PIPA CARBON 0.75\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "1\" SCH40",
+      "profileKey": "1\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 2.57,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.092,
+      "aliases": [
+        "PIPA CARBON 1\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "1.25\" SCH40",
+      "profileKey": "1.25\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 3.47,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.112,
+      "aliases": [
+        "PIPA CARBON 1.25\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "1.5\" SCH40",
+      "profileKey": "1.5\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 4.1,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.132,
+      "aliases": [
+        "PIPA CARBON 1.5\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "2\" SCH40",
+      "profileKey": "2\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 5.44,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.172,
+      "aliases": [
+        "PIPA CARBON 2\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "2.5\" SCH40",
+      "profileKey": "2.5\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 9.12,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.212,
+      "aliases": [
+        "PIPA CARBON 2.5\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "3\" SCH40",
+      "profileKey": "3\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 11.3,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.252,
+      "aliases": [
+        "PIPA CARBON 3\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "4\" SCH40",
+      "profileKey": "4\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 16.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.332,
+      "aliases": [
+        "PIPA CARBON 4\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "5\" SCH40",
+      "profileKey": "5\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 21.7,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.412,
+      "aliases": [
+        "PIPA CARBON 5\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "6\" SCH40",
+      "profileKey": "6\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 27.7,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.491,
+      "aliases": [
+        "PIPA CARBON 6\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "8\" SCH40",
+      "profileKey": "8\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 42.1,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.651,
+      "aliases": [
+        "PIPA CARBON 8\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "10\" SCH40",
+      "profileKey": "10\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 59.2,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.811,
+      "aliases": [
+        "PIPA CARBON 10\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "12\" SCH40",
+      "profileKey": "12\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 78.3,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.97,
+      "aliases": [
+        "PIPA CARBON 12\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "14\" SCH40",
+      "profileKey": "14\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 94.3,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.13,
+      "aliases": [
+        "PIPA CARBON 14\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "16\" SCH40",
+      "profileKey": "16\"_SCH40",
+      "gradeOrSchedule": "SCH40",
+      "weightPerMeterKg": 123.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.289,
+      "aliases": [
+        "PIPA CARBON 16\" SCH40"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "0.5\" SCH80",
+      "profileKey": "0.5\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 1.64,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.052,
+      "aliases": [
+        "PIPA CARBON 0.5\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "0.75\" SCH80",
+      "profileKey": "0.75\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 2.24,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.072,
+      "aliases": [
+        "PIPA CARBON 0.75\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "1\" SCH80",
+      "profileKey": "1\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 3.27,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.092,
+      "aliases": [
+        "PIPA CARBON 1\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "1.25\" SCH80",
+      "profileKey": "1.25\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 4.57,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.112,
+      "aliases": [
+        "PIPA CARBON 1.25\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "1.5\" SCH80",
+      "profileKey": "1.5\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 5.47,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.132,
+      "aliases": [
+        "PIPA CARBON 1.5\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "2\" SCH80",
+      "profileKey": "2\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 7.46,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.172,
+      "aliases": [
+        "PIPA CARBON 2\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "2.5\" SCH80",
+      "profileKey": "2.5\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 12.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.212,
+      "aliases": [
+        "PIPA CARBON 2.5\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "3\" SCH80",
+      "profileKey": "3\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 15.3,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.252,
+      "aliases": [
+        "PIPA CARBON 3\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "4\" SCH80",
+      "profileKey": "4\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 22.4,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.332,
+      "aliases": [
+        "PIPA CARBON 4\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "5\" SCH80",
+      "profileKey": "5\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 30.5,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.412,
+      "aliases": [
+        "PIPA CARBON 5\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "6\" SCH80",
+      "profileKey": "6\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 41.8,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.491,
+      "aliases": [
+        "PIPA CARBON 6\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "8\" SCH80",
+      "profileKey": "8\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 63.8,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.651,
+      "aliases": [
+        "PIPA CARBON 8\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "10\" SCH80",
+      "profileKey": "10\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 93.9,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.811,
+      "aliases": [
+        "PIPA CARBON 10\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "12\" SCH80",
+      "profileKey": "12\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 129.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.97,
+      "aliases": [
+        "PIPA CARBON 12\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "14\" SCH80",
+      "profileKey": "14\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 158.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.13,
+      "aliases": [
+        "PIPA CARBON 14\" SCH80"
+      ]
+    },
+    {
+      "family": "PIPA CARBON",
+      "profile": "16\" SCH80",
+      "profileKey": "16\"_SCH80",
+      "gradeOrSchedule": "SCH80",
+      "weightPerMeterKg": 203.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.289,
+      "aliases": [
+        "PIPA CARBON 16\" SCH80"
+      ]
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "1/4\"",
+      "profileKey": "1/4\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.522,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.043,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "3/8\"",
+      "profileKey": "3/8\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.684,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.054,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "1/2\"",
+      "profileKey": "1/2\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.962,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.067,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "3/4\"",
+      "profileKey": "3/4\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 1.41,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.084,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "1\"",
+      "profileKey": "1\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 2.22,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.092,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "1 1/4\"",
+      "profileKey": "11/4\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 2.57,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.133,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "1 1/2\"",
+      "profileKey": "11/2\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 3.27,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.152,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "2\"",
+      "profileKey": "2\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 4.14,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.172,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "2 1/2\"",
+      "profileKey": "21/2\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 5.28,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.229,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "3\"",
+      "profileKey": "3\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 6.81,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.252,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "4\"",
+      "profileKey": "4\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 11.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.332,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "5\"",
+      "profileKey": "5\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 13.4,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.412,
+      "aliases": []
+    },
+    {
+      "family": "SEAMLESS",
+      "profile": "6\"",
+      "profileKey": "6\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 18.18,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.491,
+      "aliases": []
+    },
+    {
+      "family": "PIPA HITAM STK41",
+      "profile": "2 1/2\"",
+      "profileKey": "21/2\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 5.08,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.229,
+      "aliases": []
+    },
+    {
+      "family": "PIPA HITAM STK41",
+      "profile": "3\"",
+      "profileKey": "3\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 6.78,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.252,
+      "aliases": []
+    },
+    {
+      "family": "PIPA HITAM STK41",
+      "profile": "4\"",
+      "profileKey": "4\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 9.56,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.332,
+      "aliases": []
+    },
+    {
+      "family": "PIPA HITAM STK41",
+      "profile": "5\"",
+      "profileKey": "5\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 15.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.412,
+      "aliases": []
+    },
+    {
+      "family": "PIPA HITAM STK41",
+      "profile": "6\"",
+      "profileKey": "6\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 17.8,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.491,
+      "aliases": []
+    },
+    {
+      "family": "PIPA HITAM STK41",
+      "profile": "7\"",
+      "profileKey": "7\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 24.2,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.571,
+      "aliases": []
+    },
+    {
+      "family": "PIPA HITAM STK41",
+      "profile": "8\"",
+      "profileKey": "8\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 30.1,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.651,
+      "aliases": []
+    },
+    {
+      "family": "PIPA HITAM STK41",
+      "profile": "10\"",
+      "profileKey": "10\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 42.4,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.811,
+      "aliases": []
+    },
+    {
+      "family": "PIPA HITAM STK41",
+      "profile": "12\"",
+      "profileKey": "12\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 53.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.97,
+      "aliases": []
+    },
+    {
+      "family": "PIPA HITAM STK41",
+      "profile": "14\"",
+      "profileKey": "14\"",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 67.7,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.13,
+      "aliases": []
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1/2\" HEAVY",
+      "profileKey": "1/2\"_HEAVY",
+      "gradeOrSchedule": "HEAVY",
+      "weightPerMeterKg": 1.22,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.067,
+      "aliases": [
+        "PIPA HITAM 1/2\" HEAVY"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "3/4\" HEAVY",
+      "profileKey": "3/4\"_HEAVY",
+      "gradeOrSchedule": "HEAVY",
+      "weightPerMeterKg": 1.58,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.084,
+      "aliases": [
+        "PIPA HITAM 3/4\" HEAVY"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1\" HEAVY",
+      "profileKey": "1\"_HEAVY",
+      "gradeOrSchedule": "HEAVY",
+      "weightPerMeterKg": 2.44,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.092,
+      "aliases": [
+        "PIPA HITAM 1\" HEAVY"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1 1/4\" HEAVY",
+      "profileKey": "11/4\"_HEAVY",
+      "gradeOrSchedule": "HEAVY",
+      "weightPerMeterKg": 3.14,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.133,
+      "aliases": [
+        "PIPA HITAM 1 1/4\" HEAVY"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1 1/2\" HEAVY",
+      "profileKey": "11/2\"_HEAVY",
+      "gradeOrSchedule": "HEAVY",
+      "weightPerMeterKg": 3.62,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.152,
+      "aliases": [
+        "PIPA HITAM 1 1/2\" HEAVY"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "2\" HEAVY",
+      "profileKey": "2\"_HEAVY",
+      "gradeOrSchedule": "HEAVY",
+      "weightPerMeterKg": 5.09,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.172,
+      "aliases": [
+        "PIPA HITAM 2\" HEAVY"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "2 1/2\" HEAVY",
+      "profileKey": "21/2\"_HEAVY",
+      "gradeOrSchedule": "HEAVY",
+      "weightPerMeterKg": 6.52,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.229,
+      "aliases": [
+        "PIPA HITAM 2 1/2\" HEAVY"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "3\" HEAVY",
+      "profileKey": "3\"_HEAVY",
+      "gradeOrSchedule": "HEAVY",
+      "weightPerMeterKg": 8.47,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.252,
+      "aliases": [
+        "PIPA HITAM 3\" HEAVY"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "4\" HEAVY",
+      "profileKey": "4\"_HEAVY",
+      "gradeOrSchedule": "HEAVY",
+      "weightPerMeterKg": 12.1,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.332,
+      "aliases": [
+        "PIPA HITAM 4\" HEAVY"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "5\" HEAVY",
+      "profileKey": "5\"_HEAVY",
+      "gradeOrSchedule": "HEAVY",
+      "weightPerMeterKg": 16.2,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.412,
+      "aliases": [
+        "PIPA HITAM 5\" HEAVY"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "6\" HEAVY",
+      "profileKey": "6\"_HEAVY",
+      "gradeOrSchedule": "HEAVY",
+      "weightPerMeterKg": 19.2,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.491,
+      "aliases": [
+        "PIPA HITAM 6\" HEAVY"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1/2\" MEDIUM",
+      "profileKey": "1/2\"_MEDIUM",
+      "gradeOrSchedule": "MEDIUM",
+      "weightPerMeterKg": 0.95,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.067,
+      "aliases": [
+        "PIPA HITAM 1/2\" MEDIUM"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "3/4\" MEDIUM",
+      "profileKey": "3/4\"_MEDIUM",
+      "gradeOrSchedule": "MEDIUM",
+      "weightPerMeterKg": 1.4,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.084,
+      "aliases": [
+        "PIPA HITAM 3/4\" MEDIUM"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1\" MEDIUM",
+      "profileKey": "1\"_MEDIUM",
+      "gradeOrSchedule": "MEDIUM",
+      "weightPerMeterKg": 2.01,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.092,
+      "aliases": [
+        "PIPA HITAM 1\" MEDIUM"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1 1/4\" MEDIUM",
+      "profileKey": "11/4\"_MEDIUM",
+      "gradeOrSchedule": "MEDIUM",
+      "weightPerMeterKg": 2.57,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.133,
+      "aliases": [
+        "PIPA HITAM 1 1/4\" MEDIUM"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1 1/2\" MEDIUM",
+      "profileKey": "11/2\"_MEDIUM",
+      "gradeOrSchedule": "MEDIUM",
+      "weightPerMeterKg": 3.26,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.152,
+      "aliases": [
+        "PIPA HITAM 1 1/2\" MEDIUM"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "2\" MEDIUM",
+      "profileKey": "2\"_MEDIUM",
+      "gradeOrSchedule": "MEDIUM",
+      "weightPerMeterKg": 4.11,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.172,
+      "aliases": [
+        "PIPA HITAM 2\" MEDIUM"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "2 1/2\" MEDIUM",
+      "profileKey": "21/2\"_MEDIUM",
+      "gradeOrSchedule": "MEDIUM",
+      "weightPerMeterKg": 5.8,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.229,
+      "aliases": [
+        "PIPA HITAM 2 1/2\" MEDIUM"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "3\" MEDIUM",
+      "profileKey": "3\"_MEDIUM",
+      "gradeOrSchedule": "MEDIUM",
+      "weightPerMeterKg": 6.82,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.252,
+      "aliases": [
+        "PIPA HITAM 3\" MEDIUM"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "4\" MEDIUM",
+      "profileKey": "4\"_MEDIUM",
+      "gradeOrSchedule": "MEDIUM",
+      "weightPerMeterKg": 9.88,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.332,
+      "aliases": [
+        "PIPA HITAM 4\" MEDIUM"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1/2\" LIGHT",
+      "profileKey": "1/2\"_LIGHT",
+      "gradeOrSchedule": "LIGHT",
+      "weightPerMeterKg": 0.91,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.067,
+      "aliases": [
+        "PIPA HITAM 1/2\" LIGHT"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "3/4\" LIGHT",
+      "profileKey": "3/4\"_LIGHT",
+      "gradeOrSchedule": "LIGHT",
+      "weightPerMeterKg": 1.28,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.084,
+      "aliases": [
+        "PIPA HITAM 3/4\" LIGHT"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1\" LIGHT",
+      "profileKey": "1\"_LIGHT",
+      "gradeOrSchedule": "LIGHT",
+      "weightPerMeterKg": 1.88,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.092,
+      "aliases": [
+        "PIPA HITAM 1\" LIGHT"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1 1/4\" LIGHT",
+      "profileKey": "11/4\"_LIGHT",
+      "gradeOrSchedule": "LIGHT",
+      "weightPerMeterKg": 2.4,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.133,
+      "aliases": [
+        "PIPA HITAM 1 1/4\" LIGHT"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "1 1/2\" LIGHT",
+      "profileKey": "11/2\"_LIGHT",
+      "gradeOrSchedule": "LIGHT",
+      "weightPerMeterKg": 2.92,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.152,
+      "aliases": [
+        "PIPA HITAM 1 1/2\" LIGHT"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "2\" LIGHT",
+      "profileKey": "2\"_LIGHT",
+      "gradeOrSchedule": "LIGHT",
+      "weightPerMeterKg": 3.67,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.172,
+      "aliases": [
+        "PIPA HITAM 2\" LIGHT"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "2 1/2\" LIGHT",
+      "profileKey": "21/2\"_LIGHT",
+      "gradeOrSchedule": "LIGHT",
+      "weightPerMeterKg": 5.37,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.229,
+      "aliases": [
+        "PIPA HITAM 2 1/2\" LIGHT"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "3\" LIGHT",
+      "profileKey": "3\"_LIGHT",
+      "gradeOrSchedule": "LIGHT",
+      "weightPerMeterKg": 6.31,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.252,
+      "aliases": [
+        "PIPA HITAM 3\" LIGHT"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "4\" LIGHT",
+      "profileKey": "4\"_LIGHT",
+      "gradeOrSchedule": "LIGHT",
+      "weightPerMeterKg": 8.83,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.332,
+      "aliases": [
+        "PIPA HITAM 4\" LIGHT"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "5\" LIGHT",
+      "profileKey": "5\"_LIGHT",
+      "gradeOrSchedule": "LIGHT",
+      "weightPerMeterKg": 12.17,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.412,
+      "aliases": [
+        "PIPA HITAM 5\" LIGHT"
+      ]
+    },
+    {
+      "family": "PIPA HITAM",
+      "profile": "6\" LIGHT",
+      "profileKey": "6\"_LIGHT",
+      "gradeOrSchedule": "LIGHT",
+      "weightPerMeterKg": 14.43,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.491,
+      "aliases": [
+        "PIPA HITAM 6\" LIGHT"
+      ]
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "12.7",
+      "profileKey": "12.7",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.265,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.026,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "14.3",
+      "profileKey": "14.3",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.298,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.154,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "15.9",
+      "profileKey": "15.9",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.332,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.281,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "19.1",
+      "profileKey": "19.1",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.403,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.06,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "22.2",
+      "profileKey": "22.2",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.524,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.07,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "23.8",
+      "profileKey": "23.8",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.561,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.075,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "25.4",
+      "profileKey": "25.4",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.717,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.08,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "28.6",
+      "profileKey": "28.6",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.811,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.09,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "31.8",
+      "profileKey": "31.8",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.81,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.1,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "35",
+      "profileKey": "35",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 0.905,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.11,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "38.1",
+      "profileKey": "38.1",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 1.092,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.12,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "41.3",
+      "profileKey": "41.3",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 1.186,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.13,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "44.5",
+      "profileKey": "44.5",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 1.487,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.14,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "50.8",
+      "profileKey": "50.8",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 1.706,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.16,
+      "aliases": []
+    },
+    {
+      "family": "PIPA STAAL-BUIS",
+      "profile": "57.2",
+      "profileKey": "57.2",
+      "gradeOrSchedule": "",
+      "weightPerMeterKg": 1.926,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.18,
+      "aliases": []
+    },
+    {
+      "family": "RCWF",
+      "profile": "250x125.0x6.0x9.0",
+      "profileKey": "RCWF250X125.0X6.0X9.0",
+      "gradeOrSchedule": "CASTELLATED",
+      "weightPerMeterKg": 29.6,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.0,
+      "aliases": [
+        "RCWF 250",
+        "RCWF.250",
+        "RCWF-250"
+      ]
+    },
+    {
+      "family": "RCWF",
+      "profile": "300x150.0x6.5x9.0",
+      "profileKey": "RCWF300X150.0X6.5X9.0",
+      "gradeOrSchedule": "CASTELLATED",
+      "weightPerMeterKg": 36.7,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.2,
+      "aliases": [
+        "RCWF 300",
+        "RCWF.300",
+        "RCWF-300"
+      ]
+    },
+    {
+      "family": "RCWF",
+      "profile": "350x175.0x7.0x11.0",
+      "profileKey": "RCWF350X175.0X7.0X11.0",
+      "gradeOrSchedule": "CASTELLATED",
+      "weightPerMeterKg": 49.6,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.4,
+      "aliases": [
+        "RCWF 350",
+        "RCWF.350",
+        "RCWF-350"
+      ]
+    },
+    {
+      "family": "RCWF",
+      "profile": "400x200.0x8.0x13.0",
+      "profileKey": "RCWF400X200.0X8.0X13.0",
+      "gradeOrSchedule": "CASTELLATED",
+      "weightPerMeterKg": 66.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.6,
+      "aliases": [
+        "RCWF 400",
+        "RCWF.400",
+        "RCWF-400"
+      ]
+    },
+    {
+      "family": "RCWF",
+      "profile": "450x200.0x9.0x14.0",
+      "profileKey": "RCWF450X200.0X9.0X14.0",
+      "gradeOrSchedule": "CASTELLATED",
+      "weightPerMeterKg": 76.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.7,
+      "aliases": [
+        "RCWF 450",
+        "RCWF.450",
+        "RCWF-450"
+      ]
+    },
+    {
+      "family": "RCWF",
+      "profile": "500x200.0x10.0x16.0",
+      "profileKey": "RCWF500X200.0X10.0X16.0",
+      "gradeOrSchedule": "CASTELLATED",
+      "weightPerMeterKg": 89.583333,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 1.8,
+      "aliases": [
+        "RCWF 500",
+        "RCWF.500",
+        "RCWF-500"
+      ]
+    },
+    {
+      "family": "RCWF",
+      "profile": "588x300.0x10.0x16.0",
+      "profileKey": "RCWF588X300.0X10.0X16.0",
+      "gradeOrSchedule": "CASTELLATED",
+      "weightPerMeterKg": 151.0,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 2.376,
+      "aliases": [
+        "RCWF 588",
+        "RCWF.588",
+        "RCWF-588"
+      ]
+    },
+    {
+      "family": "2L",
+      "profile": "40x40.0x4.0",
+      "profileKey": "2L_40X40.0X4.0",
+      "gradeOrSchedule": "DOUBLE_ANGLE",
+      "weightPerMeterKg": 4.833334,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.32,
+      "aliases": [
+        "2L 40x40x4",
+        "2L 40X40"
+      ]
+    },
+    {
+      "family": "2L",
+      "profile": "50x50.0x5.0",
+      "profileKey": "2L_50X50.0X5.0",
+      "gradeOrSchedule": "DOUBLE_ANGLE",
+      "weightPerMeterKg": 7.5,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "2L 50x50x5",
+        "2L 50X50"
+      ]
+    },
+    {
+      "family": "2L",
+      "profile": "60x60.0x6.0",
+      "profileKey": "2L_60X60.0X6.0",
+      "gradeOrSchedule": "DOUBLE_ANGLE",
+      "weightPerMeterKg": 10.833334,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.48,
+      "aliases": [
+        "2L 60x60x6",
+        "2L 60X60"
+      ]
+    },
+    {
+      "family": "2L",
+      "profile": "70x70.0x7.0",
+      "profileKey": "2L_70X70.0X7.0",
+      "gradeOrSchedule": "DOUBLE_ANGLE",
+      "weightPerMeterKg": 14.766666,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.56,
+      "aliases": [
+        "2L 70x70x7",
+        "2L 70X70"
+      ]
+    },
+    {
+      "family": "2L",
+      "profile": "75x75.0x7.0",
+      "profileKey": "2L_75X75.0X7.0",
+      "gradeOrSchedule": "DOUBLE_ANGLE",
+      "weightPerMeterKg": 15.88,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.6,
+      "aliases": [
+        "2L 75x75x7",
+        "2L 75X75"
+      ]
+    },
+    {
+      "family": "2L",
+      "profile": "80x80.0x8.0",
+      "profileKey": "2L_80X80.0X8.0",
+      "gradeOrSchedule": "DOUBLE_ANGLE",
+      "weightPerMeterKg": 19.32,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.64,
+      "aliases": [
+        "2L 80x80x8",
+        "2L 80X80"
+      ]
+    },
+    {
+      "family": "2L",
+      "profile": "90x90.0x9.0",
+      "profileKey": "2L_90X90.0X9.0",
+      "gradeOrSchedule": "DOUBLE_ANGLE",
+      "weightPerMeterKg": 24.4,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.72,
+      "aliases": [
+        "2L 90x90x9",
+        "2L 90X90"
+      ]
+    },
+    {
+      "family": "2L",
+      "profile": "100x100.0x10.0",
+      "profileKey": "2L_100X100.0X10.0",
+      "gradeOrSchedule": "DOUBLE_ANGLE",
+      "weightPerMeterKg": 29.8,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.8,
+      "aliases": [
+        "2L 100x100x10",
+        "2L 100X100"
+      ]
+    },
+    {
+      "family": "2CNP",
+      "profile": "100x50.0x2.3",
+      "profileKey": "2CNP_100X50.0X2.3",
+      "gradeOrSchedule": "DOUBLE_CNP",
+      "weightPerMeterKg": 8.133334,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.8,
+      "aliases": [
+        "2CNP 100",
+        "2X C 100"
+      ]
+    },
+    {
+      "family": "2CNP",
+      "profile": "125x50.0x2.3",
+      "profileKey": "2CNP_125X50.0X2.3",
+      "gradeOrSchedule": "DOUBLE_CNP",
+      "weightPerMeterKg": 9.033334,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.9,
+      "aliases": [
+        "2CNP 125",
+        "2X C 125"
+      ]
+    },
+    {
+      "family": "2CNP",
+      "profile": "150x50.0x2.3",
+      "profileKey": "2CNP_150X50.0X2.3",
+      "gradeOrSchedule": "DOUBLE_CNP",
+      "weightPerMeterKg": 9.933334,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.0,
+      "aliases": [
+        "2CNP 150",
+        "2X C 150",
+        "2CNP 150x50x2.3"
+      ]
+    },
+    {
+      "family": "2CNP",
+      "profile": "150x50.0x3.2",
+      "profileKey": "2CNP_150X50.0X3.2",
+      "gradeOrSchedule": "DOUBLE_CNP",
+      "weightPerMeterKg": 13.533334,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.0,
+      "aliases": [
+        "2CNP 150x50x3.2"
+      ]
+    },
+    {
+      "family": "2CNP",
+      "profile": "150x65.0x2.3",
+      "profileKey": "2CNP_150X65.0X2.3",
+      "gradeOrSchedule": "DOUBLE_CNP",
+      "weightPerMeterKg": 11.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.12,
+      "aliases": [
+        "2CNP 150x65x2.3"
+      ]
+    },
+    {
+      "family": "2CNP",
+      "profile": "150x65.0x3.2",
+      "profileKey": "2CNP_150X65.0X3.2",
+      "gradeOrSchedule": "DOUBLE_CNP",
+      "weightPerMeterKg": 15.033334,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.12,
+      "aliases": [
+        "2CNP 150x65x3.2"
+      ]
+    },
+    {
+      "family": "2CNP",
+      "profile": "200x75.0x3.2",
+      "profileKey": "2CNP_200X75.0X3.2",
+      "gradeOrSchedule": "DOUBLE_CNP",
+      "weightPerMeterKg": 18.54,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 1.4,
+      "aliases": [
+        "2CNP 200",
+        "2X C 200"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "40x40.0x2.0",
+      "profileKey": "HOLLOW_40X40.0X2.0",
+      "gradeOrSchedule": "SHS",
+      "weightPerMeterKg": 2.31,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.16,
+      "aliases": [
+        "SHS 40x40x2",
+        "HOLLOW 40x40x2"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "50x50.0x2.0",
+      "profileKey": "HOLLOW_50X50.0X2.0",
+      "gradeOrSchedule": "SHS",
+      "weightPerMeterKg": 2.94,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.2,
+      "aliases": [
+        "SHS 50x50x2",
+        "HOLLOW 50x50x2"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "50x50.0x3.0",
+      "profileKey": "HOLLOW_50X50.0X3.0",
+      "gradeOrSchedule": "SHS",
+      "weightPerMeterKg": 4.25,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.2,
+      "aliases": [
+        "SHS 50x50x3",
+        "HOLLOW 50x50x3"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "60x60.0x3.0",
+      "profileKey": "HOLLOW_60X60.0X3.0",
+      "gradeOrSchedule": "SHS",
+      "weightPerMeterKg": 5.19,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.24,
+      "aliases": [
+        "SHS 60x60x3",
+        "HOLLOW 60x60x3"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "75x75.0x3.0",
+      "profileKey": "HOLLOW_75X75.0X3.0",
+      "gradeOrSchedule": "SHS",
+      "weightPerMeterKg": 6.6,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.3,
+      "aliases": [
+        "SHS 75x75x3",
+        "HOLLOW 75x75x3"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "100x100.0x3.2",
+      "profileKey": "HOLLOW_100X100.0X3.2",
+      "gradeOrSchedule": "SHS",
+      "weightPerMeterKg": 9.48,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "SHS 100x100x3.2",
+        "HOLLOW 100x100x3.2"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "100x100.0x4.5",
+      "profileKey": "HOLLOW_100X100.0X4.5",
+      "gradeOrSchedule": "SHS",
+      "weightPerMeterKg": 13.0,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.4,
+      "aliases": [
+        "SHS 100x100x4.5",
+        "HOLLOW 100x100x4.5"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "150x150.0x4.5",
+      "profileKey": "HOLLOW_150X150.0X4.5",
+      "gradeOrSchedule": "SHS",
+      "weightPerMeterKg": 20.1,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.6,
+      "aliases": [
+        "SHS 150x150x4.5",
+        "HOLLOW 150x150x4.5"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "50x100.0x2.3",
+      "profileKey": "HOLLOW_50X100.0X2.3",
+      "gradeOrSchedule": "RHS",
+      "weightPerMeterKg": 5.15,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.3,
+      "aliases": [
+        "RHS 50x100x2.3",
+        "HOLLOW 100x50x2.3"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "50x100.0x3.2",
+      "profileKey": "HOLLOW_50X100.0X3.2",
+      "gradeOrSchedule": "RHS",
+      "weightPerMeterKg": 6.97,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.3,
+      "aliases": [
+        "RHS 50x100x3.2",
+        "HOLLOW 100x50x3.2"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "100x150.0x4.5",
+      "profileKey": "HOLLOW_100X150.0X4.5",
+      "gradeOrSchedule": "RHS",
+      "weightPerMeterKg": 16.6,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.5,
+      "aliases": [
+        "RHS 100x150x4.5",
+        "HOLLOW 150x100x4.5"
+      ]
+    },
+    {
+      "family": "HOLLOW",
+      "profile": "100x200.0x4.5",
+      "profileKey": "HOLLOW_100X200.0X4.5",
+      "gradeOrSchedule": "RHS",
+      "weightPerMeterKg": 20.1,
+      "standardLengthM": 6.0,
+      "surfaceAreaM2PerM": 0.6,
+      "aliases": [
+        "RHS 100x200x4.5",
+        "HOLLOW 200x100x4.5"
+      ]
+    },
+    {
+      "family": "ROD",
+      "profile": "Dia 10",
+      "profileKey": "ROD_DIA10",
+      "gradeOrSchedule": "ROUND_BAR",
+      "weightPerMeterKg": 0.6165,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.031,
+      "aliases": [
+        "Tie Rod 10 mm",
+        "Dia 10"
+      ]
+    },
+    {
+      "family": "ROD",
+      "profile": "Dia 12",
+      "profileKey": "ROD_DIA12",
+      "gradeOrSchedule": "ROUND_BAR",
+      "weightPerMeterKg": 0.8878,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.038,
+      "aliases": [
+        "Tie Rod 12 mm",
+        "Regel Bar Dia. 12 mm",
+        "Dia 12"
+      ]
+    },
+    {
+      "family": "ROD",
+      "profile": "Dia 16",
+      "profileKey": "ROD_DIA16",
+      "gradeOrSchedule": "ROUND_BAR",
+      "weightPerMeterKg": 1.5782,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.05,
+      "aliases": [
+        "Wind Brace Dia. 16 mm",
+        "Tie Rod 16 mm",
+        "Dia 16"
+      ]
+    },
+    {
+      "family": "ROD",
+      "profile": "Dia 19",
+      "profileKey": "ROD_DIA19",
+      "gradeOrSchedule": "ROUND_BAR",
+      "weightPerMeterKg": 2.2256,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.06,
+      "aliases": [
+        "Wind Brace Dia. 19 mm",
+        "Dia 19"
+      ]
+    },
+    {
+      "family": "ROD",
+      "profile": "Dia 20",
+      "profileKey": "ROD_DIA20",
+      "gradeOrSchedule": "ROUND_BAR",
+      "weightPerMeterKg": 2.466,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.063,
+      "aliases": [
+        "Wind Brace Dia. 20 mm",
+        "Dia 20"
+      ]
+    },
+    {
+      "family": "ROD",
+      "profile": "Dia 22",
+      "profileKey": "ROD_DIA22",
+      "gradeOrSchedule": "ROUND_BAR",
+      "weightPerMeterKg": 2.9839,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.069,
+      "aliases": [
+        "Wind Brace Dia. 22 mm",
+        "Dia 22"
+      ]
+    },
+    {
+      "family": "ROD",
+      "profile": "Dia 25",
+      "profileKey": "ROD_DIA25",
+      "gradeOrSchedule": "ROUND_BAR",
+      "weightPerMeterKg": 3.8531,
+      "standardLengthM": 12.0,
+      "surfaceAreaM2PerM": 0.079,
+      "aliases": [
+        "Wind Brace Dia. 25 mm",
+        "Dia 25"
+      ]
+    }
+  ]
+}

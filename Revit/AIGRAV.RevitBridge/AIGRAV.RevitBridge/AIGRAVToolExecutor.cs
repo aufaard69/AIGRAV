@@ -2366,11 +2366,11 @@ public static class AIGRAVToolExecutor
             definition.AddSortGroupField(sortGroup);
         }
 
-        // Configure Filter for Structural Framing (filter out steel like CNP/UNP)
-        if (category == BuiltInCategory.OST_StructuralFraming && materialField != null)
+        // Optional material/comments filters can be passed explicitly; never hardcode project-specific ElementIds.
+        string materialFilter = GetString(data, "material_name");
+        if (!string.IsNullOrWhiteSpace(materialFilter) && materialField != null)
         {
-            // Material 54292 = Concrete, Cast-in-Place gray
-            ScheduleFilter filter = new(materialField.FieldId, ScheduleFilterType.Equal, new ElementId(54292));
+            ScheduleFilter filter = new(materialField.FieldId, ScheduleFilterType.Contains, materialFilter);
             definition.AddFilter(filter);
         }
 

@@ -151,54 +151,40 @@ Validator bertindak sebagai **Senior BIM Engineer & Arsitek** yang wajib menguji
 
 ---
 
-## 6. Protokol Standar Quantity Takeoff (QTO) Schedule & Kalibrasi Baja
-Setiap pembuatan, modifikasi, dan audit jadwal kuantitas (Schedule / QTO) baja struktural WAJIB tunduk pada standar berikut:
+## 6. Protokol Standar Quantity Takeoff (QTO) Universal Multi-Disiplin v4.0
+Setiap pembuatan, injeksi parameter, kalibrasi, ekspor BOQ, dan audit jadwal kuantitas (Schedule / QTO) lintas disiplin (Struktur, Arsitektur, Siteplan/Sipil) WAJIB tunduk pada standar QTO v4.0 berikut:
 
-### 1. Template Kolom Baku & Posisi Mutlak Kolom A (Lokasi)
-- **Kolom A (Index 0 / Kolom Pertama) WAJIB berupa parameter `Lokasi`** (unhidden/terlihat) sebagai penanda zona spasial pada seluruh schedule berbasis lokasi (`C.3.x.y`).
-- **Layout Kolom Baku per Kategori Komponen**:
-  1. **Pelat Sambungan** (`OST_StructConnectionPlates`): Tepat **5 Kolom**  
-     `Lokasi | Tipe Sambungan | Thickness (mm) | Qty | Berat (Kg)`  
-     *Sorting*: By `Type of Connection` (Asc), lalu `Thickness` (Asc, **ShowFooter=True** untuk subtotal Qty & Berat).
-  2. **Baut Sambungan** (`OST_StructConnectionBolts`): Tepat **3 Kolom** (Baut dihitung butir, tanpa kolom berat)  
-     `Lokasi | Tipe Sambungan | Qty`
-  3. **Baseplate Kolom** (`OST_StructConnectionPlates`): Tepat **7 Kolom**  
-     `Lokasi | Keterangan | Thickness (mm) | Width (mm) | Length (mm) | Qty | Berat (Kg)`  
-     *Sorting*: By `Comments`, `Thickness`, `Width`, `Length` (Asc).
-  4. **Kolom & Balok Profil** (`OST_StructuralColumns` / `OST_StructuralFraming`): Tepat **6 Kolom**  
-     `Lokasi | Family and Type | Length (mm) | Comments | Qty | Berat (Kg)`
-  5. **Angkur Baja** (`OST_StructuralFraming` / Anchor Hardware): Tepat **5 Kolom**  
-     `Lokasi | Comments | Diameter | Qty | Length`
-  6. **Voute Sambungan Baja** (`OST_StructConnectionProfiles`): Tepat **7 Kolom**  
-     `Lokasi | Tipe Sambungan | Type | Length (mm) | Volume | Qty | Berat (Kg)`  
-     *Sorting*: By `Profile Type` (Asc), lalu `Cut Length` (Asc, **ShowFooter=True** untuk subtotal Qty & Berat).  
-     *Kalibrasi Berat*: Dihitung wajib dari **volume solid eksak** ($\text{Exact Weight} = \text{Volume} \times 7850\text{ kg/m}^3$) karena voute adalah potongan profil setengah/tapered. Dilarang mengalikan panjang utuh balok.
+### 1. Standar Dual-Key Filter & Posisi Mutlak Kolom A (`Lokasi`)
+- **Kolom A (Index 0 / Kolom Pertama) WAJIB berupa parameter `Lokasi`** (terlihat/unhidden) pada seluruh schedule lintas disiplin (`Structure`, `Architecture`, `Siteplan`).
+- **Aturan Dual-Key Filter Mutlak**:
+  1. **Seluruh Sambungan Baja (`Custom Advance Steel Connections` maupun `Manual / Exploded Connections`, termasuk `Voute` / `OST_StructConnectionProfiles`)**:
+     - Filter WAJIB menggunakan **`Lokasi` + `Type of Connection`**.
+     - **Otomasi Shared Parameter & Injeksi Sub-Elemen (`aigrav_qto_sync_connection_params`)**: Wajib memastikan `Type of Connection` & `Lokasi` ter-bind ke **10 kategori Advance Steel** (`OST_StructConnections`, `Plates`, `Bolts`, `Anchors`, `Profiles`, `Welds`, `ShearStuds`, `Modifiers`, `Holes`, `Others`) dan menginjeksi nilai dari parent handler ke 100% sub-elemen di dalamnya (termasuk Voute), serta menyelaraskan Manual/Exploded Connections.
+  2. **Seluruh Elemen Non-Sambungan (Struktur Beton/Baja Profil, Arsitektur, Siteplan)**:
+     - Filter WAJIB menggunakan **`Lokasi` + `Comments`** (+ **`Material: Name`** khusus Material Takeoff plester/aci/cat/keramik/tanah/aspal).
+- **Layout Kolom Baku Baja & Koneksi**:
+  1. **Pelat Sambungan** (`OST_StructConnectionPlates`): `Lokasi | Type of Connection | Thickness (mm) | Qty | Berat (Kg)` (*Sorting*: `Type of Connection` Asc -> `Thickness` Asc, `ShowFooter=True`).
+  2. **Baut Sambungan** (`OST_StructConnectionBolts`): `Lokasi | Type of Connection | Qty` (**WAJIB memakai `Number`**, DILARANG memakai `Count` agar 1 bolt-group isi 8 baut tidak terhitung 1!).
+  3. **Baseplate Kolom** (`OST_StructConnectionPlates`): `Lokasi | Type of Connection | Thickness (mm) | Width (mm) | Length (mm) | Qty | Berat (Kg)`.
+  4. **Kolom & Balok Profil** (`OST_StructuralColumns` / `OST_StructuralFraming`): `Lokasi | Family and Type | Length (mm) | Comments | Qty | Berat (Kg)`.
+  5. **Angkur Baja** (`OST_StructuralFraming` / `OST_StructConnectionAnchors`): `Lokasi | Type of Connection | Diameter | Number/Qty | Length`.
+  6. **Voute Sambungan Baja** (`OST_StructConnectionProfiles`): `Lokasi | Type of Connection | Type | Length (mm) | Volume | Qty | Berat (Kg)` (*Kalibrasi Berat*: $\text{Exact Weight} = \text{Volume} \times 7850\text{ kg/m}^3$).
 
-### 2. Kewajiban Validasi Terhadap Database Profil Baja (`AIGRAV.SteelDatabase.csv`)
-- **DILARANG KERAS** menginput berat nominal hasil karangan manual (*hardcoded guesswork*).
-- Setiap profil baja struktural (WF, H-Beam, INP, UNP, CNP, L/Angle) **WAJIB tervalidasi terhadap database resmi**:  
-  📂 `C:\AIGRAV\Revit\AIGRAV.SteelDatabase.csv` (standar pabrikan resmi Gunung Garuda & SNI).
-- **Rumus Kalibrasi Berat Baja**:
-  * **Profil Balok & Kolom**:  
-    $$\text{Berat (Kg)} = \text{Panjang (m)} \times \text{weightPerMeterKg (dari Database)}$$
-  * **Pelat Sambungan & Baseplate**: Berat jenis baja standar $\rho = 7850\text{ kg/m}^3$  
-    $$\text{Berat (Kg)} = \text{Thickness (m)} \times \text{Width (m)} \times \text{Length (m)} \times 7850\text{ kg/m}^3$$
-- Jika profil di model tidak ditemukan di database, sistem wajib mencatatnya sebagai *uncalibrated profile warning* dan meminta konfirmasi profil ekuivalen resmi.
+### 2. Database Terpadu QTO v4.0 & Kalibrasi Profil Baja (`steel_profiles_sni_jis.json`)
+- **Database Resmi QTO v4.0**:
+  - `C:\AIGRAV\Databases\QTO\steel_profiles_sni_jis.json` (268 profil SNI/JIS bersih, terverifikasi; disinkronkan ke `AIGRAV.SteelDatabase.csv`) — mencakup `WF`, `HBEAM`, `INP` (koreksi tabel 180–500), `UNP` (koreksi tabel 180–400), `SIKU` (equal/unequal), `CNP`, `PIPA CARBON` (`SCH40`/`SCH80`), `PIPA HITAM` (`HEAVY`/`MEDIUM`/`LIGHT`), `RCWF`, `2L`, `2CNP`, `HOLLOW`, dan `ROD` lengkap dengan `surfaceAreaM2PerM`.
+  - `C:\AIGRAV\Databases\QTO\materials_hardware_rebar.json` (standar besi tulangan SNI `d^2 * 0.0061654`, wiremesh, bekisting, rasio engineering `kg/m³`).
+  - `C:\AIGRAV\Databases\QTO\qto_master_templates.json` (template multi-disiplin: Structure `A–N`, Architecture `AR-A..AR-K`, Siteplan `SP-A..SP-H` & `KDB`).
+- **DILARANG KERAS** menginput berat nominal karangan manual. Jika profil tidak ditemukan di database, wajib dilaporkan sebagai *uncalibrated profile warning*.
 
-### 3. Protokol Anti Double-Counting (Pencegahan Duplikasi Kuantitas)
-Untuk menjamin elemen yang dipartisi ke sub-zona (misal: *Carton & Cups*, *Waterline*, *Power House*) tidak terhitung ganda di ringkasan utama:
-1. **Schedule Bangunan Utama / General (`B.*`, `C.2.*`)**:
-   - WAJIB memiliki filter: `Lokasi Equal ""` (string kosong).
-   - Elemen yang telah memiliki nama lokasi otomatis dikeluarkan dari hitungan bangunan utama.
-2. **Schedule Sub-Zona (`C.3.x.y`)**:
-   - Kolom A wajib bernilai `Lokasi Equal "<NamaZona>"`.
+### 3. Protokol Anti Double-Counting & Higiene Penomoran WBS
+- **Disjoint Partitioning**: Schedule utama/general (`Lokasi Equal ""`) dan schedule sub-zona (`Lokasi Equal "<NamaZona>"`) tidak boleh tumpang tindih. Material Takeoff plester/aci/cat wajib memfilter `Material: Name` secara spesifik dan tidak boleh mencampur kategori yang sudah dihitung sebagai objek utuh.
+- **WBS Cleanliness**: Penomoran WBS harus berurutan tanpa awalan ganda (gunakan akhiran `a/b/c` atau sub-nomor `X.Y.Z`, tanpa suffix `Copy 1`/`Copy 2`, dan bebas typo judul/heading seperti `Diamater`/`Lenght`/`Pagr`/`Strous`).
 
-### 4. QA/QC Audit Otomatis
-- Setiap transaksi schedule wajib divalidasi melalui in-memory audit tool (`aigrav_qa_audit_all_schedules`) untuk memastikan:
-  - [ ] Tidak ada schedule duplikat dengan akhiran `Copy 1`, `Copy 2`.
-  - [ ] Urutan kolom index 0 selalu `Lokasi`.
-  - [ ] Grand totals tercentang aktif (`Title: Total`, `Count=True`, `Totals=True`).
-  - [ ] Tidak ada nilai volume/berat yang menghasilkan 0 akibat kesalahan rumus parameter.
+### 4. Mandatory 12-Gate QTO Audit + Plan & Report Protocol
+Sebelum melakukan modifikasi schedule atau menyerahkan BOQ final, AIGRAV **WAJIB** menjalankan **Plan & Report (`plan` mode)** terlebih dahulu lalu memvalidasi seluruh **12 Gate Audit** via `aigrav_qto_full_audit`:
+1. Unscheduled elements check | 2. Double counting check | 3. Spatial duplicate elements at same location | 4. Empty schedule & typo diagnosis | 5. Filter & cross-contamination check | 6. Unit & heading mismatch check (mis. `kg` di kolom Volume) | 7. Calculation errors (`ShowGrandTotal=True`, `Totals=True`, Bolt `Number` vs `Count`, `0.00 kg`) | 8. Steel weight table calibration (`AIGRAV.SteelDatabase` / SNI-JIS JSON) | 9. Custom Connection & Voute parameter injection completeness | 10. WBS numbering hygiene | 11. Zero-geometry / missing `Lokasi`/`Comments` | 12. Engineering sanity ratio (`kg/m³` rebar).
+- **Ekspor BOQ Excel Pintar**: Kompilasi TSV ke `.xlsx` wajib menggunakan `deliverable_orchestrator.py build-qto-workbook` sehingga menghasilkan angka numerik murni (bukan string), rumus `=SUM(...)` aktif, serta tab `Executive BOQ Summary` berlink lintas-sheet.
 
 ---
 

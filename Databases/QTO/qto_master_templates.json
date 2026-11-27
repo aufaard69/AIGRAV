@@ -1,0 +1,778 @@
+{
+  "qto_standards_version": "4.0.0",
+  "last_updated": "2026-11-27",
+  "benchmarks": [
+    "NTS-FT-PA-ST.rvt (Structure, 201 schedules)",
+    "NTS-FT-BU-AR.rvt (Architecture, 39 schedules)",
+    "NUAS-FT-SP.rvt (Siteplan/Pagar/Saluran, 80 schedules)"
+  ],
+  "universal_rules": {
+    "column_a_parameter": "Lokasi",
+    "dual_key_filter_standard": {
+      "steel_connections_all": {
+        "applies_to": [
+          "OST_StructConnections",
+          "OST_StructConnectionPlates",
+          "OST_StructConnectionBolts",
+          "OST_StructConnectionAnchors",
+          "OST_StructConnectionProfiles",
+          "OST_StructConnectionWelds",
+          "OST_StructConnectionShearStuds"
+        ],
+        "includes_modes": [
+          "Custom Advance Steel Connection",
+          "Manual / Exploded Connection"
+        ],
+        "primary_filters": [
+          "Lokasi",
+          "Type of Connection"
+        ],
+        "shared_parameter_binding_10_categories": [
+          "OST_StructConnections",
+          "OST_StructConnectionPlates",
+          "OST_StructConnectionBolts",
+          "OST_StructConnectionAnchors",
+          "OST_StructConnectionProfiles",
+          "OST_StructConnectionWelds",
+          "OST_StructConnectionShearStuds",
+          "OST_StructConnectionModifiers",
+          "OST_StructConnectionHoles",
+          "OST_StructConnectionOthers"
+        ]
+      },
+      "non_connection_elements_all": {
+        "applies_to": [
+          "Foundation/Pile/Pilecap",
+          "Concrete Beams/Columns/Slabs/Walls",
+          "Formwork",
+          "Primary/Secondary Steel Profiles",
+          "Roof/Flashing/Cladding",
+          "Doors/Windows/Ceilings/Railings",
+          "Siteplan DPT/Rabat/Kanstin/Pipes",
+          "Rebar"
+        ],
+        "primary_filters": [
+          "Lokasi",
+          "Comments"
+        ],
+        "secondary_material_takeoff_filter": "Material: Name",
+        "forbid_elemid_filters": true,
+        "forbid_negative_notequal_filters": true
+      }
+    },
+    "anti_double_counting": {
+      "main_building_lokasi_value": "Bangunan Utama (or Lokasi == '')",
+      "sub_zone_filter": "Lokasi Equal '<ZoneName>'",
+      "derived_multi_qto_exemptions": [
+        "Formwork/Bekisting paired with Concrete Volume",
+        "Reference Door/Window Schedules vs BOQ Volume Schedules",
+        "Material Takeoffs splitting distinct material layers (Bata vs Plester Aci)",
+        "1-Railing-3-QTO derived schedules (Pagar + Sloof + Stump)"
+      ]
+    },
+    "wbs_anti_duplicate_numbering": {
+      "require_unique_wbs_prefix": true,
+      "triplet_suffix_convention": {
+        "concrete": "a",
+        "lean_concrete": "b",
+        "rebar": "c"
+      }
+    },
+    "qa_12_gates": [
+      "unscheduled_elements",
+      "double_counting",
+      "spatial_duplicates",
+      "empty_schedules_with_typo_diagnosis",
+      "filter_errors_and_cross_contamination",
+      "unit_and_heading_errors",
+      "calculation_errors_totals_and_bolt_number",
+      "steel_weight_calibration",
+      "connection_parameter_injection_and_voute",
+      "wbs_numbering_hygiene",
+      "geometry_and_param_health",
+      "engineering_sanity_rebar_ratio"
+    ]
+  },
+  "disciplines": {
+    "Structure": {
+      "wbs_divisions": [
+        "A Foundation/Substructure",
+        "B Columns & Base Hardware",
+        "C1 Main Rafters",
+        "C3 Zone Framing/Connections/Voutes",
+        "D-K Secondary Framing & Bracing",
+        "L Roof/Gutter",
+        "M Cladding/Drain",
+        "N Stairs & Hoist"
+      ],
+      "templates": {
+        "ST_DeepPile": {
+          "category": "OST_StructuralFoundation",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Depth",
+            "Count",
+            "Volume"
+          ],
+          "totals": [
+            "Count",
+            "Volume"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "ST_PileCap_Subbase": {
+          "category": "OST_StructuralFoundation",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Mark",
+            "Count",
+            "Volume"
+          ],
+          "totals": [
+            "Count",
+            "Volume"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "ST_Formwork_Foundation": {
+          "category": "OST_StructuralFoundation",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Length",
+            "Width",
+            "Count",
+            "Luas (m2)"
+          ],
+          "totals": [
+            "Count",
+            "Luas (m2)"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "ST_Concrete_Linear": {
+          "category": "OST_StructuralFraming / OST_StructuralColumns",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "System Length",
+            "Count",
+            "Volume"
+          ],
+          "totals": [
+            "Count",
+            "Volume"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ],
+          "forbid_columns": [
+            "Berat",
+            "Weight"
+          ]
+        },
+        "ST_Formwork_Framing": {
+          "category": "OST_StructuralFraming / OST_StructuralColumns",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Cut Length",
+            "Count",
+            "Luas (m2)"
+          ],
+          "totals": [
+            "Count",
+            "Luas (m2)"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "ST_Concrete_Slab_Bondek": {
+          "category": "OST_Floors",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Family and Type",
+            "Area",
+            "Default Thickness",
+            "Volume"
+          ],
+          "totals": [
+            "Area",
+            "Volume"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "ST_Concrete_Wall": {
+          "category": "OST_Walls",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Count",
+            "Area",
+            "Volume"
+          ],
+          "totals": [
+            "Area",
+            "Volume"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "ST_Steel_Profile_Linear": {
+          "category": "OST_StructuralColumns / OST_StructuralFraming",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Type",
+            "Cut Length",
+            "Count",
+            "Berat (Kg)"
+          ],
+          "totals": [
+            "Count",
+            "Berat (Kg)"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "ST_Steel_Connection_Plates": {
+          "category": "OST_StructConnectionPlates",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Type of Connection",
+            "Thickness",
+            "Count",
+            "Weight"
+          ],
+          "totals": [
+            "Count",
+            "Weight"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Type of Connection"
+          ],
+          "sort": [
+            "Type of Connection",
+            "Thickness (Footer)"
+          ]
+        },
+        "ST_Steel_Baseplate": {
+          "category": "OST_StructConnectionPlates",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Type of Connection",
+            "Thickness",
+            "Width",
+            "Length",
+            "Count",
+            "Weight"
+          ],
+          "totals": [
+            "Count",
+            "Weight"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Type of Connection"
+          ]
+        },
+        "ST_Steel_Bolts": {
+          "category": "OST_StructConnectionBolts",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Type of Connection",
+            "Diameter",
+            "Number"
+          ],
+          "totals": [
+            "Number"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Type of Connection"
+          ],
+          "forbid_fields": [
+            "Count"
+          ]
+        },
+        "ST_Steel_Anchors": {
+          "category": "OST_StructConnectionAnchors",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Type of Connection",
+            "Diameter",
+            "Length",
+            "Number"
+          ],
+          "totals": [
+            "Number"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Type of Connection"
+          ],
+          "forbid_fields": [
+            "Count"
+          ]
+        },
+        "ST_Steel_Voute_Profiles": {
+          "category": "OST_StructConnectionProfiles",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Type of Connection",
+            "Profile Type",
+            "Cut Length",
+            "Volume",
+            "Count",
+            "Exact Weight"
+          ],
+          "totals": [
+            "Volume",
+            "Count",
+            "Exact Weight"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Type of Connection"
+          ]
+        },
+        "ST_Roof_Cladding_Flashing": {
+          "category": "OST_Roofs / OST_Walls / OST_Fascia / OST_Cornices",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Length",
+            "Area"
+          ],
+          "totals": [
+            "Length",
+            "Area"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        }
+      }
+    },
+    "Architecture": {
+      "wbs_divisions": [
+        "AR-A Floors & Countertops",
+        "AR-B Stair Finishes",
+        "AR-C Walls & Partitions",
+        "AR-D Plaster & Paint",
+        "AR-E Skirting & Wall Tiles",
+        "AR-F Doors & Windows",
+        "AR-G Ceilings & Shadow Lines",
+        "AR-H Practical Concrete",
+        "AR-I Secondary Steel Framing",
+        "AR-J Gewel Connections",
+        "AR-K Openings, BRC & Sanitary"
+      ],
+      "templates": {
+        "AR_Floor_Finish": {
+          "category": "OST_Floors",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Area"
+          ],
+          "totals": [
+            "Area"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "AR_Stair_Keramik_Stepnosing": {
+          "category": "OST_StairsRuns",
+          "mode": "MaterialTakeoff",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Material: Name",
+            "Luas Aktual Keramik",
+            "Panjang Stepnosing"
+          ],
+          "totals": [
+            "Luas Aktual Keramik",
+            "Panjang Stepnosing"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments",
+            "Material: Name"
+          ]
+        },
+        "AR_Wall_Panel_Partition": {
+          "category": "OST_Walls",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Area"
+          ],
+          "totals": [
+            "Area"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "AR_Wall_Brick_MaterialTakeoff": {
+          "category": "OST_Walls",
+          "mode": "MaterialTakeoff",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Material: Name",
+            "Material: Area"
+          ],
+          "totals": [
+            "Material: Area"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments",
+            "Material: Name"
+          ]
+        },
+        "AR_Wall_Plaster_MaterialTakeoff": {
+          "category": "OST_Walls",
+          "mode": "MaterialTakeoff",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Material: Name",
+            "Material: Area"
+          ],
+          "totals": [
+            "Material: Area"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments",
+            "Material: Name"
+          ]
+        },
+        "AR_WallSweep_Plint": {
+          "category": "OST_Cornices",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Length"
+          ],
+          "totals": [
+            "Length"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "AR_WallSweep_Tile_Takeoff": {
+          "category": "OST_Cornices",
+          "mode": "MaterialTakeoff",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Material: Name",
+            "Material: Area"
+          ],
+          "totals": [
+            "Material: Area"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "AR_Doors_Windows": {
+          "category": "OST_Doors / OST_Windows",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Height",
+            "Width",
+            "Count"
+          ],
+          "totals": [
+            "Count"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "AR_Ceiling_And_ShadowLine": {
+          "category": "OST_Ceilings",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Area",
+            "Perimeter"
+          ],
+          "totals": [
+            "Area",
+            "Perimeter"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "AR_Practical_Concrete": {
+          "category": "OST_StructuralColumns / OST_StructuralFraming",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Cut Length",
+            "Count",
+            "Volume"
+          ],
+          "totals": [
+            "Count",
+            "Volume"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        }
+      }
+    },
+    "Siteplan": {
+      "wbs_divisions": [
+        "SP-A Foundations, Cerucuk, Sulingan & Control Boxes",
+        "SP-B BRC/Pipe Fences, Infiltration Wells & Planters",
+        "SP-C Channels, Gratings & Deckers",
+        "SP-D Retaining Walls (DPT Triplet a/b/c) & Borepiles",
+        "SP-E Rigid Pavement (Rabat)",
+        "SP-F Road Curb (Kanstin)",
+        "SP-G Access Stairs",
+        "SP-H Drainage Pipes",
+        "KDB Land-Use & Building Coverage"
+      ],
+      "templates": {
+        "SP_Site_Foundation_Linear": {
+          "category": "OST_StructuralFraming / OST_StructuralFoundation",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Family",
+            "Comments",
+            "Type",
+            "Cut Length",
+            "Count",
+            "Volume"
+          ],
+          "totals": [
+            "Cut Length",
+            "Count",
+            "Volume"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "SP_Subbase_MaterialTakeoff": {
+          "category": "OST_Floors",
+          "mode": "MaterialTakeoff",
+          "columns": [
+            "Lokasi",
+            "Material: Name",
+            "Comments",
+            "Area",
+            "Material: Volume"
+          ],
+          "totals": [
+            "Area",
+            "Material: Volume"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments",
+            "Material: Name"
+          ]
+        },
+        "SP_Rebar_BBS_12Col": {
+          "category": "OST_Rebar",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Bar Diameter",
+            "Bending Detail",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "Bar Length",
+            "Total Bar Length",
+            "Quantity",
+            "Berat (Kg)"
+          ],
+          "totals": [
+            "Total Bar Length",
+            "Quantity",
+            "Berat (Kg)"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "SP_Railing_Fence": {
+          "category": "OST_StairsRailing",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Length",
+            "Area"
+          ],
+          "totals": [
+            "Length",
+            "Area"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "SP_Rigid_Pavement": {
+          "category": "OST_Floors",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Area",
+            "Volume"
+          ],
+          "totals": [
+            "Area",
+            "Volume"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "SP_Drainage_Pipe": {
+          "category": "OST_PipeCurves",
+          "mode": "Regular",
+          "columns": [
+            "Lokasi",
+            "Comments",
+            "Type",
+            "Diameter",
+            "Count",
+            "Length"
+          ],
+          "totals": [
+            "Count",
+            "Length"
+          ],
+          "filter_keys": [
+            "Lokasi",
+            "Comments"
+          ]
+        },
+        "SP_KDB_SiteProperty": {
+          "category": "OST_SiteProperty",
+          "mode": "Regular",
+          "columns": [
+            "Mark",
+            "Comments",
+            "Name",
+            "Area",
+            "Prosentase (%)"
+          ],
+          "totals": [
+            "Area",
+            "Prosentase (%)"
+          ],
+          "filter_keys": []
+        },
+        "SP_KDB_Rooms": {
+          "category": "OST_Rooms",
+          "mode": "Regular",
+          "columns": [
+            "Comments",
+            "Number",
+            "Name",
+            "Area",
+            "%"
+          ],
+          "totals": [
+            "Area",
+            "%"
+          ],
+          "filter_keys": []
+        }
+      }
+    }
+  }
+}

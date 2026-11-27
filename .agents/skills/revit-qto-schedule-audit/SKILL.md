@@ -1,16 +1,25 @@
 ---
 name: revit-qto-schedule-audit
 description: >-
-  Standard Operating Procedure and automation engine for Revit Quantity Takeoff (QTO)
-  schedules. Creates, formats, audits, and standardizes structural steel schedules (framing,
-  columns, connection plates, bolts, baseplates, anchors) with hierarchical naming
-  (Lokasi > Item > Profile/Type), strict column order (Lokasi in Column A), anti-double
-  counting filters, and multi-agent QA/QC validation.
+  Standard Operating Procedure and automation engine for AIGRAV QTO v4.0 Universal
+  Multi-Discipline Quantity Takeoff (Structure, Architecture, Siteplan), 12-Gate QA/QC Audit,
+  Dual-Key Filtering (Type of Connection vs Comments), Custom Connection Parameter Injection,
+  and Smart Excel BOQ Compilation.
 ---
 
-# Revit QTO Schedule Audit & Creation Skill
+# Revit QTO v4.0 Universal Multi-Discipline & 12-Gate QA/QC Skill
 
-This skill provides the mandatory guidelines, naming conventions, column layout templates, and Revit API execution commands for creating and auditing Structural Quantity Takeoff (QTO) schedules in Autodesk Revit.
+This skill encodes the official **AIGRAV QTO v4.0** workflow across **Structure (`A–N`)**, **Architecture (`AR-A..AR-K`)**, and **Siteplan/Civil (`SP-A..SP-H`, `KDB`)** disciplines using clean unified databases (`C:\AIGRAV\Databases\QTO\steel_profiles_sni_jis.json`, `materials_hardware_rebar.json`, `qto_master_templates.json`).
+
+## Dual-Key Standard, Connection Injection & Mandatory 12-Gate Audit
+
+1. **Dual-Key Filter Standard**:
+   - **ALL Steel Connections** (Custom Advance Steel + Manual/Exploded + Voute/`OST_StructConnectionProfiles`) MUST filter by **`Lokasi` + `Type of Connection`**. Always run `aigrav_qto_sync_connection_params` (`mode: "plan"` first, then `"execute"`) to auto-bind all 10 Advance Steel categories and inject parent `Type of Connection` & `Lokasi` into 100% of subelements (Plates, Bolts, Anchors, Voutes, Welds).
+   - **ALL Non-Connection Elements** MUST filter by **`Lokasi` + `Comments`** (+ `Material: Name` for Material Takeoffs).
+   - **Bolts & Anchors** MUST schedule `Number` (`Totals`) instead of `Count`.
+2. **Mandatory Plan & Report + 12-Gate Audit (`aigrav_qto_full_audit` + `aigrav_qto_plan_wbs_schedules`)**:
+   - Check: (1) unscheduled elements, (2) double counting, (3) spatial duplicates at same location, (4) empty schedules + typo diagnosis, (5) filter/cross-contamination errors, (6) unit & heading mismatches, (7) calculation errors (`ShowGrandTotal`, `Totals`, Bolt `Number` vs `Count`, `0.00 kg`), (8) steel table calibration vs cleaned SNI/JIS DB (268 profiles), (9) connection param injection & Voute check, (10) WBS numbering hygiene, (11) zero-geometry/missing params, (12) engineering sanity (`kg/m³` rebar).
+   - Export multi-tab Smart Excel BOQ via `deliverable_orchestrator.py build-qto-workbook` (`Executive BOQ Summary` tab with live cross-sheet references + numeric cells + `=SUM()` formulas).
 
 ---
 

@@ -1148,6 +1148,138 @@ def aigrav_switch_session(port_or_title: str) -> str:
 
 
 # ============================================================
+# AIGRAV QTO v4.0 UNIVERSAL MULTI-DISCIPLINE ENGINE & QA/QC
+# ============================================================
+
+
+@mcp.tool(
+    name="aigrav_qto",
+    description="[QTO v4.0 Engine] Universal Quantity Takeoff measurement across Structure, Architecture, and Siteplan with cleaned SNI/JIS steel calibration (268 profiles), solid-volume plate/voute weights, surface areas, and Lokasi/Comments filtering.",
+)
+def aigrav_qto(
+    category: str,
+    template: str = "Generic",
+    lokasi_filter: str = "",
+    comments_filter: str = "",
+    group_by: str = "Comments,Type",
+    schedule_name: str = "",
+) -> str:
+    payload: dict[str, Any] = {
+        "Category": category,
+        "Template": template,
+        "GroupBy": [x.strip() for x in group_by.split(",") if x.strip()],
+    }
+    if lokasi_filter:
+        payload["LokasiFilter"] = lokasi_filter
+    if comments_filter:
+        payload["CommentsFilter"] = comments_filter
+    if schedule_name:
+        payload["ScheduleName"] = schedule_name
+    return call_aigrav("aigrav_qto", json.dumps(payload))
+
+
+@mcp.tool(
+    name="aigrav_qto_full_audit",
+    description="[QTO v4.0 12-Gate Auditor - Read-Only] Audit menyeluruh 12 gerbang QA/QC pada model & seluruh schedule Revit: unscheduled elements, double counting, spatial duplicates, empty schedules + diagnosis typo, filter errors, unit/heading mismatches, calculation errors (Bolt Number vs Count, GrandTotal), steel calibration vs SNI/JIS, connection parameter injection & Voute check, WBS numbering hygiene, dan engineering sanity.",
+)
+def aigrav_qto_full_audit(
+    discipline: str = "auto",
+    max_samples_per_issue: int = 12,
+    tolerance_pct: float = 5.0,
+) -> str:
+    payload = {
+        "Discipline": discipline,
+        "MaxSamplesPerIssue": max_samples_per_issue,
+        "TolerancePct": tolerance_pct,
+    }
+    return call_aigrav("aigrav_qto_full_audit", json.dumps(payload))
+
+
+@mcp.tool(
+    name="aigrav_qto_sync_connection_params",
+    description="[QTO v4.0 Connection Injector] Mode 'plan' (Read-Only) mengaudit binding 'Type of Connection' & 'Lokasi' di 10 kategori Advance Steel serta kelengkapan parameter pada Custom Connection subelements (Plates, Bolts, Anchors, Voutes/Profiles, Welds) & Manual/Exploded Connections. Mode 'execute' melakukan auto-bind & injeksi parameter otomatis.",
+)
+def aigrav_qto_sync_connection_params(
+    mode: str = "plan",
+    auto_bind_shared_params: bool = True,
+    include_manual_exploded: bool = True,
+    force_overwrite: bool = False,
+    default_lokasi: str = "",
+) -> str:
+    payload = {
+        "Mode": mode,
+        "AutoBindSharedParams": auto_bind_shared_params,
+        "IncludeManualExploded": include_manual_exploded,
+        "ForceOverwrite": force_overwrite,
+        "DefaultLokasi": default_lokasi,
+    }
+    return call_aigrav("aigrav_qto_sync_connection_params", json.dumps(payload))
+
+
+@mcp.tool(
+    name="aigrav_qto_plan_wbs_schedules",
+    description="[QTO v4.0 WBS Planner - Read-Only] Scan elemen aktif di model Revit (Struktur, Arsitektur, Siteplan), identifikasi zona Lokasi & Comments/Type of Connection, lalu susun rencana penomoran WBS schedule tanpa duplikasi sebelum pembuatan schedule.",
+)
+def aigrav_qto_plan_wbs_schedules() -> str:
+    return call_aigrav("aigrav_qto_plan_wbs_schedules", "{}")
+
+
+@mcp.tool(
+    name="aigrav_qto_create_standard_schedule",
+    description="[QTO v4.0 Schedule Creator] Buat ViewSchedule (Regular atau MaterialTakeoff) lintas disiplin mengikuti standar Kolom A = Lokasi, Dual-Key filter (Type of Connection untuk sambungan baja; Comments untuk non-sambungan), Bolt Number (bukan Count), Totals, dan Grand Total aktif.",
+)
+def aigrav_qto_create_standard_schedule(
+    schedule_name: str,
+    category: str,
+    is_material_takeoff: bool = False,
+    template: str = "Generic",
+    lokasi_filter: str = "",
+    comments_filter: str = "",
+    type_of_connection_filter: str = "",
+    material_name_filter: str = "",
+    type_contains_filter: str = "",
+    replace_existing: bool = False,
+) -> str:
+    payload = {
+        "ScheduleName": schedule_name,
+        "Category": category,
+        "IsMaterialTakeoff": is_material_takeoff,
+        "Template": template,
+        "LokasiFilter": lokasi_filter or None,
+        "CommentsFilter": comments_filter or None,
+        "TypeOfConnectionFilter": type_of_connection_filter or None,
+        "MaterialNameFilter": material_name_filter or None,
+        "TypeContainsFilter": type_contains_filter or None,
+        "ReplaceExisting": replace_existing,
+    }
+    return call_aigrav("aigrav_qto_create_standard_schedule", json.dumps(payload))
+
+
+@mcp.tool(
+    name="aigrav_standardize_plate_schedules",
+    description="[QTO Plate Standardizer] Standardisasi schedule pelat sambungan baja menjadi 5 kolom (Lokasi Index 0, Tipe Sambungan, Thickness, Qty, Berat Kg) dengan sorting Thickness & subtotal footer.",
+)
+def aigrav_standardize_plate_schedules(argument: str = "{}") -> str:
+    return call_aigrav("aigrav_standardize_plate_schedules", argument)
+
+
+@mcp.tool(
+    name="aigrav_generate_voute_schedules",
+    description="[QTO Voute Generator] Buat schedule QTO voute/haunch sambungan baja menggunakan kategori native OST_StructConnectionProfiles dengan kalibrasi volume solid (Volume * 7850 kg/m3) & tata letak 7 kolom.",
+)
+def aigrav_generate_voute_schedules(argument: str = "{}") -> str:
+    return call_aigrav("aigrav_generate_voute_schedules", argument)
+
+
+@mcp.tool(
+    name="aigrav_audit_voute_schedules",
+    description="[QTO Voute Auditor] Audit kelengkapan schedule & berat voute sambungan baja (OST_StructConnectionProfiles) pada dokumen Revit aktif.",
+)
+def aigrav_audit_voute_schedules() -> str:
+    return call_aigrav("aigrav_audit_voute_schedules", "{}")
+
+
+# ============================================================
 # START MCP
 # ============================================================
 

@@ -1,0 +1,293 @@
+{
+  "databaseId": "AIGRAV-QTO-MAT-HW-REBAR-v4.0",
+  "version": "4.0.0",
+  "lastUpdated": "2026-11-27",
+  "steel_plates_and_sheets": {
+    "steelDensityKgPerM3": 7850.0,
+    "maxNormalPlateThicknessMm": 100.0,
+    "plateWeightFormula": "Volume_m3 * 7850.0",
+    "standardPlateThicknessesMm": [
+      3,
+      4.5,
+      5,
+      6,
+      8,
+      9,
+      10,
+      12,
+      14,
+      16,
+      19,
+      20,
+      22,
+      25,
+      28,
+      30,
+      32,
+      36,
+      40,
+      50
+    ],
+    "checkerPlatePatternAllowanceKgPerM2": 2.4,
+    "roofAndCladdingSheets": [
+      {
+        "name": "Zincalume Trimdek / Spandek t=0.45mm TCT",
+        "unitWeightKgPerM2": 4.28
+      },
+      {
+        "name": "Zincalume Trimdek / Spandek t=0.50mm TCT",
+        "unitWeightKgPerM2": 4.74
+      },
+      {
+        "name": "Bondek / Floor Deck W-1000 t=0.75mm",
+        "unitWeightKgPerM2": 7.45
+      },
+      {
+        "name": "Bondek / Floor Deck W-1000 t=1.00mm",
+        "unitWeightKgPerM2": 9.93
+      },
+      {
+        "name": "Sandwich Panel PU/PIR t=100mm",
+        "unitWeightKgPerM2": 13.5
+      }
+    ]
+  },
+  "bolts_and_anchors": {
+    "qtyFieldMandatory": "Number",
+    "forbiddenQtyField": "Count",
+    "grades": [
+      "ASTM A325",
+      "ASTM A490",
+      "DIN 14399-4 (10.9)",
+      "Class 8.8",
+      "ST37 / SS400 Anchor"
+    ],
+    "boltCatalogKgPerSetIncludingNutWasher": {
+      "M12": {
+        "approxSetKg": 0.085
+      },
+      "M16": {
+        "approxSetKg": 0.165
+      },
+      "M19": {
+        "approxSetKg": 0.255
+      },
+      "M20": {
+        "approxSetKg": 0.285
+      },
+      "M22": {
+        "approxSetKg": 0.365
+      },
+      "M24": {
+        "approxSetKg": 0.455
+      },
+      "M25": {
+        "approxSetKg": 0.505
+      },
+      "M27": {
+        "approxSetKg": 0.61
+      },
+      "M30": {
+        "approxSetKg": 0.785
+      },
+      "M36": {
+        "approxSetKg": 1.24
+      }
+    },
+    "anchorCatalog": [
+      {
+        "diameterMm": 16,
+        "standardLengthsMm": [
+          400,
+          500,
+          600
+        ],
+        "steelBarKgPerM": 1.5782
+      },
+      {
+        "diameterMm": 19,
+        "standardLengthsMm": [
+          500,
+          600,
+          700,
+          800
+        ],
+        "steelBarKgPerM": 2.2256
+      },
+      {
+        "diameterMm": 22,
+        "standardLengthsMm": [
+          600,
+          700,
+          800,
+          900
+        ],
+        "steelBarKgPerM": 2.9839
+      },
+      {
+        "diameterMm": 24,
+        "standardLengthsMm": [
+          700,
+          800,
+          1000
+        ],
+        "steelBarKgPerM": 3.551
+      },
+      {
+        "diameterMm": 25,
+        "standardLengthsMm": [
+          700,
+          800,
+          1000
+        ],
+        "steelBarKgPerM": 3.8531
+      },
+      {
+        "diameterMm": 30,
+        "standardLengthsMm": [
+          800,
+          1000,
+          1200
+        ],
+        "steelBarKgPerM": 5.5485
+      }
+    ]
+  },
+  "rebar_sni": {
+    "weightFormula": "d_mm * d_mm * 0.0061654",
+    "standardBarLengthM": 12.0,
+    "sniSizes": [
+      {
+        "code": "P6",
+        "diameterMm": 6,
+        "deformed": false,
+        "kgPerM": 0.222
+      },
+      {
+        "code": "P8",
+        "diameterMm": 8,
+        "deformed": false,
+        "kgPerM": 0.3946
+      },
+      {
+        "code": "P10",
+        "diameterMm": 10,
+        "deformed": false,
+        "kgPerM": 0.6165
+      },
+      {
+        "code": "D10",
+        "diameterMm": 10,
+        "deformed": true,
+        "kgPerM": 0.6165
+      },
+      {
+        "code": "P12",
+        "diameterMm": 12,
+        "deformed": false,
+        "kgPerM": 0.8878
+      },
+      {
+        "code": "D13",
+        "diameterMm": 13,
+        "deformed": true,
+        "kgPerM": 1.042
+      },
+      {
+        "code": "D16",
+        "diameterMm": 16,
+        "deformed": true,
+        "kgPerM": 1.5783
+      },
+      {
+        "code": "D19",
+        "diameterMm": 19,
+        "deformed": true,
+        "kgPerM": 2.2257
+      },
+      {
+        "code": "D22",
+        "diameterMm": 22,
+        "deformed": true,
+        "kgPerM": 2.9841
+      },
+      {
+        "code": "D25",
+        "diameterMm": 25,
+        "deformed": true,
+        "kgPerM": 3.8534
+      },
+      {
+        "code": "D29",
+        "diameterMm": 29,
+        "deformed": true,
+        "kgPerM": 5.1851
+      },
+      {
+        "code": "D32",
+        "diameterMm": 32,
+        "deformed": true,
+        "kgPerM": 6.3134
+      }
+    ],
+    "wiremeshKgPerSheet_2100x5400mm": {
+      "M4": 15.4,
+      "M5": 24.06,
+      "M6": 34.65,
+      "M7": 47.16,
+      "M8": 61.6,
+      "M9": 77.96,
+      "M10": 96.25,
+      "M12": 138.6
+    }
+  },
+  "rebar_ratio_benchmarks_kg_per_m3": {
+    "pilecap": {
+      "min": 75.0,
+      "max": 180.0,
+      "typical": 115.0
+    },
+    "sloof": {
+      "min": 95.0,
+      "max": 200.0,
+      "typical": 135.0
+    },
+    "pedestal": {
+      "min": 110.0,
+      "max": 230.0,
+      "typical": 155.0
+    },
+    "column": {
+      "min": 120.0,
+      "max": 280.0,
+      "typical": 180.0
+    },
+    "beam": {
+      "min": 110.0,
+      "max": 240.0,
+      "typical": 160.0
+    },
+    "slab": {
+      "min": 65.0,
+      "max": 150.0,
+      "typical": 95.0
+    },
+    "dpt": {
+      "min": 80.0,
+      "max": 190.0,
+      "typical": 130.0
+    },
+    "bak_kontrol": {
+      "min": 90.0,
+      "max": 210.0,
+      "typical": 150.0
+    }
+  },
+  "formwork_formulas": {
+    "pilecap": "2 * (L + W) * H",
+    "sloof": "2 * CutLength * H",
+    "beam": "(2 * H + W) * CutLength",
+    "column": "2 * (W + D) * ClearHeight",
+    "slab_edge_or_soffit": "Area (excl. Bondek soffit)"
+  }
+}

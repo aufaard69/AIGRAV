@@ -21,4 +21,12 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <MakeDir Directories="$(MSBuildProjectDirectory)\..\AIGRAV.RevitBridge\bin\x64\Debug\net10.0-windows\Skills\SteelDatabase\" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MSBuildProjectDirectory)\..\AIGRAV.RevitBridge\bin\x64\Debug\net10.0-windows\Skills\" ContinueOnError="true" />
+    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(MSBuildProjectDirectory)\..\AIGRAV.RevitBridge\bin\x64\Debug\net10.0-windows\Skills\" ContinueOnError="true" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\..\..\Databases\QTO\steel_profiles_sni_jis.json" DestinationFolder="$(MSBuildProjectDirectory)\..\AIGRAV.RevitBridge\bin\x64\Debug\net10.0-windows\Skills\SteelDatabase\" ContinueOnError="true" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\..\..\Databases\QTO\steel_profiles_sni_jis.json" DestinationFiles="$(MSBuildProjectDirectory)\..\AIGRAV.RevitBridge\bin\x64\Debug\net10.0-windows\Skills\SteelDatabase\AIGRAV.SteelDatabase.json" ContinueOnError="true" />
+  </Target>
 </Project>
