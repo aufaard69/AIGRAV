@@ -1281,19 +1281,23 @@ def aigrav_audit_voute_schedules() -> str:
 
 @mcp.tool(
     name="aigrav_qto_generate_all_schedules",
-    description="[QTO v4.0 Universal Auto-Suite] Generate seluruh set QTO ViewSchedule secara model-driven lintas divisi WBS (A Pondasi/Beton, B Kolom, C.1 Rafter, C.3 Zona, D-K Secondary, L-M Atap/Cladding, N Tangga/Hoist/Rebar) dengan Dual-Key filter, Kolom A = Lokasi, Baut memakai Number, Voute Volume*7850, dan nol double-counting. Mode 'plan' read-only; mode 'execute' mengeksekusi pembuatan.",
+    description="[QTO v4.0 Universal Auto-Suite] Generate seluruh set QTO ViewSchedule secara model-driven lintas divisi WBS (A Pondasi/Beton, B Kolom, C.1 Rafter, C.3 Zona, D-K Secondary, L-M Atap/Cladding, N Tangga/Hoist/Rebar) dengan Dual-Key filter, Kolom A = Lokasi, Baut memakai Number, Voute Volume*7850, nol double-counting, nol schedule (Blank Comments), dan auto-prune schedule kosong. Mode 'plan' read-only; mode 'execute' mengeksekusi pembuatan.",
 )
 def aigrav_qto_generate_all_schedules(
     mode: str = "plan",
     replace_existing: bool = True,
     delete_existing_qto_schedules: bool = False,
-    include_zero_blank_buckets: bool = True,
+    include_zero_blank_buckets: bool = False,
+    auto_tag_unambiguous_blanks: bool = False,
+    prune_empty_schedules_after_create: bool = True,
 ) -> str:
     payload = {
         "Mode": mode,
         "ReplaceExisting": replace_existing,
         "DeleteExistingQtoSchedules": delete_existing_qto_schedules,
         "IncludeZeroBlankBuckets": include_zero_blank_buckets,
+        "AutoTagUnambiguousBlanks": auto_tag_unambiguous_blanks,
+        "PruneEmptySchedulesAfterCreate": prune_empty_schedules_after_create,
     }
     return call_aigrav("aigrav_qto_generate_all_schedules", json.dumps(payload))
 

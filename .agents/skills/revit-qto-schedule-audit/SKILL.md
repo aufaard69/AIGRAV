@@ -19,6 +19,7 @@ This skill encodes the official **AIGRAV QTO v4.0** workflow across **Structure 
    - **Bolts & Anchors** MUST schedule `Number` (`Totals`) instead of `Count`.
 2. **Mandatory Plan & Report + 12-Gate Audit (`aigrav_qto_full_audit` + `aigrav_qto_plan_wbs_schedules`)**:
    - Check: (1) unscheduled elements, (2) double counting, (3) spatial duplicates at same location, (4) empty schedules + typo diagnosis, (5) filter/cross-contamination errors, (6) unit & heading mismatches, (7) calculation errors (`ShowGrandTotal`, `Totals`, Bolt `Number` vs `Count`, `0.00 kg`), (8) steel table calibration vs cleaned SNI/JIS DB (268 profiles), (9) connection param injection & Voute check, (10) WBS numbering hygiene, (11) zero-geometry/missing params, (12) engineering sanity (`kg/m³` rebar).
+   - **Zero `(Blank Comments)` & Zero Empty Handover Rule**: Blank-comment crosschecks are internal-only (`untagged_crosscheck_report`). Never leave `(Blank Comments)` or empty (`0 rows`) schedules in final Revit Project Browser deliverables; auto-tag unambiguous blanks (`AutoTagUnambiguousBlanks=true`) and prune empty schedules (`PruneEmptySchedulesAfterCreate=true`).
    - Export multi-tab Smart Excel BOQ via `deliverable_orchestrator.py build-qto-workbook` (`Executive BOQ Summary` tab with live cross-sheet references + numeric cells + `=SUM()` formulas).
 
 ---

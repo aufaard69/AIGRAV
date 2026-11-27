@@ -177,9 +177,10 @@ Setiap pembuatan, injeksi parameter, kalibrasi, ekspor BOQ, dan audit jadwal kua
   - `C:\AIGRAV\Databases\QTO\qto_master_templates.json` (template multi-disiplin: Structure `A–N`, Architecture `AR-A..AR-K`, Siteplan `SP-A..SP-H` & `KDB`).
 - **DILARANG KERAS** menginput berat nominal karangan manual. Jika profil tidak ditemukan di database, wajib dilaporkan sebagai *uncalibrated profile warning*.
 
-### 3. Protokol Anti Double-Counting & Higiene Penomoran WBS
+### 3. Protokol Anti Double-Counting, Zero Empty & Higiene Penomoran WBS
 - **Disjoint Partitioning**: Schedule utama/general (`Lokasi Equal ""`) dan schedule sub-zona (`Lokasi Equal "<NamaZona>"`) tidak boleh tumpang tindih. Material Takeoff plester/aci/cat wajib memfilter `Material: Name` secara spesifik dan tidak boleh mencampur kategori yang sudah dihitung sebagai objek utuh.
 - **WBS Cleanliness**: Penomoran WBS harus berurutan tanpa awalan ganda (gunakan akhiran `a/b/c` atau sub-nomor `X.Y.Z`, tanpa suffix `Copy 1`/`Copy 2`, dan bebas typo judul/heading seperti `Diamater`/`Lenght`/`Pagr`/`Strous`).
+- **Zero `(Blank Comments)` & Zero Empty Schedule Handover Mandate**: Schedule `(Blank Comments)` HANYA boleh bersifat audit/crosscheck internal sementara (di JSON/laporan audit). **DILARANG KERAS** meninggalkan schedule bernama `(Blank Comments)` atau schedule kosong (`0 rows`) di Project Browser Revit final. Elemen yang `Comments`/`Lokasi`-nya jelas dari Type/Host wajib di-*auto-tag* ke schedule WBS resmi, sisanya dilaporkan sebagai *untagged crosscheck report* ke pengguna, dan schedule kosong wajib di-*prune*.
 
 ### 4. Mandatory 12-Gate QTO Audit + Plan & Report Protocol
 Sebelum melakukan modifikasi schedule atau menyerahkan BOQ final, AIGRAV **WAJIB** menjalankan **Plan & Report (`plan` mode)** terlebih dahulu lalu memvalidasi seluruh **12 Gate Audit** via `aigrav_qto_full_audit`:

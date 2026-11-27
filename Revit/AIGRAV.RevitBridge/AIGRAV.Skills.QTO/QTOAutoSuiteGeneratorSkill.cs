@@ -33,7 +33,9 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
         public string Mode { get; set; } = "plan"; // "plan" | "execute"
         public bool ReplaceExisting { get; set; } = true;
         public bool DeleteExistingQtoSchedules { get; set; } = false;
-        public bool IncludeZeroBlankBuckets { get; set; } = true;
+        public bool IncludeZeroBlankBuckets { get; set; } = false;
+        public bool AutoTagUnambiguousBlanks { get; set; } = false;
+        public bool PruneEmptySchedulesAfterCreate { get; set; } = true;
     }
 
     private sealed class PlannedSchedule
@@ -90,11 +92,12 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
 
         try
         {
-            List<PlannedSchedule> plans = BuildUniversalPlan(doc, req);
-            AssignUniqueWbsNames(plans);
-
             if (!isExecute)
             {
+                List<object> untaggedReport = new();
+                List<PlannedSchedule> plans = BuildUniversalPlan(doc, req, untaggedReport);
+                AssignUniqueWbsNames(plans);
+
                 var byDiv = plans
                     .GroupBy(p => p.WbsPrefix)
                     .Select(g => new { division = g.Key, schedule_count = g.Count(), expected_elements = g.Sum(x => x.ExpectedElementCount) })
@@ -107,6 +110,8 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
                     project = doc.Title,
                     total_planned_schedules = plans.Count,
                     divisions_summary = byDiv,
+                    untagged_crosscheck_count = untaggedReport.Count,
+                    untagged_crosscheck_report = untaggedReport,
                     planned_schedules = plans.Select(p => new
                     {
                         schedule_name = p.ScheduleName,
@@ -121,7 +126,7 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
                 }, new JsonSerializerOptions { WriteIndented = true });
             }
 
-            return ExecutePlan(doc, req, plans);
+            return ExecutePlan(app!, doc, req);
         }
         catch (Exception ex)
         {
@@ -135,7 +140,7 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
         }
     }
 
-    private static List<PlannedSchedule> BuildUniversalPlan(Document doc, SuiteRequest req)
+    private static List<PlannedSchedule> BuildUniversalPlan(Document doc, SuiteRequest req, List<object> untaggedReport)
     {
         List<PlannedSchedule> plans = new();
         int dynamicZoneCounter = 7;
@@ -148,6 +153,24 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
             return dynamicZoneCounter++;
         }
 
+        void RecordUntagged(BuiltInCategory bic, string reason, IEnumerable<Element> elems, string lokasi = "")
+        {
+            var list = elems.ToList();
+            if (list.Count == 0) return;
+            foreach (var tg in list.GroupBy(e => GetTypeName(doc, e), StringComparer.OrdinalIgnoreCase))
+            {
+                untaggedReport.Add(new
+                {
+                    category = bic.ToString(),
+                    lokasi = string.IsNullOrWhiteSpace(lokasi) ? "(blank)" : lokasi,
+                    type = tg.Key,
+                    reason,
+                    element_count = tg.Count(),
+                    sample_ids = tg.Take(6).Select(x => x.Id.Value).ToList()
+                });
+            }
+        }
+
         // ------------------------------------------------------------
         // 1. OST_StructuralFoundation (Divisi A.1 - Partitioned by Comments)
         // ------------------------------------------------------------
@@ -158,7 +181,11 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
 
         foreach (var g in foundations.GroupBy(e => GetStr(e, "Comments"), StringComparer.Ordinal))
         {
-            if (string.IsNullOrWhiteSpace(g.Key) && !req.IncludeZeroBlankBuckets) continue;
+            if (string.IsNullOrWhiteSpace(g.Key) && !req.IncludeZeroBlankBuckets)
+            {
+                RecordUntagged(BuiltInCategory.OST_StructuralFoundation, "Blank Comments", g);
+                continue;
+            }
             string comm = g.Key;
             bool isPile = comm.Contains("Strauss", StringComparison.OrdinalIgnoreCase) || comm.Contains("Pancang", StringComparison.OrdinalIgnoreCase);
             bool isFormworkPair = comm.Contains("Pilecap", StringComparison.OrdinalIgnoreCase);
@@ -213,7 +240,11 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
         foreach (var g in concreteCols.GroupBy(e => GetStr(e, "Comments"), StringComparer.Ordinal))
         {
             string comm = g.Key;
-            if (string.IsNullOrWhiteSpace(comm) && !req.IncludeZeroBlankBuckets) continue;
+            if (string.IsNullOrWhiteSpace(comm) && !req.IncludeZeroBlankBuckets)
+            {
+                RecordUntagged(BuiltInCategory.OST_StructuralColumns, "Blank Comments (Concrete)", g);
+                continue;
+            }
             bool isHoist = comm.Contains("HOIST", StringComparison.OrdinalIgnoreCase);
             var typeGroups = g.GroupBy(e => GetTypeName(doc, e)).ToList();
             bool needTypeSplit = isHoist || typeGroups.Count > 1 && comm.Contains("HOIST", StringComparison.OrdinalIgnoreCase);
@@ -257,7 +288,11 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
         {
             string lok = locComm.Key.Lok;
             string comm = locComm.Key.Comm;
-            if (string.IsNullOrWhiteSpace(comm) && !req.IncludeZeroBlankBuckets) continue;
+            if (string.IsNullOrWhiteSpace(comm) && !req.IncludeZeroBlankBuckets)
+            {
+                RecordUntagged(BuiltInCategory.OST_StructuralColumns, "Blank Comments (Steel)", locComm, lok);
+                continue;
+            }
 
             var byType = locComm.GroupBy(e => GetTypeName(doc, e), StringComparer.OrdinalIgnoreCase).ToList();
             bool isHoistGroup = comm.Contains("HOIST", StringComparison.OrdinalIgnoreCase);
@@ -313,7 +348,11 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
             string comm = g.Key;
             if (string.IsNullOrWhiteSpace(comm))
             {
-                if (!req.IncludeZeroBlankBuckets) continue;
+                if (!req.IncludeZeroBlankBuckets)
+                {
+                    RecordUntagged(BuiltInCategory.OST_StructuralFraming, "Blank Comments (Concrete)", g);
+                    continue;
+                }
                 foreach (var tg in g.GroupBy(e => (Lok: GetStr(e, "Lokasi", "LOKASI"), Tn: GetTypeName(doc, e))))
                 {
                     var typeIds = tg.Select(x => x.GetTypeId()).Distinct().ToList();
@@ -363,7 +402,11 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
         {
             string lok = locComm.Key.Lok;
             string comm = locComm.Key.Comm;
-            if (string.IsNullOrWhiteSpace(comm) && !req.IncludeZeroBlankBuckets) continue;
+            if (string.IsNullOrWhiteSpace(comm) && !req.IncludeZeroBlankBuckets)
+            {
+                RecordUntagged(BuiltInCategory.OST_StructuralFraming, "Blank Comments (Steel Framing)", locComm, lok);
+                continue;
+            }
 
             var byType = locComm.GroupBy(e => GetTypeName(doc, e), StringComparer.OrdinalIgnoreCase).ToList();
             bool splitByType = byType.Count >= 2;
@@ -427,7 +470,11 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
         foreach (var g in floors.GroupBy(e => GetStr(e, "Comments"), StringComparer.Ordinal))
         {
             string comm = g.Key;
-            if (string.IsNullOrWhiteSpace(comm) && !req.IncludeZeroBlankBuckets) continue;
+            if (string.IsNullOrWhiteSpace(comm) && !req.IncludeZeroBlankBuckets)
+            {
+                RecordUntagged(BuiltInCategory.OST_Floors, "Blank Comments (Slab)", g);
+                continue;
+            }
             string title = comm.Equals("Bangunan Utama", StringComparison.OrdinalIgnoreCase)
                 ? "Plat Lantai Lt. Dasar"
                 : (string.IsNullOrWhiteSpace(comm) ? "Plat Lantai Lainnya (Blank Comments)" : comm);
@@ -516,7 +563,19 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
             BuiltInCategory bic = kv.Key.Cat;
             string lok = kv.Key.Lok;
             string toc = kv.Key.Toc;
-            if (string.IsNullOrWhiteSpace(toc) && !req.IncludeZeroBlankBuckets) continue;
+            if (string.IsNullOrWhiteSpace(toc) && !req.IncludeZeroBlankBuckets)
+            {
+                untaggedReport.Add(new
+                {
+                    category = bic.ToString(),
+                    lokasi = string.IsNullOrWhiteSpace(lok) ? "(blank)" : lok,
+                    type = "(Blank Type of Connection)",
+                    reason = "Blank Type of Connection",
+                    element_count = kv.Value,
+                    sample_ids = Array.Empty<long>()
+                });
+                continue;
+            }
 
             bool isMain = IsMainBuildingLokasi(lok);
             bool isBaseplate = toc.Contains("Baseplate", StringComparison.OrdinalIgnoreCase) || toc.Contains("Base Plate", StringComparison.OrdinalIgnoreCase);
@@ -633,6 +692,11 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
         var windows = new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Windows).WhereElementIsNotElementType().ToElements();
         foreach (var g in windows.GroupBy(e => GetStr(e, "Comments"), StringComparer.Ordinal))
         {
+            if (string.IsNullOrWhiteSpace(g.Key) && !req.IncludeZeroBlankBuckets)
+            {
+                RecordUntagged(BuiltInCategory.OST_Windows, "Blank Comments", g);
+                continue;
+            }
             plans.Add(new PlannedSchedule
             {
                 WbsPrefix = "M.1",
@@ -690,6 +754,11 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
         var rebar = new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rebar).WhereElementIsNotElementType().ToElements();
         foreach (var g in rebar.GroupBy(e => GetStr(e, "Comments"), StringComparer.Ordinal))
         {
+            if (string.IsNullOrWhiteSpace(g.Key) && !req.IncludeZeroBlankBuckets)
+            {
+                RecordUntagged(BuiltInCategory.OST_Rebar, "Blank Comments (No Host Tag)", g);
+                continue;
+            }
             plans.Add(new PlannedSchedule
             {
                 WbsPrefix = "N.3",
@@ -736,13 +805,142 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
         }
     }
 
-    private static string ExecutePlan(Document doc, SuiteRequest req, List<PlannedSchedule> plans)
+    private static void AutoTagUnambiguousElements(Document doc, Dictionary<string, int> summary)
+    {
+        void Bump(string key) => summary[key] = summary.GetValueOrDefault(key) + 1;
+
+        static bool TrySet(Element el, string paramName, string val)
+        {
+            Parameter? p = el.LookupParameter(paramName);
+            if (p != null && !p.IsReadOnly && p.StorageType == StorageType.String)
+                return p.Set(val);
+            return false;
+        }
+
+        // 1. Foundations (blank Comments -> Pondasi Pilecap / Pondasi Strauss Pile when Type is unambiguous)
+        foreach (Element el in new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFoundation).WhereElementIsNotElementType())
+        {
+            if (!string.IsNullOrWhiteSpace(GetStr(el, "Comments"))) continue;
+            string tn = GetTypeName(doc, el);
+            if (tn.StartsWith("PC.", StringComparison.OrdinalIgnoreCase))
+            {
+                if (TrySet(el, "Comments", "Pondasi Pilecap")) Bump("Foundation: Pondasi Pilecap");
+            }
+            else if (tn.Contains("Straus", StringComparison.OrdinalIgnoreCase) || tn.Contains("Pile", StringComparison.OrdinalIgnoreCase))
+            {
+                if (TrySet(el, "Comments", "Pondasi Strauss Pile")) Bump("Foundation: Pondasi Strauss Pile");
+            }
+        }
+
+        // 2. Framing (blank Comments Batu Kali -> Pondasi Batu Kali; blank Lokasi on Balok Tangga -> Bangunan Utama)
+        foreach (Element el in new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).WhereElementIsNotElementType())
+        {
+            string comm = GetStr(el, "Comments");
+            string tn = GetTypeName(doc, el);
+            if (string.IsNullOrWhiteSpace(comm) && tn.Contains("Batu Kali", StringComparison.OrdinalIgnoreCase))
+            {
+                if (TrySet(el, "Comments", "Pondasi Batu Kali")) Bump("Framing: Pondasi Batu Kali");
+            }
+            if (comm.Contains("Tangga", StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(GetStr(el, "Lokasi", "LOKASI")))
+            {
+                if (TrySet(el, "Lokasi", "Bangunan Utama")) Bump("Framing Tangga Lokasi -> Bangunan Utama");
+            }
+        }
+
+        // 3. Windows (Solar Tuff blank Comments -> Solar Tuff Cladding)
+        foreach (Element el in new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Windows).WhereElementIsNotElementType())
+        {
+            if (!string.IsNullOrWhiteSpace(GetStr(el, "Comments"))) continue;
+            if (GetTypeName(doc, el).Contains("Solar Tuff", StringComparison.OrdinalIgnoreCase))
+            {
+                if (TrySet(el, "Comments", "Solar Tuff Cladding")) Bump("Windows: Solar Tuff Cladding");
+            }
+        }
+
+        // 4. Rebar (blank Comments -> inherit from Rebar.GetHostId() Comments or unambiguous host Type)
+        foreach (Element el in new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rebar).WhereElementIsNotElementType())
+        {
+            if (!string.IsNullOrWhiteSpace(GetStr(el, "Comments"))) continue;
+            if (el is Rebar rb)
+            {
+                ElementId hid = rb.GetHostId();
+                Element? host = hid != ElementId.InvalidElementId ? doc.GetElement(hid) : null;
+                if (host != null)
+                {
+                    string hComm = GetStr(host, "Comments");
+                    string target = hComm;
+                    if (string.IsNullOrWhiteSpace(target))
+                    {
+                        string hTn = GetTypeName(doc, host).ToUpperInvariant();
+                        if (hTn.StartsWith("PC.") || hTn.Contains("PILECAP")) target = "Pondasi Pilecap";
+                        else if (hTn.Contains("PEDESTAL")) target = "Kolom Pedestal";
+                        else if (hTn.Contains("SLOOF") || hTn.StartsWith("S1") || hTn.StartsWith("S2")) target = "Balok Sloof";
+                        else if (hTn.Contains("PIT")) target = "PIT HOIST";
+                        else if (hTn.Contains("BATU KALI")) target = "Pondasi Batu Kali";
+                        else if (hTn.Contains("PLAT") || hTn.Contains("FLOOR")) target = "Pelat Lantai";
+                    }
+                    if (!string.IsNullOrWhiteSpace(target) && TrySet(el, "Comments", target))
+                        Bump($"Rebar (from Host): {target}");
+                }
+            }
+        }
+
+        // 5. Connection Plates & Anchors on Stairs/Checker with blank Lokasi -> Bangunan Utama
+        foreach (BuiltInCategory bic in new[] { BuiltInCategory.OST_StructConnectionPlates, BuiltInCategory.OST_StructConnectionAnchors })
+        {
+            foreach (Element el in new FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType())
+            {
+                if (!string.IsNullOrWhiteSpace(GetStr(el, "Lokasi", "LOKASI"))) continue;
+                string key = GetStr(el, "Type of Connection", "Type of connection");
+                if (string.IsNullOrWhiteSpace(key)) key = GetStr(el, "Comments");
+                if (key.Contains("Checker", StringComparison.OrdinalIgnoreCase) || key.Contains("Tangga", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (TrySet(el, "Lokasi", "Bangunan Utama")) Bump($"{bic}: Lokasi -> Bangunan Utama");
+                }
+            }
+        }
+    }
+
+    private static string ExecutePlan(UIApplication app, Document doc, SuiteRequest req)
     {
         List<object> created = new();
         List<string> failed = new();
+        List<string> prunedEmpty = new();
+        Dictionary<string, int> autoTaggedSummary = new(StringComparer.OrdinalIgnoreCase);
 
-        using var tg = new TransactionGroup(doc, "AIGRAV QTO v4.0 - Generate Full WBS Schedule Suite");
+        // Switch ActiveView away from any ViewSchedule so old schedules (e.g. N.3.5) are never locked against deletion
+        UIDocument? uidoc = app.ActiveUIDocument;
+        if (uidoc?.ActiveView is ViewSchedule)
+        {
+            View? safeView = new FilteredElementCollector(doc)
+                .OfClass(typeof(View))
+                .Cast<View>()
+                .FirstOrDefault(v => !v.IsTemplate && (v.ViewType == ViewType.FloorPlan || v.ViewType == ViewType.ThreeD || v.ViewType == ViewType.EngineeringPlan));
+            if (safeView != null)
+            {
+                try { uidoc.ActiveView = safeView; } catch { }
+            }
+        }
+
+        using var tg = new TransactionGroup(doc, "AIGRAV QTO v4.0 - Generate Clean WBS Schedule Suite");
         tg.Start();
+
+        if (req.AutoTagUnambiguousBlanks)
+        {
+            using var txTag = new Transaction(doc, "AIGRAV - Auto-Tag Unambiguous Blanks");
+            FailureHandlingOptions fhoTag = txTag.GetFailureHandlingOptions();
+            fhoTag.SetFailuresPreprocessor(new SilentWarningPreprocessor());
+            fhoTag.SetClearAfterRollback(true);
+            txTag.SetFailureHandlingOptions(fhoTag);
+            txTag.Start();
+            AutoTagUnambiguousElements(doc, autoTaggedSummary);
+            doc.Regenerate();
+            txTag.Commit();
+        }
+
+        List<object> untaggedReport = new();
+        List<PlannedSchedule> plans = BuildUniversalPlan(doc, req, untaggedReport);
+        AssignUniqueWbsNames(plans);
 
         Dictionary<string, ViewSchedule> existingByName;
         using (var txDel = new Transaction(doc, "AIGRAV - Cleanup Existing QTO Schedules"))
@@ -789,6 +987,7 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
             txDel.Commit();
         }
 
+        List<(ViewSchedule Vs, PlannedSchedule Plan)> createdList = new();
         using (var tx = new Transaction(doc, "AIGRAV - Create Universal QTO Schedules"))
         {
             FailureHandlingOptions fho = tx.GetFailureHandlingOptions();
@@ -808,6 +1007,7 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
                     }
 
                     ViewSchedule vs = CreateScheduleFromPlan(doc, plan);
+                    createdList.Add((vs, plan));
                     created.Add(new
                     {
                         schedule_name = vs.Name,
@@ -827,6 +1027,48 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
             tx.Commit();
         }
 
+        if (req.PruneEmptySchedulesAfterCreate && createdList.Count > 0)
+        {
+            using var txPrune = new Transaction(doc, "AIGRAV - Prune Any Empty Schedules");
+            FailureHandlingOptions fhoP = txPrune.GetFailureHandlingOptions();
+            fhoP.SetFailuresPreprocessor(new SilentWarningPreprocessor());
+            txPrune.SetFailureHandlingOptions(fhoP);
+            txPrune.Start();
+
+            foreach (var (vs, plan) in createdList)
+            {
+                bool isEmpty = false;
+                bool isConnSubCat = plan.Category == BuiltInCategory.OST_StructConnectionPlates ||
+                                    plan.Category == BuiltInCategory.OST_StructConnectionBolts ||
+                                    plan.Category == BuiltInCategory.OST_StructConnectionAnchors ||
+                                    plan.Category == BuiltInCategory.OST_StructConnectionProfiles;
+                try
+                {
+                    if (!isConnSubCat)
+                    {
+                        int cnt = new FilteredElementCollector(doc, vs.Id).WhereElementIsNotElementType().GetElementCount();
+                        if (cnt == 0) isEmpty = true;
+                    }
+                    else if (string.IsNullOrEmpty(plan.LokasiFilter) || string.IsNullOrEmpty(plan.TypeOfConnectionFilter))
+                    {
+                        var body = vs.GetTableData().GetSectionData(SectionType.Body);
+                        if (body == null || body.NumberOfRows <= 2) isEmpty = true;
+                    }
+
+                    if (isEmpty)
+                    {
+                        string pName = vs.Name;
+                        doc.Delete(vs.Id);
+                        prunedEmpty.Add(pName);
+                    }
+                }
+                catch { }
+            }
+
+            if (prunedEmpty.Count > 0) doc.Regenerate();
+            txPrune.Commit();
+        }
+
         tg.Assimilate();
 
         return JsonSerializer.Serialize(new
@@ -834,8 +1076,13 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
             status = failed.Count == 0 ? "Success" : "CompletedWithErrors",
             mode = "execute",
             project = doc.Title,
+            auto_tagged_summary = autoTaggedSummary,
             total_planned = plans.Count,
-            total_created = created.Count,
+            total_created = created.Count - prunedEmpty.Count,
+            pruned_empty_count = prunedEmpty.Count,
+            pruned_empty_schedules = prunedEmpty,
+            untagged_crosscheck_count = untaggedReport.Count,
+            untagged_crosscheck_report = untaggedReport,
             total_failed = failed.Count,
             failed_items = failed,
             created_schedules_sample = created.Take(40).ToList(),
@@ -1152,7 +1399,9 @@ public sealed class QTOAutoSuiteGeneratorSkill : IAIGRAVSkill
     {
         try
         {
-            ScheduleFilter f = new(fid, ScheduleFilterType.Equal, val);
+            ScheduleFilter f = string.IsNullOrEmpty(val)
+                ? new(fid, ScheduleFilterType.HasNoValue)
+                : new(fid, ScheduleFilterType.Equal, val);
             def.AddFilter(f);
             return true;
         }
