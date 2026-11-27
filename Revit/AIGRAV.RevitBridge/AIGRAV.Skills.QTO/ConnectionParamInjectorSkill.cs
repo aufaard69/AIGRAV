@@ -61,7 +61,11 @@ public sealed class ConnectionParamInjectorSkill : IAIGRAVSkill
         BuiltInCategory.OST_Windows,
         BuiltInCategory.OST_Rebar,
         BuiltInCategory.OST_StairsRailing,
-        BuiltInCategory.OST_PipeCurves
+        BuiltInCategory.OST_PipeCurves,
+        BuiltInCategory.OST_Fascia,
+        BuiltInCategory.OST_Cornices,
+        BuiltInCategory.OST_PlumbingFixtures,
+        BuiltInCategory.OST_GenericModel
     };
 
     private static readonly BuiltInCategory[] SteelChildCategories =
@@ -136,9 +140,9 @@ public sealed class ConnectionParamInjectorSkill : IAIGRAVSkill
 
         foreach (Element el in handlers)
         {
-            string hType = ResolveHandlerTypeName(doc, el);
-            string hLok = GetStringParam(el, "Lokasi", "LOKASI");
             string curHType = GetStringParam(el, "Type of Connection", "Type of connection");
+            string hType = string.IsNullOrWhiteSpace(curHType) ? ResolveHandlerTypeName(doc, el) : curHType;
+            string hLok = GetStringParam(el, "Lokasi", "LOKASI");
             if (string.IsNullOrWhiteSpace(curHType)) handlersMissingType++;
             if (string.IsNullOrWhiteSpace(hLok)) handlersMissingLokasi++;
 
@@ -506,7 +510,7 @@ public sealed class ConnectionParamInjectorSkill : IAIGRAVSkill
         foreach (BuiltInCategory bic in requiredCats)
         {
             Category? cat = doc.Settings.Categories.get_Item(bic);
-            if (cat != null && !existingIds.Contains(cat.Id.Value))
+            if (cat != null && cat.AllowsBoundParameters && !existingIds.Contains(cat.Id.Value))
             {
                 catSet.Insert(cat);
                 needUpdate = true;

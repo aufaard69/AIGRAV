@@ -43,6 +43,8 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
         BuiltInCategory.OST_StairsRuns,
         BuiltInCategory.OST_Cornices,
         BuiltInCategory.OST_Fascia,
+        BuiltInCategory.OST_PlumbingFixtures,
+        BuiltInCategory.OST_GenericModel,
         BuiltInCategory.OST_Rebar,
         BuiltInCategory.OST_PipeCurves,
         BuiltInCategory.OST_StructConnections,
@@ -63,8 +65,21 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
     private sealed class AuditRequest
     {
         public string Discipline { get; set; } = "auto";
-        public int MaxSamplesPerIssue { get; set; } = 12;
+        public int MaxSamplesPerIssue { get; set; } = 15;
         public double TolerancePct { get; set; } = 5.0;
+        public int MaxRenderedTableChecks { get; set; } = 30;
+    }
+
+    private sealed class CachedElem
+    {
+        public long Id;
+        public long CatId;
+        public long TypeId;
+        public string TypeName = string.Empty;
+        public string FamilyName = string.Empty;
+        public string Lokasi = string.Empty;
+        public string Comments = string.Empty;
+        public string TypeOfConnection = string.Empty;
     }
 
     public bool CanHandle(string toolName) =>
@@ -107,9 +122,13 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
             else discipline = "Structure";
         }
 
-        // Collect elements across audit categories & per-schedule coverage
+        // Collect elements across audit categories & build fast in-memory metadata cache
         Dictionary<long, List<Element>> modelByCat = new();
         Dictionary<long, Element> elemById = new();
+        Dictionary<long, List<CachedElem>> cachedByCat = new();
+        Dictionary<long, string> typeNameCache = new();
+        Dictionary<long, string> familyNameCache = new();
+
         foreach (BuiltInCategory bic in AuditCategories)
         {
             var list = new FilteredElementCollector(doc)
@@ -118,8 +137,39 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
                 .ToElements()
                 .ToList();
             modelByCat[(long)bic] = list;
-            foreach (Element e in list) elemById[e.Id.Value] = e;
+            List<CachedElem> cList = new(list.Count);
+            foreach (Element e in list)
+            {
+                elemById[e.Id.Value] = e;
+                long tid = e.GetTypeId().Value;
+                if (!typeNameCache.TryGetValue(tid, out string? tn))
+                {
+                    ElementType? et = e.GetTypeId() != ElementId.InvalidElementId ? doc.GetElement(e.GetTypeId()) as ElementType : null;
+                    tn = et?.Name ?? e.Name ?? string.Empty;
+                    typeNameCache[tid] = tn;
+                    familyNameCache[tid] = et?.FamilyName ?? string.Empty;
+                }
+                cList.Add(new CachedElem
+                {
+                    Id = e.Id.Value,
+                    CatId = (long)bic,
+                    TypeId = tid,
+                    TypeName = tn,
+                    FamilyName = familyNameCache[tid],
+                    Lokasi = GetStr(e, "Lokasi", "LOKASI"),
+                    Comments = GetStr(e, "Comments"),
+                    TypeOfConnection = GetStr(e, "Type of Connection", "Type of connection")
+                });
+            }
+            cachedByCat[(long)bic] = cList;
         }
+
+        // Single-pass Custom Steel Connection handler & subelement cache (used for both Gate 4/1 and Gate 9!)
+        int criticalCount = 0;
+        int warningCount = 0;
+        int infoCount = 0;
+        Dictionary<long, List<CachedElem>> cachedSubByCat = new();
+        var connectionAudit = ScanConnectionsAndVoutesOnce(doc, cap, ref criticalCount, ref warningCount, cachedSubByCat);
 
         // Build schedule membership map
         Dictionary<long, List<(string Name, string Domain)>> elemScheduleHits = new();
@@ -133,18 +183,21 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
         List<string> copyClutter = new();
         List<string> missingLokasiColA = new();
 
-        int criticalCount = 0;
-        int warningCount = 0;
-        int infoCount = 0;
+        bool smallDoc = qtoScheds.Count <= 60;
+        int sampleStep = qtoScheds.Count > 0 && req.MaxRenderedTableChecks > 0
+            ? Math.Max(1, qtoScheds.Count / Math.Max(1, req.MaxRenderedTableChecks))
+            : 1;
+        int renderedChecksDone = 0;
 
-        foreach (ViewSchedule vs in qtoScheds)
+        for (int sIdx = 0; sIdx < qtoScheds.Count; sIdx++)
         {
+            ViewSchedule vs = qtoScheds[sIdx];
             ScheduleDefinition def = vs.Definition;
             long catId = def.CategoryId.Value;
             string schedDomain = ClassifyScheduleDomain(vs, def);
 
-            // Track WBS codes
-            var wbsMatch = Regex.Match(vs.Name.Trim(), @"^((?:AR-|SP-)?[A-Z]\.\d+(?:\.\d+[a-z]?)?)\b", RegexOptions.IgnoreCase);
+            // Track WBS codes (up to 4 numeric segments + optional letter suffix, e.g. C.3.1.27 or D.1.2a)
+            var wbsMatch = Regex.Match(vs.Name.Trim(), @"^((?:AR-|SP-)?[A-Z]\.\d+(?:\.\d+)*(?:[a-z])?)\b", RegexOptions.IgnoreCase);
             if (wbsMatch.Success)
             {
                 string code = wbsMatch.Groups[1].Value.ToUpperInvariant();
@@ -157,38 +210,48 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
             }
             if (Regex.IsMatch(vs.Name, @"(?i)\bcopy(\s+\d+)?\b")) copyClutter.Add(vs.Name);
 
-            // Collect matched elements in schedule
-            IList<ElementId> matchedIds = Array.Empty<ElementId>();
-            try
-            {
-                matchedIds = new FilteredElementCollector(doc, vs.Id)
-                    .WhereElementIsNotElementType()
-                    .ToElementIds()
-                    .ToList();
-            }
-            catch { }
+            // Fast in-memory filter evaluation first; only hit Revit view-table engine on small docs, unknowns, 0-matches, or sampled QA rows
+            bool usedFastEval = TryEvaluateScheduleInMemory(def, catId, cachedByCat, cachedSubByCat, out List<long> memMatchedIds, out int topLevelMatchedCount);
+            bool needRevitQuery = smallDoc || !usedFastEval || memMatchedIds.Count == 0;
+            bool shouldRenderTable = smallDoc || !usedFastEval || memMatchedIds.Count == 0 ||
+                                     (renderedChecksDone < req.MaxRenderedTableChecks && (sIdx % sampleStep == 0));
 
-            foreach (ElementId eid in matchedIds)
+            IList<ElementId> matchedIds;
+            if (needRevitQuery)
             {
-                allScheduledIds.Add(eid.Value);
-                if (!elemScheduleHits.TryGetValue(eid.Value, out var hits))
+                try
                 {
-                    hits = new List<(string Name, string Domain)>();
-                    elemScheduleHits[eid.Value] = hits;
+                    matchedIds = new FilteredElementCollector(doc, vs.Id)
+                        .WhereElementIsNotElementType()
+                        .ToElementIds()
+                        .ToList();
                 }
-                hits.Add((vs.Name, schedDomain));
+                catch { matchedIds = Array.Empty<ElementId>(); }
+                foreach (ElementId eid in matchedIds) RecordHit(eid.Value, vs.Name, schedDomain, allScheduledIds, elemScheduleHits);
+                foreach (long sid in memMatchedIds)
+                {
+                    if (sid < 0) RecordHit(sid, vs.Name, schedDomain, allScheduledIds, elemScheduleHits);
+                }
+            }
+            else
+            {
+                matchedIds = memMatchedIds.Where(id => id > 0).Select(id => new ElementId(id)).ToList();
+                foreach (long id in memMatchedIds) RecordHit(id, vs.Name, schedDomain, allScheduledIds, elemScheduleHits);
             }
 
-            // Read rendered body table safely
-            TableSectionData? body = null;
-            try { body = vs.GetTableData().GetSectionData(SectionType.Body); } catch { }
-            int bodyRows = body?.NumberOfRows ?? 0;
-            int bodyCols = body?.NumberOfColumns ?? 0;
+            int totalEffectiveCount = needRevitQuery ? Math.Max(matchedIds.Count, memMatchedIds.Count) : memMatchedIds.Count;
 
-            bool hasDataRows = CheckScheduleHasDataRows(vs, body);
+            TableSectionData? body = null;
+            bool hasDataRows = totalEffectiveCount > 0;
+            if (shouldRenderTable)
+            {
+                renderedChecksDone++;
+                try { body = vs.GetTableData().GetSectionData(SectionType.Body); } catch { }
+                if (body != null) hasDataRows = CheckScheduleHasDataRows(vs, body);
+            }
 
             // Gate 4: Empty schedules + typo diagnosis
-            if (!hasDataRows || matchedIds.Count == 0)
+            if (!hasDataRows || totalEffectiveCount == 0)
             {
                 string diagnosis = DiagnoseEmptySchedule(doc, def, modelByCat.GetValueOrDefault(catId));
                 criticalCount++;
@@ -197,7 +260,7 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
                     schedule = vs.Name,
                     id = vs.Id.Value,
                     category = ((BuiltInCategory)catId).ToString(),
-                    matched_elements = matchedIds.Count,
+                    matched_elements = totalEffectiveCount,
                     diagnosis
                 });
             }
@@ -205,9 +268,9 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
             // Gate 5: Filter errors & cross-contamination
             InspectFiltersAndContamination(doc, vs, def, catId, matchedIds, filterErrors, ref criticalCount, ref warningCount, ref infoCount);
 
-            // Inspect visible & hidden fields
+            // Inspect visible & hidden fields (+ rendered cells when sampled)
             InspectFieldsUnitsAndCalculations(
-                doc, vs, def, catId, schedDomain, body, hasDataRows,
+                doc, vs, def, catId, schedDomain, body, body != null && hasDataRows,
                 unitAndHeadingErrors, calculationErrors, missingLokasiColA,
                 ref criticalCount, ref warningCount, ref infoCount);
         }
@@ -269,8 +332,7 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
         // Gate 8: Steel Calibration Audit against clean SNI/JIS DB
         var steelCalibration = AuditSteelCalibration(doc, modelByCat, req.TolerancePct, cap, ref criticalCount, ref warningCount);
 
-        // Gate 9: Connection Injection & Voute Audit
-        var connectionAudit = AuditConnectionsAndVoutes(doc, cap, ref criticalCount, ref warningCount);
+        // Gate 9 already computed in single pass above (connectionAudit)
 
         // Gate 10: WBS Numbering Hygiene
         var duplicateWbs = wbsMap
@@ -439,10 +501,10 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
             catch { }
         }
 
-        if (usesElemIdFilter)
+        if (usesElemIdFilter && !hasCommentsOrMaterialFilter)
         {
             warningCount++;
-            filterErrors.Add(new { severity = "WARNING", schedule = vs.Name, issue = "Uses fragile 'Type/Family Equal ElemId' filter instead of Comments / Material: Name / Type of Connection." });
+            filterErrors.Add(new { severity = "WARNING", schedule = vs.Name, issue = "Uses fragile 'Type/Family Equal ElemId' filter without Comments / Material: Name / Type of Connection." });
         }
         if (usesNotEqual)
         {
@@ -454,12 +516,17 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
                               catId == (long)BuiltInCategory.OST_StructConnectionBolts ||
                               catId == (long)BuiltInCategory.OST_StructConnectionAnchors ||
                               catId == (long)BuiltInCategory.OST_StructConnectionProfiles;
+        bool isSingleWholeCatAllowed = catId == (long)BuiltInCategory.OST_Fascia ||
+                                       catId == (long)BuiltInCategory.OST_Cornices ||
+                                       catId == (long)BuiltInCategory.OST_StairsRailing ||
+                                       catId == (long)BuiltInCategory.OST_PlumbingFixtures ||
+                                       catId == (long)BuiltInCategory.OST_GenericModel;
         if (isSteelConnCat && !hasTypeOfConnFilter)
         {
             infoCount++;
             filterErrors.Add(new { severity = "INFO", schedule = vs.Name, issue = "Steel Connection schedule should standardize filter on 'Type of Connection' (+ 'Lokasi') instead of 'Comments' alone." });
         }
-        else if (!isSteelConnCat && def.GetFilterCount() == 0 && !vs.Name.Contains("SCHEDULE", StringComparison.OrdinalIgnoreCase))
+        else if (!isSteelConnCat && !isSingleWholeCatAllowed && def.GetFilterCount() == 0 && !vs.Name.Contains("SCHEDULE", StringComparison.OrdinalIgnoreCase))
         {
             warningCount++;
             filterErrors.Add(new { severity = "WARNING", schedule = vs.Name, issue = "Schedule has 0 filters (risk of capturing unintended elements)." });
@@ -566,12 +633,28 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
                 unitErrors.Add(new { severity = "WARNING", schedule = vs.Name, field = heading, issue = "Concrete/Earthwork schedule includes Steel Weight ('Berat') column." });
             }
 
+            try
+            {
+                FormatOptions fo = f.GetFormatOptions();
+                if (fName.Equals("Volume", StringComparison.OrdinalIgnoreCase) && !fo.UseDefault && fo.GetUnitTypeId() == UnitTypeId.Kilograms)
+                {
+                    criticalCount++;
+                    unitErrors.Add(new { severity = "CRITICAL", schedule = vs.Name, field = heading, issue = "Revit 'Volume' field FormatOptions is set to Kilograms instead of Cubic Meters!" });
+                }
+            }
+            catch { }
+
             // Calculation check: Totals enabled on primary quantitative columns?
+            bool isLinearMeasureCategory = catId == (long)BuiltInCategory.OST_StairsRailing ||
+                                           catId == (long)BuiltInCategory.OST_PipeCurves ||
+                                           catId == (long)BuiltInCategory.OST_Fascia ||
+                                           catId == (long)BuiltInCategory.OST_Cornices;
             bool shouldTotal = QuantityFieldHint.IsMatch(fName) || QuantityFieldHint.IsMatch(heading);
             if (shouldTotal &&
                 !fName.Equals("Cut Length", StringComparison.OrdinalIgnoreCase) &&
                 !fName.Equals("System Length", StringComparison.OrdinalIgnoreCase) &&
                 !fName.Equals("Bar Length", StringComparison.OrdinalIgnoreCase) &&
+                !(fName.Equals("Length", StringComparison.OrdinalIgnoreCase) && !isLinearMeasureCategory) &&
                 !fName.Equals("Diameter", StringComparison.OrdinalIgnoreCase) &&
                 f.DisplayType == ScheduleFieldDisplayType.Standard &&
                 !(fName.Equals("Count", StringComparison.OrdinalIgnoreCase) && !def.IsItemized && !isBoltOrAnchor && !vs.Name.Contains("Volume Pintu", StringComparison.OrdinalIgnoreCase) && !vs.Name.Contains("Pipa Sulingan", StringComparison.OrdinalIgnoreCase) && !vs.Name.Contains("Sumur Resapan", StringComparison.OrdinalIgnoreCase)))
@@ -801,7 +884,131 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
         };
     }
 
-    private static object AuditConnectionsAndVoutes(Document doc, int cap, ref int criticalCount, ref int warningCount)
+    private static void RecordHit(
+        long id,
+        string schedName,
+        string domain,
+        HashSet<long> allScheduledIds,
+        Dictionary<long, List<(string Name, string Domain)>> elemScheduleHits)
+    {
+        if (id > 0) allScheduledIds.Add(id);
+        if (!elemScheduleHits.TryGetValue(id, out var hits))
+        {
+            hits = new List<(string Name, string Domain)>();
+            elemScheduleHits[id] = hits;
+        }
+        hits.Add((schedName, domain));
+    }
+
+    private static bool TryEvaluateScheduleInMemory(
+        ScheduleDefinition def,
+        long catId,
+        Dictionary<long, List<CachedElem>> cachedByCat,
+        Dictionary<long, List<CachedElem>> cachedSubByCat,
+        out List<long> matchedIds,
+        out int topLevelMatchedCount)
+    {
+        matchedIds = new List<long>();
+        topLevelMatchedCount = 0;
+        if (def.IsMaterialTakeoff) return false;
+
+        int fc = def.GetFilterCount();
+        List<(string FieldName, ScheduleFilterType Op, string? StrVal, long ElemIdVal)> parsedFilters = new(fc);
+        for (int i = 0; i < fc; i++)
+        {
+            ScheduleFilter flt = def.GetFilter(i);
+            ScheduleField? fld = null;
+            try { fld = def.GetField(flt.FieldId); } catch { }
+            string fName = fld?.GetName() ?? string.Empty;
+            if (!fName.Equals("Lokasi", StringComparison.OrdinalIgnoreCase) &&
+                !fName.Equals("Comments", StringComparison.OrdinalIgnoreCase) &&
+                !fName.Equals("Type of Connection", StringComparison.OrdinalIgnoreCase) &&
+                !fName.Equals("Type Name", StringComparison.OrdinalIgnoreCase) &&
+                !fName.Equals("Type", StringComparison.OrdinalIgnoreCase) &&
+                !fName.Equals("Family and Type", StringComparison.OrdinalIgnoreCase) &&
+                !fName.Equals("Family", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            string? strVal = null;
+            long eidVal = -1;
+            try { if (flt.IsStringValue) strVal = flt.GetStringValue() ?? string.Empty; } catch { }
+            try { if (flt.IsElementIdValue) eidVal = flt.GetElementIdValue().Value; } catch { }
+            parsedFilters.Add((fName, flt.FilterType, strVal, eidVal));
+        }
+
+        if (cachedByCat.TryGetValue(catId, out var elems))
+        {
+            foreach (CachedElem e in elems)
+            {
+                if (MatchesAll(e, parsedFilters))
+                {
+                    matchedIds.Add(e.Id);
+                    topLevelMatchedCount++;
+                }
+            }
+        }
+        if (cachedSubByCat.TryGetValue(catId, out var subElems))
+        {
+            foreach (CachedElem e in subElems)
+            {
+                if (MatchesAll(e, parsedFilters))
+                    matchedIds.Add(e.Id);
+            }
+        }
+        return true;
+    }
+
+    private static bool MatchesAll(
+        CachedElem e,
+        List<(string FieldName, ScheduleFilterType Op, string? StrVal, long ElemIdVal)> filters)
+    {
+        foreach (var (fn, op, sv, eid) in filters)
+        {
+            if (eid > 0 && (fn.Equals("Type", StringComparison.OrdinalIgnoreCase) || fn.Equals("Family and Type", StringComparison.OrdinalIgnoreCase)))
+            {
+                bool eq = e.TypeId == eid;
+                if (op == ScheduleFilterType.Equal && !eq) return false;
+                if (op == ScheduleFilterType.NotEqual && eq) return false;
+                continue;
+            }
+
+            string actual = fn.ToUpperInvariant() switch
+            {
+                "LOKASI" => e.Lokasi,
+                "COMMENTS" => e.Comments,
+                "TYPE OF CONNECTION" => e.TypeOfConnection,
+                "TYPE NAME" or "TYPE" => e.TypeName,
+                "FAMILY AND TYPE" => $"{e.FamilyName} : {e.TypeName}",
+                "FAMILY" => e.FamilyName,
+                _ => string.Empty
+            };
+
+            string target = sv ?? string.Empty;
+            bool ok = op switch
+            {
+                ScheduleFilterType.Equal => string.Equals(actual, target, StringComparison.OrdinalIgnoreCase),
+                ScheduleFilterType.NotEqual => !string.Equals(actual, target, StringComparison.OrdinalIgnoreCase),
+                ScheduleFilterType.Contains => actual.Contains(target, StringComparison.OrdinalIgnoreCase),
+                ScheduleFilterType.NotContains => !actual.Contains(target, StringComparison.OrdinalIgnoreCase),
+                ScheduleFilterType.BeginsWith => actual.StartsWith(target, StringComparison.OrdinalIgnoreCase),
+                ScheduleFilterType.EndsWith => actual.EndsWith(target, StringComparison.OrdinalIgnoreCase),
+                ScheduleFilterType.HasValue => !string.IsNullOrWhiteSpace(actual),
+                ScheduleFilterType.HasNoValue => string.IsNullOrWhiteSpace(actual),
+                _ => true
+            };
+            if (!ok) return false;
+        }
+        return true;
+    }
+
+    private static object ScanConnectionsAndVoutesOnce(
+        Document doc,
+        int cap,
+        ref int criticalCount,
+        ref int warningCount,
+        Dictionary<long, List<CachedElem>> cachedSubByCat)
     {
         var handlers = new FilteredElementCollector(doc)
             .OfCategory(BuiltInCategory.OST_StructConnections)
@@ -819,12 +1026,14 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
         int totalVoutes = 0;
         int uninjectedSub = 0;
         int uninjectedVoutes = 0;
+        long synthId = -900000000L;
         List<object> samples = new();
 
         foreach (Element el in handlers)
         {
             if (el is not StructuralConnectionHandler handler) continue;
             string parentType = GetStr(el, "Type of Connection", "Type of connection");
+            string parentLok = GetStr(el, "Lokasi", "LOKASI");
             IList<Subelement>? subs = null;
             try { subs = handler.GetSubelements(); } catch { }
             if (subs == null) continue;
@@ -832,20 +1041,41 @@ public sealed class QTOComprehensiveAuditSkill : IAIGRAVSkill
             foreach (Subelement sub in subs)
             {
                 totalSub++;
-                bool isProfile = sub.Category?.Id.Value == (long)BuiltInCategory.OST_StructConnectionProfiles;
+                long scId = sub.Category?.Id.Value ?? 0;
+                bool isProfile = scId == (long)BuiltInCategory.OST_StructConnectionProfiles;
                 if (isProfile) totalVoutes++;
 
+                string subTypeVal = string.Empty;
                 bool missing = typeConnId == null || !sub.HasParameter(typeConnId);
                 if (!missing)
                 {
                     try
                     {
                         var spv = sub.GetParameterValue(typeConnId) as StringParameterValue;
-                        if (string.IsNullOrWhiteSpace(spv?.Value) ||
-                            (!string.IsNullOrWhiteSpace(parentType) && !spv.Value.Equals(parentType, StringComparison.OrdinalIgnoreCase)))
+                        subTypeVal = spv?.Value?.Trim() ?? string.Empty;
+                        if (string.IsNullOrWhiteSpace(subTypeVal) ||
+                            (!string.IsNullOrWhiteSpace(parentType) && !subTypeVal.Equals(parentType, StringComparison.OrdinalIgnoreCase)))
                             missing = true;
                     }
                     catch { missing = true; }
+                }
+
+                if (scId != 0)
+                {
+                    if (!cachedSubByCat.TryGetValue(scId, out var bucket))
+                    {
+                        bucket = new List<CachedElem>();
+                        cachedSubByCat[scId] = bucket;
+                    }
+                    bucket.Add(new CachedElem
+                    {
+                        Id = synthId--,
+                        CatId = scId,
+                        TypeId = -1,
+                        Lokasi = parentLok,
+                        Comments = parentType,
+                        TypeOfConnection = !string.IsNullOrWhiteSpace(subTypeVal) ? subTypeVal : parentType
+                    });
                 }
 
                 if (missing)

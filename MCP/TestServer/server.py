@@ -1279,6 +1279,25 @@ def aigrav_audit_voute_schedules() -> str:
     return call_aigrav("aigrav_audit_voute_schedules", "{}")
 
 
+@mcp.tool(
+    name="aigrav_qto_generate_all_schedules",
+    description="[QTO v4.0 Universal Auto-Suite] Generate seluruh set QTO ViewSchedule secara model-driven lintas divisi WBS (A Pondasi/Beton, B Kolom, C.1 Rafter, C.3 Zona, D-K Secondary, L-M Atap/Cladding, N Tangga/Hoist/Rebar) dengan Dual-Key filter, Kolom A = Lokasi, Baut memakai Number, Voute Volume*7850, dan nol double-counting. Mode 'plan' read-only; mode 'execute' mengeksekusi pembuatan.",
+)
+def aigrav_qto_generate_all_schedules(
+    mode: str = "plan",
+    replace_existing: bool = True,
+    delete_existing_qto_schedules: bool = False,
+    include_zero_blank_buckets: bool = True,
+) -> str:
+    payload = {
+        "Mode": mode,
+        "ReplaceExisting": replace_existing,
+        "DeleteExistingQtoSchedules": delete_existing_qto_schedules,
+        "IncludeZeroBlankBuckets": include_zero_blank_buckets,
+    }
+    return call_aigrav("aigrav_qto_generate_all_schedules", json.dumps(payload))
+
+
 # ============================================================
 # START MCP
 # ============================================================
