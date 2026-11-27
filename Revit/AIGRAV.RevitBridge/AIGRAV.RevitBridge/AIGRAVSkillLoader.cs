@@ -146,7 +146,11 @@ public static class AIGRAVSkillLoader
                 DiscoveredSkillFiles.Add(file);
             }
 
-            DiscoveredSkillFiles.Sort(StringComparer.OrdinalIgnoreCase);
+            DiscoveredSkillFiles.Sort((a, b) =>
+            {
+                int cmp = File.GetLastWriteTimeUtc(a).CompareTo(File.GetLastWriteTimeUtc(b));
+                return cmp != 0 ? cmp : StringComparer.OrdinalIgnoreCase.Compare(a, b);
+            });
 
             return DiscoveredSkillFiles.AsReadOnly();
         }

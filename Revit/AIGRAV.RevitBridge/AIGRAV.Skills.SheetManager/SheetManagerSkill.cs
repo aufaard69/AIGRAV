@@ -26,7 +26,9 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
 
     public bool CanHandle(string toolName)
     {
-        return toolName.Equals("aigrav_inspect_views", StringComparison.OrdinalIgnoreCase) ||
+        return toolName.Equals("get_views", StringComparison.OrdinalIgnoreCase) ||
+               toolName.Equals("aigrav_get_views", StringComparison.OrdinalIgnoreCase) ||
+               toolName.Equals("aigrav_inspect_views", StringComparison.OrdinalIgnoreCase) ||
                toolName.Equals("aigrav_place_viewport", StringComparison.OrdinalIgnoreCase) ||
                toolName.Equals("aigrav_setup_sheets", StringComparison.OrdinalIgnoreCase) ||
                toolName.Equals("aigrav_inspect_viewports", StringComparison.OrdinalIgnoreCase) ||
@@ -67,7 +69,9 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
                 return PlaceNextToViewportOnSheet(doc, argument);
             }
 
-            if (toolName.Equals("aigrav_inspect_views", StringComparison.OrdinalIgnoreCase))
+            if (toolName.Equals("get_views", StringComparison.OrdinalIgnoreCase) ||
+                toolName.Equals("aigrav_get_views", StringComparison.OrdinalIgnoreCase) ||
+                toolName.Equals("aigrav_inspect_views", StringComparison.OrdinalIgnoreCase))
             {
                 return InspectViews(doc);
             }
@@ -141,14 +145,58 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
         }
     }
 
+    private static bool TryExtractLong(JsonElement el, out long value)
+    {
+        if (el.ValueKind == JsonValueKind.Number && el.TryGetInt64(out value))
+            return true;
+
+        if (el.ValueKind == JsonValueKind.String &&
+            long.TryParse(el.GetString()?.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
+            return true;
+
+        value = 0;
+        return false;
+    }
+
+    private static bool TryExtractDouble(JsonElement el, out double value)
+    {
+        if (el.ValueKind == JsonValueKind.Number && el.TryGetDouble(out value))
+            return true;
+
+        if (el.ValueKind == JsonValueKind.String &&
+            double.TryParse(el.GetString()?.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out value))
+            return true;
+
+        value = 0;
+        return false;
+    }
+
     private static ViewSheet? ResolveSheet(Document doc, JsonElement root, string? rawArg)
     {
         if (root.ValueKind == JsonValueKind.Object)
         {
-            if (root.TryGetProperty("sheet_id", out JsonElement sid) && sid.ValueKind == JsonValueKind.Number)
-                return doc.GetElement(new ElementId(sid.GetInt64())) as ViewSheet;
-            if (root.TryGetProperty("sheetId", out JsonElement sid2) && sid2.ValueKind == JsonValueKind.Number)
-                return doc.GetElement(new ElementId(sid2.GetInt64())) as ViewSheet;
+            foreach (string key in new[] { "sheet_id", "sheetId" })
+            {
+                if (root.TryGetProperty(key, out JsonElement sid))
+                {
+                    if (TryExtractLong(sid, out long idVal))
+                    {
+                        var byId = doc.GetElement(new ElementId(idVal)) as ViewSheet;
+                        if (byId != null) return byId;
+                    }
+                    else if (sid.ValueKind == JsonValueKind.String)
+                    {
+                        string num = (sid.GetString() ?? "").Trim();
+                        if (!string.IsNullOrEmpty(num))
+                        {
+                            var byNum = new FilteredElementCollector(doc).OfClass(typeof(ViewSheet)).Cast<ViewSheet>()
+                                .FirstOrDefault(s => s.SheetNumber.Equals(num, StringComparison.OrdinalIgnoreCase));
+                            if (byNum != null) return byNum;
+                        }
+                    }
+                }
+            }
+
             if (root.TryGetProperty("sheet_number", out JsonElement snum) && snum.ValueKind == JsonValueKind.String)
             {
                 string num = snum.GetString() ?? "";
@@ -182,10 +230,27 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
     {
         if (root.ValueKind != JsonValueKind.Object) return null;
 
-        if (root.TryGetProperty(propId, out JsonElement vid) && vid.ValueKind == JsonValueKind.Number)
-            return doc.GetElement(new ElementId(vid.GetInt64())) as View;
-        if (root.TryGetProperty("viewId", out JsonElement vid2) && vid2.ValueKind == JsonValueKind.Number)
-            return doc.GetElement(new ElementId(vid2.GetInt64())) as View;
+        foreach (string key in new[] { propId, "viewId" })
+        {
+            if (root.TryGetProperty(key, out JsonElement vid))
+            {
+                if (TryExtractLong(vid, out long idVal))
+                {
+                    var byId = doc.GetElement(new ElementId(idVal)) as View;
+                    if (byId != null) return byId;
+                }
+                else if (vid.ValueKind == JsonValueKind.String)
+                {
+                    string vStr = (vid.GetString() ?? "").Trim();
+                    if (!string.IsNullOrEmpty(vStr))
+                    {
+                        var byStr = new FilteredElementCollector(doc).OfClass(typeof(View)).Cast<View>()
+                            .FirstOrDefault(v => !v.IsTemplate && v.Name.Equals(vStr, StringComparison.OrdinalIgnoreCase));
+                        if (byStr != null) return byStr;
+                    }
+                }
+            }
+        }
 
         string? vName = null;
         if (root.TryGetProperty(propName, out JsonElement vn) && vn.ValueKind == JsonValueKind.String)
@@ -463,8 +528,14 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
             layoutRule = lr2.GetString() ?? "Auto";
 
         double paddingMm = 12.0;
-        if (root.TryGetProperty("padding_mm", out JsonElement pm) && pm.ValueKind == JsonValueKind.Number)
-            paddingMm = pm.GetDouble();
+        foreach (string padKey in new[] { "padding_mm", "paddingMm", "margin_mm", "marginMm" })
+        {
+            if (root.TryGetProperty(padKey, out JsonElement pm) && TryExtractDouble(pm, out double padVal))
+            {
+                paddingMm = padVal;
+                break;
+            }
+        }
 
         var (tbRect, drawableRect, paperSize, _, _) = ExtractTitleBlockGeometry(doc, sheet);
 
@@ -740,12 +811,22 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
             return JsonSerializer.Serialize(new { error = "Target View not found." });
 
         long refVpId = -1;
-        if (root.TryGetProperty("reference_viewport_id", out JsonElement rv1) && rv1.ValueKind == JsonValueKind.Number)
-            refVpId = rv1.GetInt64();
-        else if (root.TryGetProperty("referenceViewportId", out JsonElement rv2) && rv2.ValueKind == JsonValueKind.Number)
-            refVpId = rv2.GetInt64();
+        foreach (string refKey in new[] { "reference_viewport_id", "referenceViewportId", "reference_viewport_or_view_id" })
+        {
+            if (root.TryGetProperty(refKey, out JsonElement rvEl) && TryExtractLong(rvEl, out long parsedRef))
+            {
+                refVpId = parsedRef;
+                break;
+            }
+        }
 
-        Viewport? refVp = doc.GetElement(new ElementId(refVpId)) as Viewport;
+        Viewport? refVp = refVpId > 0 ? doc.GetElement(new ElementId(refVpId)) as Viewport : null;
+        if (refVp == null && refVpId > 0)
+        {
+            refVp = sheet.GetAllViewports()
+                .Select(id => doc.GetElement(id) as Viewport)
+                .FirstOrDefault(vp => vp != null && vp.ViewId.Value == refVpId);
+        }
         if (refVp == null)
         {
             // Fallback: pick the last placed viewport on the sheet
@@ -764,8 +845,14 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
             direction = (dirEl.GetString() ?? "right").Trim().ToLowerInvariant();
 
         double gapMm = 15.0;
-        if (root.TryGetProperty("gap_mm", out JsonElement gapEl) && gapEl.ValueKind == JsonValueKind.Number)
-            gapMm = gapEl.GetDouble();
+        foreach (string gapKey in new[] { "gap_mm", "gapMm" })
+        {
+            if (root.TryGetProperty(gapKey, out JsonElement gapEl) && TryExtractDouble(gapEl, out double parsedGap))
+            {
+                gapMm = parsedGap;
+                break;
+            }
+        }
 
         Outline refOutline = refVp.GetBoxOutline();
         PaperRectMm refRect = new()
@@ -928,8 +1015,27 @@ public sealed class SheetManagerSkill : IAIGRAVSkill
         using JsonDocument jdoc = JsonDocument.Parse(argument);
         JsonElement root = jdoc.RootElement;
 
-        long sheetIdVal = root.TryGetProperty("sheetId", out JsonElement s1) ? s1.GetInt64() : root.GetProperty("sheet_id").GetInt64();
-        long viewIdVal = root.TryGetProperty("viewId", out JsonElement v1) ? v1.GetInt64() : root.GetProperty("view_id").GetInt64();
+        long sheetIdVal = -1;
+        foreach (string sKey in new[] { "sheetId", "sheet_id" })
+        {
+            if (root.TryGetProperty(sKey, out JsonElement sEl) && TryExtractLong(sEl, out long parsedS))
+            {
+                sheetIdVal = parsedS;
+                break;
+            }
+        }
+        if (sheetIdVal <= 0) return "PlaceViewport failed: valid sheetId / sheet_id required.";
+
+        long viewIdVal = -1;
+        foreach (string vKey in new[] { "viewId", "view_id" })
+        {
+            if (root.TryGetProperty(vKey, out JsonElement vEl) && TryExtractLong(vEl, out long parsedV))
+            {
+                viewIdVal = parsedV;
+                break;
+            }
+        }
+        if (viewIdVal <= 0) return "PlaceViewport failed: valid viewId / view_id required.";
 
         // Support both legacy feet (x, y) and millimeters (x_mm, y_mm)
         double xFt = root.TryGetProperty("x_mm", out JsonElement xmm) ? MmToFt(xmm.GetDouble()) : root.GetProperty("x").GetDouble();

@@ -24,4 +24,10 @@
   <Project Path="AIGRAV.Skills.MasterExporter/AIGRAV.Skills.MasterExporter.csproj">
     <Platform Project="x64" />
   </Project>
+  <Project Path="AIGRAV.Skills.SheetManager/AIGRAV.Skills.SheetManager.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="AIGRAV.Skills.BimAudit/AIGRAV.Skills.BimAudit.csproj">
+    <Platform Project="x64" />
+  </Project>
 </Solution>

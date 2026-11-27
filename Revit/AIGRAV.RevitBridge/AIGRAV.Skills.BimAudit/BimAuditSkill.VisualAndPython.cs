@@ -19,6 +19,8 @@ public sealed partial class SpatialAgenticSandboxSkill
 
         int pixelSize = 1280;
         string? requestedViewName = null;
+        long? requestedViewId = null;
+        bool reset3dCrop = false;
         if (!string.IsNullOrWhiteSpace(argument))
         {
             try
@@ -31,9 +33,22 @@ public sealed partial class SpatialAgenticSandboxSkill
                     {
                         pixelSize = Math.Clamp(px, 800, 2048);
                     }
-                    if (jd.RootElement.TryGetProperty("view_name", out JsonElement vnEl))
+                    if (jd.RootElement.TryGetProperty("view_name", out JsonElement vnEl) &&
+                        vnEl.ValueKind == JsonValueKind.String)
                     {
                         requestedViewName = vnEl.GetString();
+                    }
+                    if (jd.RootElement.TryGetProperty("view_id", out JsonElement vidEl))
+                    {
+                        if (vidEl.ValueKind == JsonValueKind.Number && vidEl.TryGetInt64(out long vidNum))
+                            requestedViewId = vidNum;
+                        else if (vidEl.ValueKind == JsonValueKind.String && long.TryParse(vidEl.GetString()?.Trim(), out long vidParsed))
+                            requestedViewId = vidParsed;
+                    }
+                    if (jd.RootElement.TryGetProperty("reset_3d_crop", out JsonElement rcEl) &&
+                        (rcEl.ValueKind == JsonValueKind.True || rcEl.ValueKind == JsonValueKind.False))
+                    {
+                        reset3dCrop = rcEl.GetBoolean();
                     }
                 }
             }
@@ -41,60 +56,33 @@ public sealed partial class SpatialAgenticSandboxSkill
         }
 
         View? requestedView = null;
-        if (!string.IsNullOrWhiteSpace(requestedViewName))
+        if (requestedViewId.HasValue && requestedViewId.Value > 0)
+        {
+            if (doc.GetElement(new ElementId(requestedViewId.Value)) is View vById && !vById.IsTemplate)
+            {
+                requestedView = vById;
+            }
+        }
+        if (requestedView == null && !string.IsNullOrWhiteSpace(requestedViewName))
         {
             requestedView = new FilteredElementCollector(doc)
                 .OfClass(typeof(View))
                 .Cast<View>()
                 .FirstOrDefault(v => !v.IsTemplate && v.Name.IndexOf(requestedViewName, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
 
-            if (requestedView != null)
+        if (requestedView != null)
+        {
+            try
             {
-                try
-                {
-                    uiDoc.ActiveView = requestedView;
-                }
-                catch { }
+                uiDoc.ActiveView = requestedView;
             }
+            catch { }
         }
 
         try
         {
             uiDoc.Selection.SetElementIds(new List<ElementId>());
-
-            using (Transaction txBox = new(doc, "AIGRAV - Reset View Limits"))
-            {
-                TransactionFailureHandling.SuppressWarnings(txBox);
-                txBox.Start();
-                foreach (View v in new FilteredElementCollector(doc).OfClass(typeof(View)).Cast<View>())
-                {
-                    if (!v.IsTemplate)
-                    {
-                        try
-                        {
-                            if (v.IsInTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate))
-                                v.DisableTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate);
-                            v.CropBoxActive = false;
-                            v.CropBoxVisible = false;
-                            if (v is View3D v3d)
-                            {
-                                if (v3d.Name.IndexOf("Cutaway", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                    v3d.Name.IndexOf("Pondasi", StringComparison.OrdinalIgnoreCase) < 0)
-                                {
-                                    v3d.IsSectionBoxActive = false;
-                                }
-                                v3d.DisplayStyle = DisplayStyle.Shading;
-                            }
-                        }
-                        catch { }
-                    }
-                }
-                txBox.Commit();
-            }
-
-            UIView? activeUiView = uiDoc.GetOpenUIViews().FirstOrDefault(v => v.ViewId == doc.ActiveView.Id)
-                                   ?? uiDoc.GetOpenUIViews().FirstOrDefault();
-            activeUiView?.ZoomToFit();
         }
         catch { }
 
@@ -137,6 +125,55 @@ public sealed partial class SpatialAgenticSandboxSkill
             }
         }
 
+        if (reset3dCrop)
+        {
+            try
+            {
+                using Transaction txBox = new(doc, "AIGRAV - Reset Target 3D Crop");
+                TransactionFailureHandling.SuppressWarnings(txBox);
+                txBox.Start();
+                foreach (ElementId vid in viewsToExport)
+                {
+                    if (doc.GetElement(vid) is View3D v3d && !v3d.IsTemplate)
+                    {
+                        try
+                        {
+                            if (v3d.IsInTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate))
+                                v3d.DisableTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate);
+                            v3d.CropBoxActive = false;
+                            v3d.CropBoxVisible = false;
+                            if (v3d.Name.IndexOf("Cutaway", StringComparison.OrdinalIgnoreCase) < 0 &&
+                                v3d.Name.IndexOf("Pondasi", StringComparison.OrdinalIgnoreCase) < 0)
+                            {
+                                v3d.IsSectionBoxActive = false;
+                            }
+                            v3d.DisplayStyle = DisplayStyle.Shading;
+                        }
+                        catch { }
+                    }
+                }
+                txBox.Commit();
+            }
+            catch { }
+        }
+
+        bool zoomToFitApplied = false;
+        if (requestedView == null)
+        {
+            try
+            {
+                UIView? activeUiView = uiDoc.GetOpenUIViews().FirstOrDefault(v => v.ViewId == doc.ActiveView.Id)
+                                       ?? uiDoc.GetOpenUIViews().FirstOrDefault();
+                if (activeUiView != null)
+                {
+                    activeUiView.ZoomToFit();
+                    zoomToFitApplied = true;
+                }
+            }
+            catch { }
+        }
+
+        bool useSetOfViews = viewsToExport.Count > 1 || requestedView != null;
         ImageExportOptions opts = new()
         {
             ZoomType = ZoomFitType.FitToPage,
@@ -146,9 +183,9 @@ public sealed partial class SpatialAgenticSandboxSkill
             HLRandWFViewsFileType = ImageFileType.PNG,
             ShadowViewsFileType = ImageFileType.PNG,
             ImageResolution = ImageResolution.DPI_150,
-            ExportRange = viewsToExport.Count > 1 ? ExportRange.SetOfViews : ExportRange.CurrentView
+            ExportRange = useSetOfViews ? ExportRange.SetOfViews : ExportRange.CurrentView
         };
-        if (viewsToExport.Count > 1)
+        if (useSetOfViews)
             opts.SetViewsAndSheets(viewsToExport);
 
         doc.ExportImage(opts);
@@ -164,7 +201,8 @@ public sealed partial class SpatialAgenticSandboxSkill
             active_view_id = doc.ActiveView.Id.Value,
             active_view_name = doc.ActiveView.Name,
             active_view_type = doc.ActiveView.ViewType.ToString(),
-            zoom_to_fit_applied = true,
+            zoom_to_fit_applied = zoomToFitApplied,
+            crop_boxes_preserved = !reset3dCrop,
             resolution_px = pixelSize,
             primary_image_path = exportedFiles.FirstOrDefault() ?? "",
             exported_images = exportedFiles,

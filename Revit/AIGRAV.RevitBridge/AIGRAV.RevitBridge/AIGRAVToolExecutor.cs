@@ -438,6 +438,7 @@ public static class AIGRAVToolExecutor
                     document,
                     argument);
 
+            case "hide_elements":
             case "hide_elements_in_view":
 
                 return SetViewVisibility(
@@ -445,6 +446,7 @@ public static class AIGRAVToolExecutor
                     argument,
                     true);
 
+            case "unhide_elements":
             case "unhide_elements_in_view":
 
                 return SetViewVisibility(
@@ -452,6 +454,7 @@ public static class AIGRAVToolExecutor
                     argument,
                     false);
 
+            case "isolate_elements":
             case "isolate_elements_in_view":
 
                 return IsolateElements(

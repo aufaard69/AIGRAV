@@ -438,19 +438,19 @@ TOOLS = {
         "Temporarily isolate elements in a view.",
 
     "aigrav_get_view_detail_level":
-        "Get view detail level.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Get view detail level.",
 
     "aigrav_set_view_detail_level":
         "Set view detail level.",
 
     "aigrav_get_view_discipline":
-        "Get view discipline.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Get view discipline.",
 
     "aigrav_set_view_discipline":
-        "Set view discipline.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Set view discipline.",
 
     "aigrav_get_view_properties":
-        "Get view properties.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Get view properties.",
 
 
     # --------------------------------------------------------
@@ -531,28 +531,28 @@ TOOLS = {
         "Save active Revit document (or synchronize with central for workshared models).",
 
     "aigrav_create_room":
-        "Create a room.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Create a room.",
 
     "aigrav_create_area":
-        "Create an area.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Create an area.",
 
     "aigrav_create_view":
-        "Create a Revit view.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Create a Revit view.",
 
     "aigrav_create_sheet":
         "Create a sheet.",
 
     "aigrav_create_dimension":
-        "Create a dimension.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Create a dimension.",
 
     "aigrav_create_text_note":
-        "Create a text note.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Create a text note.",
 
     "aigrav_create_detail_curve":
-        "Create a detail curve.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Create a detail curve.",
 
     "aigrav_create_model_curve":
-        "Create a model curve.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Create a model curve.",
 
     "aigrav_create_schedule":
         "Create a schedule.",
@@ -632,16 +632,16 @@ TOOLS = {
         "Change family instance type.",
 
     "aigrav_change_view_template":
-        "Change view template.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Change view template.",
 
     "aigrav_set_view_template":
-        "Set view template.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Set view template.",
 
     "aigrav_set_view_crop":
-        "Set view crop configuration.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Set view crop configuration.",
 
     "aigrav_set_visibility":
-        "Set element visibility.",
+        "[PENDING - NOT YET IMPLEMENTED IN C# BRIDGE] Set element visibility.",
 
     "aigrav_set_parameter_batch":
         "Set multiple parameters.",
@@ -896,10 +896,19 @@ def aigrav_execute_revit_python(script: str) -> str:
 
 @mcp.tool(
     name="aigrav_capture_revit_viewport",
-    description="[Pillar 3 Mata AI] Lakukan ZoomToFit pada viewport aktif Revit, ekspor PNG beresolusi tinggi via Document.ExportImage(), dan kembalikan Base64 / lokasi gambar + telemetri.",
+    description="[Pillar 3 Mata AI] Lakukan ZoomToFit pada viewport aktif Revit (atau ekspor view_name/view_id tertentu secara non-destruktif tanpa merusak CropBox), ekspor PNG via Document.ExportImage(), dan kembalikan lokasi gambar + telemetri.",
 )
-def aigrav_capture_revit_viewport(resolution_px: int = 1280) -> str:
-    raw = call_aigrav("capture_revit_viewport", json.dumps({"resolution_px": resolution_px}))
+def aigrav_capture_revit_viewport(
+    resolution_px: int = 1280,
+    view_name: str = "",
+    view_id: str = "",
+) -> str:
+    payload: dict[str, Any] = {"resolution_px": resolution_px}
+    if view_name:
+        payload["view_name"] = view_name
+    if view_id:
+        payload["view_id"] = view_id
+    raw = call_aigrav("capture_revit_viewport", json.dumps(payload))
     try:
         data = json.loads(raw)
         img_path = data.get("primary_image_path", "")
@@ -956,6 +965,7 @@ def aigrav_place_view_on_sheet(
         "view_id": view_id,
         "layout_rule": layout_rule,
         "margin_mm": margin_mm,
+        "padding_mm": margin_mm,
     }
     return call_aigrav("place_view_on_sheet", json.dumps(payload))
 
