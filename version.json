@@ -1,17 +1,14 @@
 {
-  "version": "3.2.1",
-  "release_name": "Unified AI Bridge Controller UI, Multi-Port Sync & Self-Healing Updater",
+  "version": "3.2.2",
+  "release_name": "Factory Structural DED Standard (ISO A3 Bottom-Strip) & SheetManager Upgrade",
   "release_date": "2026-11-27",
   "highlights": [
-    "Unified AI Bridge Controller UI (AIGRAVWelcomeWindow): Embedded AIGRAV Gemini Icon WPF Resource, real-time HTTP Server Bridge status badge, editable Port Listener, Test Connection self-probe, Cari Port Bebas (+1), Revit PID & Requests Served telemetry, and Restart Bridge action",
-    "Multi-Port Bridge Hardening (AIGRAVHttpServer + MCP server.py): Live port health verification for aigrav_port.txt and session_*.json (with updated_at timestamps) across Ports 8765-8775 so stale port hints never block Revit connection",
-    "Self-Healing Multi-PC Updater (sync-aigrav.ps1 + AIGRAVVersionChecker): Automatically waits for Revit to close before compiling AIGRAV.RevitBridge.slnx, re-executes itself if sync-aigrav.ps1 updated during pull, fails loudly on git pull or build errors, and clears RebarExtension DLL shadowing",
-    "Full v3.2.0 + Detailing Foundation Merge: Integrated Offline Rebar Studio & Rebar Suite, ViewportCapture, SheetManager JSON contract sync, BimAudit CropBox preservation, and duplicate-assembly guard in AIGRAVSkillLoader"
+    "Official Factory Structural DED Skill (revit-factory-structural-ded): Codified ISO A3 Landscape bottom-strip titleblock geometry (420x297 mm, 38 mm bottom strip, 394x253 mm canvas), 8-series sheet taxonomy (000, DG, SD, DT, PT, PD, LT, RF), and 5 standard composition templates (including Hybrid 2D + 3D Shaded Isometric)",
+    "Machine-Readable DED Standard Schema (factory_structural_ded_standard.json) & AGENTS.md Section 12: Permanent drafting rules for Typical Portal Grouping, >150m partial plan splits with Keyplans, ISO metric scale ladder, and 8 anti-error QA guardrails learned from NUAS-FT-BU-ST.rvt",
+    "SheetManager ISO A3 Bottom-Strip & Stamp Keep-Out Engine (SheetManagerSkill.cs): Automatic bottom-strip titleblock orientation detection, 48x18 mm bottom-right status stamp keep-out protection, titleblock_layout override, and bottom-bar ASCII paper-space map"
   ],
   "fixes": [
-    "Fixed AIGRAV_Gemini_Icon.png build action to WPF Resource so logo renders cleanly inside AIGRAVWelcomeWindow",
-    "Fixed SheetManager project missing from AIGRAV.RevitBridge.slnx and removed duplicate BimAudit solution entry",
-    "Fixed ViewUpdateButton_Click & sync-aigrav.ps1 silently skipping AIGRAV.RevitBridge.dll compilation when triggered from inside an active Revit session",
-    "Added hide_elements / unhide_elements / isolate_elements tool aliases in AIGRAVToolExecutor and updated server.py viewport capture view targeting"
+    "Prevented SheetManager viewport placement from overlapping bottom-strip A3 titleblocks and bottom-right FOR TENDER / FOR CONSTRUCTION status stamps",
+    "Encoded 8 QA anti-pattern guardrails (short Detail Numbers <=4 chars, zero wrong cross-ref bubbles on independent plans, naming hygiene regex blocklist, NO. parameter sync before export, and >50-sheet bridge pagination)"
   ]
 }

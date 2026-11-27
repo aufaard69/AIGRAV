@@ -75,7 +75,7 @@ public static class AIGRAVVersionChecker
             }
         }
         catch { }
-        return new VersionInfo { version = "3.2.1", release_name = "AIGRAV Core" };
+        return new VersionInfo { version = "3.2.2", release_name = "AIGRAV Core" };
     }
 
     public static async Task<(bool hasUpdate, VersionInfo? remoteInfo)> CheckForUpdatesAsync()

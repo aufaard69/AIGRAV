@@ -426,7 +426,7 @@
 						</Button>
 
 						<TextBlock x:Name="FooterVersionText"
-                            Text="AIGRAV v3.2.1  •  Gemini + MCP + Revit API • Aufa Ardianto"
+                            Text="AIGRAV v3.2.2  •  Gemini + MCP + Revit API • Aufa Ardianto"
                             HorizontalAlignment="Center"
                             Margin="0,14,0,0"
                             FontSize="10.5"
